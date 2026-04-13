@@ -65,34 +65,8 @@ const LoanForm = () => {
     }
   };
 
-  const labelMap: Record<string, string> = {
-    numero_de_cpf: "CPF",
-    nome_da_pf: "Nome",
-    data_nascimento: "Data de Nascimento",
-    situacao_cadastral: "Situação Cadastral",
-    data_inscricao: "Data de Inscrição",
-    digito_verificador: "Dígito Verificador",
-    comprovante_emitido: "Comprovante",
-    comprovante_emitido_data: "Data do Comprovante",
-  };
-
-  const renderResult = (data: Record<string, unknown>) => {
-    const entries = Object.entries(data).filter(
-      ([, v]) => v !== null && v !== undefined && v !== "" && typeof v !== "object"
-    );
-    return entries.map(([key, value], i) => (
-      <tr key={key} className={`border-b border-border/50 last:border-0 ${i % 2 === 0 ? "bg-muted/30" : ""}`}>
-        <td className="py-3 px-4 font-semibold text-foreground text-sm whitespace-nowrap w-[40%]">
-          {labelMap[key] || key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
-        </td>
-        <td className="py-3 px-4 text-muted-foreground text-sm break-all">{String(value)}</td>
-      </tr>
-    ));
-  };
-
   return (
     <div className="w-full space-y-6">
-      {/* CPF */}
       <div className="space-y-2">
         <label className="text-sm font-medium text-muted-foreground">CPF</label>
         <Input
@@ -103,7 +77,6 @@ const LoanForm = () => {
         />
       </div>
 
-      {/* Botão */}
       <Button
         type="button"
         onClick={lookupCPF}
@@ -113,19 +86,6 @@ const LoanForm = () => {
         {loading && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
         {loading ? "Consultando..." : "Continuar"}
       </Button>
-
-      {/* Resultado */}
-      {cpfData && (
-        <div className="space-y-3 pt-4">
-          <h3 className="text-lg font-bold text-foreground">Resultado da Consulta</h3>
-          <div className="rounded-xl border border-border overflow-hidden shadow-sm">
-            <div className="h-1 bg-primary w-full" />
-            <table className="w-full">
-              <tbody>{renderResult(cpfData)}</tbody>
-            </table>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
