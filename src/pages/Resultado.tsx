@@ -174,15 +174,15 @@ const Resultado = () => {
                       </li>
                     ))}
                   </ul>
-                  <Button className="w-full rounded-full bg-primary text-primary-foreground hover:bg-primary/90 font-bold h-12 transition active:scale-[0.97]">
-                    Quero um empréstimo
-                  </Button>
-                  <button className="text-primary text-sm font-semibold mt-3 hover:underline underline-offset-4 transition">
-                    Saber Mais
-                  </button>
                 </div>
               </div>
             ))}
+          </div>
+
+          <div className="flex justify-center mt-10">
+            <Button className="px-12 h-14 text-base font-bold rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-md transition active:scale-[0.98]">
+              Quero um empréstimo
+            </Button>
           </div>
         </section>
       </main>
