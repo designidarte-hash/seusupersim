@@ -24,9 +24,12 @@ const steps = [
 ];
 
 const testimonials = [
-  { name: "Luciano Dos Santos", text: "Fiz o empréstimo do valor que precisava, me passou total confiança. Sem burocracia, rápido, fácil e seguro. Eu super indico!" },
-  { name: "Brenda Luara B.", text: "Simplesmente amo! É o help que nós precisamos com condições sensacionais!" },
-  { name: "Marcia Caverzan", text: "Uma empresa séria e que realmente ajuda na hora do aperto, sem burocracias. Pagamento facilitado e que cabem no orçamento." },
+  { name: "Luciano Dos Santos", img: "https://www.supersim.com.br/media/2022/09/pessoa1.png", text: "Fiz o empréstimo do valor que precisava, me passou total confiança. Sem burocracia, rápido, fácil e seguro. Só o juros que é um pouco alto, mas fora isso, eu super indico. Parabéns aos profissionais envolvidos!" },
+  { name: "Fernanda Ap", img: "https://www.supersim.com.br/media/2022/09/pessoa2.png", text: "Muito profissional mesmo no começo achei que fosse mais um golpe de internet mais depois que uma menina entrou em contato em nome da empresa fiquei mais seguro obrigado pelo atendimento" },
+  { name: "Brenda Luara Beltrame", img: "https://www.supersim.com.br/media/2022/09/pessoa3.png", text: "Eu simplesmente amo a Super sim, é o help que nós precisamos com condições sensacionais!" },
+  { name: "Marcia Caverzan", img: "https://www.supersim.com.br/media/2025/06/depoimento-cliente-home.png", text: "Uma empresa séria e que realmente ajuda na hora do aperto, sem burocracias. Precisei, e lá estava o depósito. Pagamento facilitado e que cabem no orçamento. Pagando certinho, em dia, você consegue novo empréstimo com valor mais alto." },
+  { name: "Elias Barbaroto", img: "https://www.supersim.com.br/media/2022/09/pessoa5.png", text: "Eu amei a super sim 😍 Atendeu minha necessidade! E superou minhas expectativas 😍😇✌😎" },
+  { name: "Tatiana Bispo Dos Santos", img: null, text: "Recebi o dinheiro no tempo certo" },
 ];
 
 const Index = () => {
@@ -156,14 +159,20 @@ const Index = () => {
             <p className="text-muted-foreground font-semibold">receberam nosso SIM!</p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {testimonials.map((t) => (
-              <div key={t.name} className="bg-muted/50 rounded-2xl p-6 text-left space-y-3 border border-border/50">
-                <Quote className="w-6 h-6 text-primary/40" />
-                <p className="text-sm text-muted-foreground leading-relaxed italic">
-                  "{t.text}"
+              <div key={t.name} className="bg-background rounded-2xl p-6 text-center space-y-4 border border-border/50 shadow-sm">
+                {t.img ? (
+                  <img src={t.img} alt={t.name} className="w-16 h-16 rounded-full mx-auto object-cover border-2 border-primary/30" />
+                ) : (
+                  <div className="w-16 h-16 rounded-full mx-auto bg-purple-500 flex items-center justify-center text-white text-2xl font-bold">
+                    {t.name.charAt(0)}
+                  </div>
+                )}
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {t.text}
                 </p>
-                <p className="text-sm font-bold text-foreground">{t.name}</p>
+                <p className="text-sm font-bold text-foreground italic">{t.name}</p>
               </div>
             ))}
           </div>
