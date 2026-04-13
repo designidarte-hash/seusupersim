@@ -184,9 +184,11 @@ const Resultado = () => {
               Quero um empréstimo
             </Button>
           </div>
-              </div>
-            ))}
-          </div>
+        </section>
+      </main>
+    </div>
+  );
+};
         </section>
       </main>
     </div>
