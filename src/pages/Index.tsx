@@ -1,4 +1,5 @@
 import LoanForm from "@/components/LoanForm";
+import logo from "@/assets/logo.png";
 import { Zap, CheckCircle, Percent, DollarSign, FileCheck, ClipboardList, UserCheck, CreditCard, Send, Quote } from "lucide-react";
 
 const benefits = [
