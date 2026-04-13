@@ -1,4 +1,5 @@
 import LoanForm from "@/components/LoanForm";
+import logo from "@/assets/logo.png";
 import { Zap, CheckCircle, Percent, DollarSign, FileCheck, ClipboardList, UserCheck, CreditCard, Send, Quote } from "lucide-react";
 
 const benefits = [
@@ -30,7 +31,7 @@ const Index = () => {
       {/* Header */}
       <header className="py-4 flex justify-center bg-background border-b border-border/50">
         <img
-          src="https://www.supersim.com.br/image/simple-logo.png"
+          src={logo}
           alt="Logo"
           className="h-8"
         />
@@ -167,7 +168,7 @@ const Index = () => {
       <footer className="bg-foreground px-6 py-8">
         <div className="max-w-3xl mx-auto">
           <img
-            src="https://www.supersim.com.br/image/logo-supersim-grayscale.png"
+            src={logo}
             alt="Logo"
             className="h-6 mb-4 opacity-60"
           />
