@@ -258,7 +258,7 @@ const Index = () => {
               { src: "https://www.supersim.com.br/media/2022/09/site-seguro.png", alt: "Site Seguro SSL" },
               { src: "https://www.supersim.com.br/media/2022/09/site-blindado.png", alt: "Site Blindado" },
             ].map((selo) => (
-              <div key={selo.alt} className="bg-muted/20 rounded-lg px-4 py-2">
+              <div key={selo.alt} className="bg-muted rounded-lg px-4 py-2">
                 <img src={selo.src} alt={selo.alt} className="h-8 object-contain" />
               </div>
             ))}
@@ -267,7 +267,7 @@ const Index = () => {
           {/* Redes sociais */}
           <div className="flex items-center justify-center gap-4">
             {["facebook", "youtube", "instagram", "linkedin"].map((social) => (
-              <a key={social} href="#" className="w-10 h-10 rounded-full bg-muted/20 flex items-center justify-center text-muted hover:text-primary transition">
+              <a key={social} href="#" className="w-10 h-10 rounded-full bg-foreground flex items-center justify-center text-background hover:bg-primary transition">
                 <span className="text-lg">
                   {social === "facebook" && "f"}
                   {social === "youtube" && "▶"}
@@ -279,13 +279,13 @@ const Index = () => {
           </div>
 
           {/* Logo e texto legal */}
-          <div className="border-t border-muted/20 pt-6">
+          <div className="border-t border-border pt-6">
             <img
               src="https://www.supersim.com.br/image/logo-supersim-grayscale.png"
               alt="Logo"
               className="h-6 mb-4 opacity-60"
             />
-            <p className="text-xs text-muted leading-relaxed">
+            <p className="text-xs text-muted-foreground leading-relaxed">
               Este site é operado como correspondente bancário, nos termos da
               Resolução nº 3.954 do Banco Central do Brasil. Disponibilizamos
               produtos e serviços de crédito pessoal por meio de instituições
