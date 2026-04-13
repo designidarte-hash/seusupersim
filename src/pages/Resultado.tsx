@@ -188,5 +188,6 @@ const Resultado = () => {
       </main>
     </div>
   );
+};
 
 export default Resultado;
