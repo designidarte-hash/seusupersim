@@ -247,22 +247,55 @@ const Index = () => {
       </section>
 
       <footer className="bg-foreground px-6 py-8">
-        <div className="max-w-3xl mx-auto">
-          <img
-            src="https://www.supersim.com.br/image/logo-supersim-grayscale.png"
-            alt="Logo"
-            className="h-6 mb-4 opacity-60"
-          />
-          <p className="text-xs text-muted leading-relaxed">
-            Este site é operado como correspondente bancário, nos termos da
-            Resolução nº 3.954 do Banco Central do Brasil. Disponibilizamos
-            produtos e serviços de crédito pessoal por meio de instituições
-            financeiras parceiras. Nosso prazo de pagamento varia de 1 a 14
-            meses. A taxa de juros praticada no produto de crédito pessoal é de
-            12,5% a.m. (310,99% a.a.) até 19,9% a.m. (819% a.a.) e o custo
-            efetivo total (CET) será a partir de 12,82% a.m. (325,31% a.a.). A
-            tarifa de cadastro (TC) é de R$ 19 até R$ 150.
-          </p>
+        <div className="max-w-5xl mx-auto space-y-6">
+          {/* Selos e certificações */}
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            {[
+              { src: "https://www.supersim.com.br/media/2022/09/feex-gptw.png", alt: "FEEx GPTW" },
+              { src: "https://www.supersim.com.br/media/2022/09/ra1000.png", alt: "RA1000 Reclame Aqui" },
+              { src: "https://www.supersim.com.br/media/2022/09/febraban.png", alt: "FEBRABAN" },
+              { src: "https://www.supersim.com.br/media/2022/09/anbima.png", alt: "ANBIMA" },
+              { src: "https://www.supersim.com.br/media/2022/09/site-seguro.png", alt: "Site Seguro SSL" },
+              { src: "https://www.supersim.com.br/media/2022/09/site-blindado.png", alt: "Site Blindado" },
+            ].map((selo) => (
+              <div key={selo.alt} className="bg-muted/20 rounded-lg px-4 py-2">
+                <img src={selo.src} alt={selo.alt} className="h-8 object-contain" />
+              </div>
+            ))}
+          </div>
+
+          {/* Redes sociais */}
+          <div className="flex items-center justify-center gap-4">
+            {["facebook", "youtube", "instagram", "linkedin"].map((social) => (
+              <a key={social} href="#" className="w-10 h-10 rounded-full bg-muted/20 flex items-center justify-center text-muted hover:text-primary transition">
+                <span className="text-lg">
+                  {social === "facebook" && "f"}
+                  {social === "youtube" && "▶"}
+                  {social === "instagram" && "📷"}
+                  {social === "linkedin" && "in"}
+                </span>
+              </a>
+            ))}
+          </div>
+
+          {/* Logo e texto legal */}
+          <div className="border-t border-muted/20 pt-6">
+            <img
+              src="https://www.supersim.com.br/image/logo-supersim-grayscale.png"
+              alt="Logo"
+              className="h-6 mb-4 opacity-60"
+            />
+            <p className="text-xs text-muted leading-relaxed">
+              Este site é operado como correspondente bancário, nos termos da
+              Resolução nº 3.954 do Banco Central do Brasil. Disponibilizamos
+              produtos e serviços de crédito pessoal por meio de instituições
+              financeiras parceiras. Nosso prazo de pagamento varia de 1 a 14
+              meses. A taxa de juros praticada no produto de crédito pessoal é de
+              12,5% a.m. (310,99% a.a.) até 19,9% a.m. (819% a.a.) e o custo
+              efetivo total (CET) será a partir de 12,82% a.m. (325,31% a.a.). A
+              tarifa de cadastro (TC) é de R$ 19 até R$ 150.
+            </p>
+          </div>
         </div>
       </footer>
     </div>
