@@ -168,7 +168,7 @@ const Resultado = () => {
                   <ul className="space-y-3 mb-6 flex-1">
                     {product.benefits.map((benefit, bIdx) => (
                       <li key={bIdx} className="flex items-start gap-2 text-sm text-foreground">
-                        <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                        <img src={iconCheckOrange} alt="" className="w-5 h-5 shrink-0 mt-0.5" />
                         <span>{benefit}</span>
                       </li>
                     ))}
