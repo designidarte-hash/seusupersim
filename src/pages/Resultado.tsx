@@ -188,11 +188,5 @@ const Resultado = () => {
       </main>
     </div>
   );
-};
-        </section>
-      </main>
-    </div>
-  );
-};
 
 export default Resultado;
