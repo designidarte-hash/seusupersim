@@ -1,7 +1,7 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 
@@ -33,11 +33,9 @@ type CpfResult = Record<string, unknown> | null;
 
 const LoanForm = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [cpf, setCpf] = useState("");
-  const [email, setEmail] = useState("");
-  const [agreed, setAgreed] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [cpfData, setCpfData] = useState<CpfResult>(null);
 
   const lookupCPF = async () => {
     const cpfDigits = cpf.replace(/\D/g, "");
@@ -45,13 +43,8 @@ const LoanForm = () => {
       toast({ title: "CPF incompleto", description: "Digite os 11 dígitos do CPF.", variant: "destructive" });
       return;
     }
-    if (!agreed) {
-      toast({ title: "Termos obrigatórios", description: "Aceite os termos para continuar.", variant: "destructive" });
-      return;
-    }
 
     setLoading(true);
-    setCpfData(null);
     try {
       const url = `https://ws.hubdodesenvolvedor.com.br/v2/cpf/?cpf=${cpfDigits}&token=${API_TOKEN}`;
       const res = await fetch(url);
@@ -62,8 +55,9 @@ const LoanForm = () => {
         return;
       }
 
-      setCpfData(data.result || data);
+      const result = data.result || data;
       toast({ title: "Consulta realizada com sucesso!" });
+      navigate("/resultado", { state: { cpfData: result } });
     } catch {
       toast({ title: "Erro na consulta", description: "Não foi possível consultar o CPF.", variant: "destructive" });
     } finally {
