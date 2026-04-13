@@ -246,7 +246,7 @@ const Index = () => {
         </div>
       </section>
 
-      <footer className="bg-foreground px-6 py-8">
+      <footer className="bg-background px-6 py-8 border-t border-border/50">
         <div className="max-w-5xl mx-auto space-y-6">
           {/* Selos e certificações */}
           <div className="flex flex-wrap items-center justify-center gap-4">
