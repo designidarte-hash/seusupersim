@@ -6,6 +6,11 @@ import iconInclusao from "@/assets/icon-inclusao.png";
 import iconJuros from "@/assets/icon-juros.png";
 import iconParcelas from "@/assets/icon-parcelas.png";
 import iconBurocracia from "@/assets/icon-burocracia.png";
+import seloFeex from "@/assets/selo-feex.png";
+import seloRa from "@/assets/selo-ra.png";
+import seloFebraban from "@/assets/selo-febraban.png";
+import seloAnbima from "@/assets/selo-anbima.png";
+import seloSsl from "@/assets/selo-ssl.png";
 import { ClipboardList, UserCheck, CreditCard, Send, Quote } from "lucide-react";
 
 const benefits = [
