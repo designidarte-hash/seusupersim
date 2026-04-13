@@ -256,12 +256,11 @@ const Index = () => {
           {/* Selos e certificações */}
           <div className="flex flex-wrap items-center justify-center gap-4">
             {[
-              { src: "https://www.supersim.com.br/media/2022/09/feex-gptw.png", alt: "FEEx GPTW" },
-              { src: "https://www.supersim.com.br/media/2022/09/ra1000.png", alt: "RA1000 Reclame Aqui" },
-              { src: "https://www.supersim.com.br/media/2022/09/febraban.png", alt: "FEBRABAN" },
-              { src: "https://www.supersim.com.br/media/2022/09/anbima.png", alt: "ANBIMA" },
-              { src: "https://www.supersim.com.br/media/2022/09/site-seguro.png", alt: "Site Seguro SSL" },
-              { src: "https://www.supersim.com.br/media/2022/09/site-blindado.png", alt: "Site Blindado" },
+              { src: seloFeex, alt: "FEEx GPTW" },
+              { src: seloRa, alt: "RA1000 Reclame Aqui" },
+              { src: seloFebraban, alt: "FEBRABAN" },
+              { src: seloAnbima, alt: "ANBIMA" },
+              { src: seloSsl, alt: "Site Seguro SSL" },
             ].map((selo) => (
               <div key={selo.alt} className="bg-muted rounded-lg px-4 py-2">
                 <img src={selo.src} alt={selo.alt} className="h-8 object-contain" />
