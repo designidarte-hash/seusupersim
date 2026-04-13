@@ -11,7 +11,7 @@ import seloRa from "@/assets/selo-ra.png";
 import seloFebraban from "@/assets/selo-febraban.png";
 import seloAnbima from "@/assets/selo-anbima.png";
 import seloSsl from "@/assets/selo-ssl.png";
-import { ClipboardList, UserCheck, CreditCard, Send, Quote } from "lucide-react";
+import { ClipboardList, UserCheck, CreditCard, Send, Quote, Facebook, Youtube, Instagram, Linkedin } from "lucide-react";
 
 const benefits = [
   { img: iconPix, title: "PIX na Hora", desc: "Rápido e descomplicado, dinheiro em instantes" },
@@ -271,13 +271,13 @@ const Index = () => {
           {/* Redes sociais */}
           <div className="flex items-center justify-center gap-4">
             {[
-              { name: "facebook", label: "f", url: "https://www.facebook.com/supersimoficial/" },
-              { name: "youtube", label: "▶", url: "https://www.youtube.com/c/SuperSimEmpr%C3%A9stimoOnlineOficial" },
-              { name: "instagram", label: "📷", url: "https://www.instagram.com/supersimoficial/" },
-              { name: "linkedin", label: "in", url: "https://www.linkedin.com/company/supersim/" },
-            ].map((social) => (
-              <a key={social.name} href={social.url} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-foreground flex items-center justify-center text-background hover:bg-primary transition">
-                <span className="text-lg">{social.label}</span>
+              { icon: Facebook, url: "https://www.facebook.com/supersimoficial/" },
+              { icon: Youtube, url: "https://www.youtube.com/c/SuperSimEmpr%C3%A9stimoOnlineOficial" },
+              { icon: Instagram, url: "https://www.instagram.com/supersimoficial/" },
+              { icon: Linkedin, url: "https://www.linkedin.com/company/supersim/" },
+            ].map((social, i) => (
+              <a key={i} href={social.url} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-foreground flex items-center justify-center text-background hover:bg-primary transition">
+                <social.icon className="w-5 h-5" />
               </a>
             ))}
           </div>
