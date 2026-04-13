@@ -31,7 +31,7 @@ const Index = () => {
       {/* Header */}
       <header className="py-4 flex justify-center bg-background border-b border-border/50">
         <img
-          src="https://www.supersim.com.br/image/simple-logo.png"
+          src={logo}
           alt="Logo"
           className="h-8"
         />
