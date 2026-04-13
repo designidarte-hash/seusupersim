@@ -97,47 +97,16 @@ const LoanForm = () => {
   };
 
   return (
-    <div className="w-full space-y-5">
+    <div className="w-full space-y-6">
       {/* CPF */}
-      <div className="space-y-1.5">
-        <label className="text-sm font-medium text-foreground">CPF</label>
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-muted-foreground">CPF</label>
         <Input
           placeholder="000.000.000-00"
           value={cpf}
           onChange={(e) => setCpf(formatCPF(e.target.value))}
-          className="h-12 border-input bg-background text-foreground placeholder:text-muted-foreground"
+          className="h-14 border-input bg-background text-foreground placeholder:text-muted-foreground text-base rounded-xl"
         />
-      </div>
-
-
-      {/* Email */}
-      <div className="space-y-1.5">
-        <label className="text-sm font-medium text-foreground">Email</label>
-        <Input
-          type="email"
-          placeholder="seu@email.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="h-12 border-input bg-background text-foreground placeholder:text-muted-foreground"
-        />
-      </div>
-
-      {/* Termos */}
-      <div className="flex items-start gap-3">
-        <Checkbox
-          id="terms"
-          checked={agreed}
-          onCheckedChange={(v) => setAgreed(v === true)}
-          className="mt-0.5 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-        />
-        <label htmlFor="terms" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
-          Li e concordo com os{" "}
-          <a href="#" className="text-primary hover:underline">termos de uso</a> e{" "}
-          <a href="#" className="text-primary hover:underline">política de privacidade</a>;
-          permito a emissão de Cédula de Crédito Bancário e o acesso ao{" "}
-          <a href="#" className="text-primary hover:underline">SCR - Banco Central do Brasil</a>,
-          além de declarar que não sou uma pessoa politicamente exposta.
-        </label>
       </div>
 
       {/* Botão */}
@@ -145,10 +114,10 @@ const LoanForm = () => {
         type="button"
         onClick={lookupCPF}
         disabled={loading}
-        className="w-full h-12 text-base font-semibold bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg"
+        className="w-full h-14 text-base font-bold rounded-full bg-[hsl(48,100%,55%)] text-foreground hover:bg-[hsl(48,100%,48%)] shadow-md"
       >
         {loading && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-        {loading ? "Consultando..." : "Pedir agora"}
+        {loading ? "Consultando..." : "Continuar"}
       </Button>
 
       {/* Resultado */}
