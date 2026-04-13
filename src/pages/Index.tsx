@@ -46,7 +46,7 @@ const Index = () => {
             <img
               src={heroImage}
               alt="Empréstimo pessoal online"
-              className="w-72 md:w-96 object-contain"
+              className="w-80 md:w-[28rem] lg:w-[32rem] object-contain"
             />
           </div>
           {/* Right - Card */}
