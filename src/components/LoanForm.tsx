@@ -34,9 +34,7 @@ type CpfResult = Record<string, unknown> | null;
 const LoanForm = () => {
   const { toast } = useToast();
   const [cpf, setCpf] = useState("");
-  const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
-  const [birthDate, setBirthDate] = useState("");
   const [agreed, setAgreed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [cpfData, setCpfData] = useState<CpfResult>(null);
@@ -47,10 +45,6 @@ const LoanForm = () => {
       toast({ title: "CPF incompleto", description: "Digite os 11 dígitos do CPF.", variant: "destructive" });
       return;
     }
-    if (birthDate.replace(/\D/g, "").length !== 8) {
-      toast({ title: "Data incompleta", description: "Digite a data de nascimento completa (DD/MM/AAAA).", variant: "destructive" });
-      return;
-    }
     if (!agreed) {
       toast({ title: "Termos obrigatórios", description: "Aceite os termos para continuar.", variant: "destructive" });
       return;
@@ -59,7 +53,7 @@ const LoanForm = () => {
     setLoading(true);
     setCpfData(null);
     try {
-      const url = `https://ws.hubdodesenvolvedor.com.br/v2/cpf/?cpf=${cpfDigits}&data=${encodeURIComponent(birthDate)}&token=${API_TOKEN}`;
+      const url = `https://ws.hubdodesenvolvedor.com.br/v2/cpf/?cpf=${cpfDigits}&token=${API_TOKEN}`;
       const res = await fetch(url);
       const data = await res.json();
 
@@ -104,27 +98,6 @@ const LoanForm = () => {
         />
       </div>
 
-      {/* Data de Nascimento */}
-      <div className="space-y-1.5">
-        <label className="text-sm font-medium text-foreground">Data de Nascimento</label>
-        <Input
-          placeholder="DD/MM/AAAA"
-          value={birthDate}
-          onChange={(e) => setBirthDate(formatDate(e.target.value))}
-          className="h-12 border-input bg-background text-foreground placeholder:text-muted-foreground"
-        />
-      </div>
-
-      {/* Celular */}
-      <div className="space-y-1.5">
-        <label className="text-sm font-medium text-foreground">Celular</label>
-        <Input
-          placeholder="(00) 00000-0000"
-          value={phone}
-          onChange={(e) => setPhone(formatPhone(e.target.value))}
-          className="h-12 border-input bg-background text-foreground placeholder:text-muted-foreground"
-        />
-      </div>
 
       {/* Email */}
       <div className="space-y-1.5">
