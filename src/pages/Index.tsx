@@ -270,14 +270,14 @@ const Index = () => {
 
           {/* Redes sociais */}
           <div className="flex items-center justify-center gap-4">
-            {["facebook", "youtube", "instagram", "linkedin"].map((social) => (
-              <a key={social} href="#" className="w-10 h-10 rounded-full bg-foreground flex items-center justify-center text-background hover:bg-primary transition">
-                <span className="text-lg">
-                  {social === "facebook" && "f"}
-                  {social === "youtube" && "▶"}
-                  {social === "instagram" && "📷"}
-                  {social === "linkedin" && "in"}
-                </span>
+            {[
+              { name: "facebook", label: "f", url: "https://www.facebook.com/supersimoficial/" },
+              { name: "youtube", label: "▶", url: "https://www.youtube.com/c/SuperSimEmpr%C3%A9stimoOnlineOficial" },
+              { name: "instagram", label: "📷", url: "#" },
+              { name: "linkedin", label: "in", url: "#" },
+            ].map((social) => (
+              <a key={social.name} href={social.url} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-foreground flex items-center justify-center text-background hover:bg-primary transition">
+                <span className="text-lg">{social.label}</span>
               </a>
             ))}
           </div>
