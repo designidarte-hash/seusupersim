@@ -168,7 +168,7 @@ const Index = () => {
       <footer className="bg-foreground px-6 py-8">
         <div className="max-w-3xl mx-auto">
           <img
-            src={logo}
+            src="https://www.supersim.com.br/image/logo-supersim-grayscale.png"
             alt="Logo"
             className="h-6 mb-4 opacity-60"
           />
