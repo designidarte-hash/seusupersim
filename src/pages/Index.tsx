@@ -52,30 +52,35 @@ const Index = () => {
       </header>
 
       {/* Hero */}
-      <section className="bg-primary py-12 px-4 overflow-hidden">
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-8">
-          {/* Left - Image + Text */}
-          <div className="flex-1 flex flex-col items-center md:items-start gap-6">
+      <section className="relative bg-primary py-10 md:py-16 px-4 overflow-hidden">
+        {/* Decorative circles */}
+        <div className="absolute top-[-60px] right-[-60px] w-48 h-48 rounded-full bg-primary-foreground/5 pointer-events-none" />
+        <div className="absolute bottom-[-40px] left-[-40px] w-32 h-32 rounded-full bg-primary-foreground/5 pointer-events-none" />
+
+        <div className="relative max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-10">
+          {/* Left - Text + Image */}
+          <div className="flex-1 flex flex-col items-center md:items-start gap-5">
+            <h1 className="text-3xl md:text-4xl lg:text-[2.75rem] font-extrabold text-primary-foreground leading-[1.15] text-center md:text-left">
+              Empréstimo pessoal online com maior taxa de aprovação
+            </h1>
+            <p className="text-lg md:text-xl font-semibold text-primary-foreground/80 text-center md:text-left">
+              Para cada desafio, um <span className="text-primary-foreground font-black underline decoration-primary-foreground/30 underline-offset-4">SIM!</span>
+            </p>
             <img
               src={heroImage}
               alt="Empréstimo pessoal online"
-              className="w-80 md:w-[28rem] lg:w-[32rem] object-contain"
+              className="w-72 md:w-[24rem] lg:w-[28rem] object-contain mt-2 drop-shadow-lg"
             />
           </div>
+
           {/* Right - Card */}
-          <div className="w-full max-w-md space-y-4">
-            <h1 className="text-3xl md:text-4xl font-extrabold text-primary-foreground leading-tight text-center md:text-left">
-              Empréstimo pessoal online com maior taxa de aprovação
-            </h1>
-            <p className="text-lg font-semibold text-primary-foreground/80 text-center md:text-left">
-              Para cada desafio, um SIM!
-            </p>
-            <div className="bg-background rounded-2xl p-6 shadow-lg space-y-4">
-              <div className="text-center space-y-1">
-                <p className="text-lg font-bold text-foreground">
+          <div className="w-full max-w-md">
+            <div className="bg-background rounded-3xl p-7 shadow-xl space-y-5 border border-border/30">
+              <div className="text-center space-y-1.5">
+                <p className="text-xl font-extrabold text-foreground">
                   Empréstimo de até <span className="text-primary">R$ 2.500!</span>
                 </p>
-                <p className="text-primary font-semibold">Simule já.</p>
+                <p className="text-primary font-bold text-sm tracking-wide">Simule já.</p>
               </div>
               <LoanForm />
             </div>
