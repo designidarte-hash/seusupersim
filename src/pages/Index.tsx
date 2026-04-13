@@ -6,6 +6,11 @@ import iconInclusao from "@/assets/icon-inclusao.png";
 import iconJuros from "@/assets/icon-juros.png";
 import iconParcelas from "@/assets/icon-parcelas.png";
 import iconBurocracia from "@/assets/icon-burocracia.png";
+import seloFeex from "@/assets/selo-feex.png";
+import seloRa from "@/assets/selo-ra.png";
+import seloFebraban from "@/assets/selo-febraban.png";
+import seloAnbima from "@/assets/selo-anbima.png";
+import seloSsl from "@/assets/selo-ssl.png";
 import { ClipboardList, UserCheck, CreditCard, Send, Quote } from "lucide-react";
 
 const benefits = [
@@ -251,12 +256,11 @@ const Index = () => {
           {/* Selos e certificações */}
           <div className="flex flex-wrap items-center justify-center gap-4">
             {[
-              { src: "https://www.supersim.com.br/media/2022/09/feex-gptw.png", alt: "FEEx GPTW" },
-              { src: "https://www.supersim.com.br/media/2022/09/ra1000.png", alt: "RA1000 Reclame Aqui" },
-              { src: "https://www.supersim.com.br/media/2022/09/febraban.png", alt: "FEBRABAN" },
-              { src: "https://www.supersim.com.br/media/2022/09/anbima.png", alt: "ANBIMA" },
-              { src: "https://www.supersim.com.br/media/2022/09/site-seguro.png", alt: "Site Seguro SSL" },
-              { src: "https://www.supersim.com.br/media/2022/09/site-blindado.png", alt: "Site Blindado" },
+              { src: seloFeex, alt: "FEEx GPTW" },
+              { src: seloRa, alt: "RA1000 Reclame Aqui" },
+              { src: seloFebraban, alt: "FEBRABAN" },
+              { src: seloAnbima, alt: "ANBIMA" },
+              { src: seloSsl, alt: "Site Seguro SSL" },
             ].map((selo) => (
               <div key={selo.alt} className="bg-muted rounded-lg px-4 py-2">
                 <img src={selo.src} alt={selo.alt} className="h-8 object-contain" />
