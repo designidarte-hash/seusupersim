@@ -3,15 +3,11 @@ import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.png";
 import { ArrowLeft } from "lucide-react";
 
+const allowedFields = ["nome_da_pf", "data_nascimento"];
+
 const labelMap: Record<string, string> = {
-  numero_de_cpf: "CPF",
-  nome_da_pf: "Nome",
+  nome_da_pf: "Nome Completo",
   data_nascimento: "Data de Nascimento",
-  situacao_cadastral: "Situação Cadastral",
-  data_inscricao: "Data de Inscrição",
-  digito_verificador: "Dígito Verificador",
-  comprovante_emitido: "Comprovante",
-  comprovante_emitido_data: "Data do Comprovante",
 };
 
 const Resultado = () => {
@@ -31,7 +27,7 @@ const Resultado = () => {
   }
 
   const entries = Object.entries(cpfData).filter(
-    ([, v]) => v !== null && v !== undefined && v !== "" && typeof v !== "object"
+    ([key]) => allowedFields.includes(key)
   );
 
   return (
