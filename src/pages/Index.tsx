@@ -177,7 +177,66 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Footer */}
+      {/* FAQ */}
+      <section className="bg-background py-14 px-4">
+        <div className="max-w-3xl mx-auto space-y-8">
+          <div className="text-center space-y-2">
+            <p className="text-xs font-semibold tracking-[0.3em] text-muted-foreground uppercase">
+              Precisa de ajuda?
+            </p>
+            <h2 className="text-2xl md:text-3xl font-bold text-primary">
+              Ainda tem dúvidas?
+            </h2>
+          </div>
+
+          <div className="space-y-3">
+            {[
+              {
+                q: "O que é um empréstimo pessoal?",
+                a: "O empréstimo pessoal é uma solução financeira rápida e acessível para quem precisa de dinheiro para emergências, organizar as finanças ou realizar um projeto. Você solicita online, sem burocracia e com resposta em minutos. Aqui temos a maior taxa de aprovação do mercado!"
+              },
+              {
+                q: "Como solicitar empréstimo?",
+                a: "Basta preencher o formulário com seu CPF, aguardar a análise rápida, escolher a oferta que melhor se encaixa no seu orçamento e receber o dinheiro via PIX em até 5 minutos."
+              },
+              {
+                q: "Como funcionam os empréstimos pessoais online?",
+                a: "Todo o processo é feito online. Você preenche seus dados, nossa tecnologia analisa seu perfil de forma justa e rápida, e se aprovado, o dinheiro cai direto na sua conta via PIX."
+              },
+              {
+                q: "Estou negativado, posso pedir um empréstimo?",
+                a: "Sim! Temos ofertas também para negativados. Nossa tecnologia analisa diversos fatores além do score, aumentando suas chances de aprovação."
+              },
+              {
+                q: "É necessário depósito antecipado para liberar empréstimo?",
+                a: "Não! Nunca pedimos depósito antecipado. Desconfie de qualquer empresa que peça pagamento antes de liberar o crédito."
+              },
+              {
+                q: "Fui aprovado! Em quanto tempo o dinheiro cai na minha conta?",
+                a: "Após a aprovação, o dinheiro é enviado via PIX e pode cair na sua conta em até 5 minutos."
+              },
+              {
+                q: "Por que nos escolher?",
+                a: "Temos a maior taxa de aprovação do mercado, processo 100% online, sem burocracia, e dinheiro na conta via PIX em minutos. Atendemos todos os perfis, incluindo negativados."
+              },
+            ].map((item, i) => (
+              <details
+                key={i}
+                className="group bg-muted/50 rounded-xl border border-border/50 overflow-hidden"
+              >
+                <summary className="flex items-center justify-between px-5 py-4 cursor-pointer list-none">
+                  <span className="font-bold text-foreground text-sm md:text-base">{item.q}</span>
+                  <span className="text-primary text-xl group-open:rotate-180 transition-transform">▾</span>
+                </summary>
+                <div className="px-5 pb-4">
+                  <p className="text-sm text-muted-foreground leading-relaxed">{item.a}</p>
+                </div>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <footer className="bg-foreground px-6 py-8">
         <div className="max-w-3xl mx-auto">
           <img
