@@ -1,7 +1,8 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.png";
-import { ArrowLeft, CheckCircle2, User, CalendarDays, Sparkles } from "lucide-react";
+import { ArrowLeft, User, CalendarDays } from "lucide-react";
+import iconCheckOrange from "@/assets/icon-check-orange.png";
 import emprestimo1 from "@/assets/emprestimo1.jpg";
 import emprestimo2 from "@/assets/emprestimo2.jpg";
 import emprestimo3 from "@/assets/emprestimo3.jpg";
@@ -69,9 +70,7 @@ const Resultado = () => {
       {/* Hero strip matching Index primary band */}
       <div className="bg-primary py-6 px-4">
         <div className="max-w-lg mx-auto flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-primary-foreground/20 flex items-center justify-center">
-            <Sparkles className="w-6 h-6 text-primary-foreground" />
-          </div>
+          <img src={iconCheckOrange} alt="Sucesso" className="w-10 h-10" />
           <div>
             <h1 className="text-xl md:text-2xl font-extrabold text-primary-foreground">
               Consulta realizada!
@@ -169,7 +168,7 @@ const Resultado = () => {
                   <ul className="space-y-3 mb-6 flex-1">
                     {product.benefits.map((benefit, bIdx) => (
                       <li key={bIdx} className="flex items-start gap-2 text-sm text-foreground">
-                        <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                        <img src={iconCheckOrange} alt="" className="w-5 h-5 shrink-0 mt-0.5" />
                         <span>{benefit}</span>
                       </li>
                     ))}
