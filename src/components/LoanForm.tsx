@@ -20,51 +20,64 @@ const formatPhone = (value: string) => {
   return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
 };
 
-type CpfData = {
-  ni: string;
-  nome: string;
-  situacao: { codigo: string; descricao: string };
+const formatDate = (value: string) => {
+  const digits = value.replace(/\D/g, "").slice(0, 8);
+  if (digits.length <= 2) return digits;
+  if (digits.length <= 4) return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+  return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
+};
+
+const API_TOKEN = "203913065yMIiOaDfZL368158856";
+
+type CpfResult = {
+  nome?: string;
+  cpf?: string;
+  data_nascimento?: string;
+  situacao_cadastral?: string;
+  genero?: string;
+  mae?: string;
 } | null;
 
 const LoanForm = () => {
   const { toast } = useToast();
   const [cpf, setCpf] = useState("");
+  const [birthDate, setBirthDate] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [agreed, setAgreed] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [cpfData, setCpfData] = useState<CpfData>(null);
+  const [cpfData, setCpfData] = useState<CpfResult>(null);
 
-  const lookupCPF = async (rawCpf: string) => {
-    const digits = rawCpf.replace(/\D/g, "");
-    if (digits.length !== 11) return;
+  const lookupCPF = async () => {
+    const cpfDigits = cpf.replace(/\D/g, "");
+    if (cpfDigits.length !== 11) {
+      toast({ title: "CPF incompleto", description: "Digite os 11 dígitos do CPF.", variant: "destructive" });
+      return;
+    }
+    if (birthDate.replace(/\D/g, "").length !== 8) {
+      toast({ title: "Data incompleta", description: "Digite a data de nascimento completa.", variant: "destructive" });
+      return;
+    }
 
     setLoading(true);
     setCpfData(null);
     try {
-      const res = await fetch(`https://brasilapi.com.br/api/v1/cpf/v1/${digits}`);
-      if (!res.ok) {
-        toast({ title: "CPF não encontrado", description: "Verifique o número e tente novamente.", variant: "destructive" });
+      const url = `https://ws.hubdodesenvolvedor.com.br/v2/cpf/?cpf=${cpfDigits}&data=${encodeURIComponent(birthDate)}&token=${API_TOKEN}`;
+      const res = await fetch(url);
+      const data = await res.json();
+
+      if (data.status === false || data.return === "NOK") {
+        toast({ title: "CPF não encontrado", description: data.msg || "Verifique os dados e tente novamente.", variant: "destructive" });
         return;
       }
-      const data = await res.json();
-      setCpfData(data);
-      toast({ title: "CPF encontrado!", description: `Nome: ${data.nome}` });
+
+      const result = data.result || data;
+      setCpfData(result);
+      toast({ title: "CPF encontrado!", description: `Nome: ${result.nome || result.nome_da_pf || "—"}` });
     } catch {
-      toast({ title: "Erro na consulta", description: "Não foi possível consultar o CPF. Tente novamente.", variant: "destructive" });
+      toast({ title: "Erro na consulta", description: "Não foi possível consultar o CPF.", variant: "destructive" });
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleCpfChange = (value: string) => {
-    const formatted = formatCPF(value);
-    setCpf(formatted);
-    const digits = formatted.replace(/\D/g, "");
-    if (digits.length === 11) {
-      lookupCPF(formatted);
-    } else {
-      setCpfData(null);
     }
   };
 
@@ -81,26 +94,48 @@ const LoanForm = () => {
     <form onSubmit={handleSubmit} className="w-full max-w-md mx-auto space-y-5">
       <div className="space-y-1.5">
         <label className="text-sm font-medium text-foreground">CPF</label>
-        <div className="relative">
-          <Input
-            placeholder="000.000.000-00"
-            value={cpf}
-            onChange={(e) => handleCpfChange(e.target.value)}
-            className="h-12 border-input bg-background text-foreground placeholder:text-muted-foreground pr-10"
-          />
-          {loading && (
-            <Loader2 className="absolute right-3 top-3.5 h-5 w-5 animate-spin text-muted-foreground" />
+        <Input
+          placeholder="000.000.000-00"
+          value={cpf}
+          onChange={(e) => setCpf(formatCPF(e.target.value))}
+          className="h-12 border-input bg-background text-foreground placeholder:text-muted-foreground"
+        />
+      </div>
+
+      <div className="space-y-1.5">
+        <label className="text-sm font-medium text-foreground">Data de Nascimento</label>
+        <Input
+          placeholder="DD/MM/AAAA"
+          value={birthDate}
+          onChange={(e) => setBirthDate(formatDate(e.target.value))}
+          className="h-12 border-input bg-background text-foreground placeholder:text-muted-foreground"
+        />
+      </div>
+
+      <Button
+        type="button"
+        onClick={lookupCPF}
+        disabled={loading}
+        className="w-full h-10 text-sm font-medium bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-lg"
+      >
+        {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+        {loading ? "Consultando..." : "Consultar CPF"}
+      </Button>
+
+      {cpfData && (
+        <div className="rounded-md border border-border bg-secondary p-4 space-y-1 text-sm">
+          <p className="font-semibold text-foreground">{cpfData.nome || "—"}</p>
+          {cpfData.situacao_cadastral && (
+            <p className="text-muted-foreground">Situação: <span className="font-medium text-foreground">{cpfData.situacao_cadastral}</span></p>
+          )}
+          {cpfData.genero && (
+            <p className="text-muted-foreground">Gênero: <span className="font-medium text-foreground">{cpfData.genero}</span></p>
+          )}
+          {cpfData.data_nascimento && (
+            <p className="text-muted-foreground">Nascimento: <span className="font-medium text-foreground">{cpfData.data_nascimento}</span></p>
           )}
         </div>
-        {cpfData && (
-          <div className="rounded-md border border-border bg-secondary p-3 space-y-1 text-sm">
-            <p className="font-semibold text-foreground">{cpfData.nome}</p>
-            <p className="text-muted-foreground">
-              Situação: <span className="font-medium text-foreground">{cpfData.situacao?.descricao || "—"}</span>
-            </p>
-          </div>
-        )}
-      </div>
+      )}
 
       <div className="space-y-1.5">
         <label className="text-sm font-medium text-foreground">Celular</label>
