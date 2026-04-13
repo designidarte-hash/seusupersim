@@ -13,15 +13,11 @@ const Index = () => {
       </header>
 
       {/* Main content */}
-      <main className="flex-1 flex flex-col items-center px-4 py-6">
-        <div className="w-full max-w-lg space-y-4">
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground leading-tight">
-            Precisando de dinheiro na conta agora?
+      <main className="flex-1 flex flex-col items-center justify-center px-4 py-10">
+        <div className="w-full max-w-md space-y-8">
+          <h1 className="text-2xl font-bold text-foreground text-center">
+            Preencha seus dados para cadastro
           </h1>
-          <p className="text-muted-foreground text-base leading-relaxed">
-            Você tem a maior taxa de aprovação do mercado e um processo rápido.
-            Receba seu dinheiro em 5 minutos. Simule agora.
-          </p>
 
           <LoanForm />
         </div>
