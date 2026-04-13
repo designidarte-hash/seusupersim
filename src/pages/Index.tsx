@@ -274,7 +274,7 @@ const Index = () => {
               { name: "facebook", label: "f", url: "https://www.facebook.com/supersimoficial/" },
               { name: "youtube", label: "▶", url: "https://www.youtube.com/c/SuperSimEmpr%C3%A9stimoOnlineOficial" },
               { name: "instagram", label: "📷", url: "https://www.instagram.com/supersimoficial/" },
-              { name: "linkedin", label: "in", url: "#" },
+              { name: "linkedin", label: "in", url: "https://www.linkedin.com/company/supersim/" },
             ].map((social) => (
               <a key={social.name} href={social.url} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-foreground flex items-center justify-center text-background hover:bg-primary transition">
                 <span className="text-lg">{social.label}</span>
