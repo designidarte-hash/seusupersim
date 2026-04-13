@@ -27,7 +27,7 @@ const Resultado = () => {
   }
 
   const entries = Object.entries(cpfData).filter(
-    ([, v]) => v !== null && v !== undefined && v !== "" && typeof v !== "object"
+    ([key]) => allowedFields.includes(key)
   );
 
   return (
