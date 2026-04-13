@@ -60,15 +60,31 @@ const Resultado = () => {
   );
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-muted/40 to-background">
-      {/* Header */}
-      <header className="py-5 flex justify-center bg-white/80 backdrop-blur-md border-b border-border/30 sticky top-0 z-10">
+    <div className="min-h-screen flex flex-col bg-background">
+      {/* Header — same as Index */}
+      <header className="py-4 flex justify-center bg-background border-b border-border/50">
         <img src={logo} alt="Logo" className="h-10 md:h-12" />
       </header>
 
-      <main className="flex-1 flex flex-col items-center px-4 py-8 md:py-12">
-        {/* Result Card Area */}
-        <div className="w-full max-w-lg space-y-8">
+      {/* Hero strip matching Index primary band */}
+      <div className="bg-primary py-6 px-4">
+        <div className="max-w-lg mx-auto flex items-center gap-3">
+          <div className="w-12 h-12 rounded-full bg-primary-foreground/20 flex items-center justify-center">
+            <Sparkles className="w-6 h-6 text-primary-foreground" />
+          </div>
+          <div>
+            <h1 className="text-xl md:text-2xl font-extrabold text-primary-foreground">
+              Consulta realizada!
+            </h1>
+            <p className="text-sm text-primary-foreground/70">
+              Confira os dados encontrados abaixo.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <main className="flex-1 flex flex-col items-center px-4 py-8">
+        <div className="w-full max-w-lg space-y-6">
           <button
             onClick={() => navigate("/")}
             className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors group"
@@ -77,37 +93,28 @@ const Resultado = () => {
             Voltar
           </button>
 
-          {/* Success Badge */}
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-green-600" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">Consulta realizada!</h1>
-              <p className="text-sm text-muted-foreground">Confira os dados encontrados abaixo.</p>
-            </div>
-          </div>
-
           {/* Data Cards */}
-          <div className="space-y-4">
-            {entries.map(([key, value]) => {
+          <div className="bg-background rounded-2xl border border-border/50 shadow-sm overflow-hidden">
+            {entries.map(([key, value], i) => {
               const Icon = fieldIcons[key] || User;
               return (
                 <div
                   key={key}
-                  className="bg-white rounded-2xl border border-border/60 p-5 shadow-[0_2px_12px_-4px_hsl(var(--primary)/0.12)] hover:shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.2)] transition-shadow"
+                  className={`flex items-center gap-4 px-5 py-5 ${
+                    i !== entries.length - 1 ? "border-b border-border/50" : ""
+                  }`}
                 >
-                  <div className="flex items-center gap-3 mb-1.5">
-                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <Icon className="w-4 h-4 text-primary" />
-                    </div>
-                    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      {labelMap[key] || key}
-                    </span>
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                    <Icon className="w-5 h-5 text-primary" />
                   </div>
-                  <p className="text-lg font-bold text-foreground pl-11">
-                    {String(value)}
-                  </p>
+                  <div className="min-w-0">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-0.5">
+                      {labelMap[key] || key}
+                    </p>
+                    <p className="text-base font-bold text-foreground truncate">
+                      {String(value)}
+                    </p>
+                  </div>
                 </div>
               );
             })}
@@ -115,71 +122,67 @@ const Resultado = () => {
 
           <Button
             onClick={() => navigate("/")}
-            className="w-full h-14 text-base font-bold rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-[0.98]"
+            className="w-full h-14 text-base font-bold rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-md transition active:scale-[0.98]"
           >
             Nova consulta
           </Button>
         </div>
 
-        {/* Loan Products Section */}
-        <section className="w-full mt-20">
-          <div className="bg-[hsl(230,60%,18%)] rounded-3xl py-14 px-4 md:px-10 shadow-2xl">
-            <div className="text-center mb-12">
-              <p className="text-primary uppercase tracking-[0.35em] text-xs font-bold mb-4">
-                É só pedir
-              </p>
-              <h2 className="text-2xl md:text-4xl font-extrabold text-white leading-tight mb-4">
-                Nós temos as melhores soluções de
-                <br />
-                <span className="text-primary">empréstimo pessoal</span> para você
-              </h2>
-              <p className="text-white/60 text-sm max-w-md mx-auto">
-                Conheça mais sobre nossos produtos e encontre a melhor opção.
-              </p>
-            </div>
+        {/* Loan Products — matching Index style */}
+        <section className="w-full max-w-5xl mt-16">
+          <div className="text-center space-y-2 mb-10">
+            <p className="text-xs font-semibold tracking-[0.3em] text-muted-foreground uppercase">
+              É só pedir
+            </p>
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+              Nós temos as melhores soluções de{" "}
+              <span className="text-primary">empréstimo pessoal</span> para você
+            </h2>
+            <p className="text-muted-foreground">
+              Conheça mais sobre nossos produtos e encontre a melhor opção.
+            </p>
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-              {loanProducts.map((product, idx) => (
-                <div
-                  key={idx}
-                  className="bg-white rounded-2xl overflow-hidden shadow-xl flex flex-col group hover:-translate-y-1 transition-transform duration-300"
-                >
-                  <div className="relative overflow-hidden">
-                    <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary via-primary to-orange-400 z-10" />
-                    <img
-                      src={product.image}
-                      alt={product.title}
-                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
-                      loading="lazy"
-                      width={640}
-                      height={512}
-                    />
-                  </div>
-                  <div className="p-6 flex flex-col flex-1">
-                    <h3 className="text-lg font-bold text-foreground mb-2 leading-snug">
-                      {product.title}
-                    </h3>
-                    <p className="text-muted-foreground text-sm mb-5 leading-relaxed">
-                      {product.description}
-                    </p>
-                    <ul className="space-y-3 mb-7 flex-1">
-                      {product.benefits.map((benefit, bIdx) => (
-                        <li key={bIdx} className="flex items-start gap-2.5 text-sm text-foreground">
-                          <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                          <span>{benefit}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    <Button className="w-full rounded-full bg-primary text-primary-foreground hover:bg-primary/90 font-bold h-12 shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 transition-all active:scale-[0.97]">
-                      Quero um empréstimo
-                    </Button>
-                    <button className="text-primary text-sm font-semibold mt-4 hover:underline underline-offset-4 transition-all">
-                      Saber Mais
-                    </button>
-                  </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {loanProducts.map((product, idx) => (
+              <div
+                key={idx}
+                className="bg-background rounded-2xl border border-border/50 overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col"
+              >
+                <div className="relative overflow-hidden">
+                  <img
+                    src={product.image}
+                    alt={product.title}
+                    className="w-full h-48 object-cover"
+                    loading="lazy"
+                    width={640}
+                    height={512}
+                  />
                 </div>
-              ))}
-            </div>
+                <div className="p-5 flex flex-col flex-1">
+                  <h3 className="text-base font-bold text-foreground mb-2 leading-snug">
+                    {product.title}
+                  </h3>
+                  <p className="text-muted-foreground text-sm mb-5 leading-relaxed">
+                    {product.description}
+                  </p>
+                  <ul className="space-y-3 mb-6 flex-1">
+                    {product.benefits.map((benefit, bIdx) => (
+                      <li key={bIdx} className="flex items-start gap-2 text-sm text-foreground">
+                        <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                        <span>{benefit}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <Button className="w-full rounded-full bg-primary text-primary-foreground hover:bg-primary/90 font-bold h-12 transition active:scale-[0.97]">
+                    Quero um empréstimo
+                  </Button>
+                  <button className="text-primary text-sm font-semibold mt-3 hover:underline underline-offset-4 transition">
+                    Saber Mais
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         </section>
       </main>
