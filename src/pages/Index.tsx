@@ -1,5 +1,6 @@
 import LoanForm from "@/components/LoanForm";
 import logo from "@/assets/logo.png";
+import heroImage from "@/assets/hero-image.png";
 import { Zap, CheckCircle, Percent, DollarSign, FileCheck, ClipboardList, UserCheck, CreditCard, Send, Quote } from "lucide-react";
 
 const benefits = [
@@ -38,24 +39,33 @@ const Index = () => {
       </header>
 
       {/* Hero */}
-      <section className="bg-primary py-12 px-4">
+      <section className="bg-primary py-12 px-4 overflow-hidden">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-8">
-          <div className="flex-1 text-center md:text-left space-y-3">
-            <h1 className="text-3xl md:text-4xl font-bold text-primary-foreground leading-tight">
+          {/* Left - Image + Text */}
+          <div className="flex-1 flex flex-col items-center md:items-start gap-6">
+            <img
+              src={heroImage}
+              alt="Empréstimo pessoal online"
+              className="w-72 md:w-96 object-contain"
+            />
+          </div>
+          {/* Right - Card */}
+          <div className="w-full max-w-md space-y-4">
+            <h1 className="text-3xl md:text-4xl font-extrabold text-primary-foreground leading-tight text-center md:text-left">
               Empréstimo pessoal online com maior taxa de aprovação
             </h1>
-            <p className="text-lg font-semibold text-primary-foreground/80">
+            <p className="text-lg font-semibold text-primary-foreground/80 text-center md:text-left">
               Para cada desafio, um SIM!
             </p>
-          </div>
-          <div className="w-full max-w-md bg-background rounded-2xl p-6 shadow-lg space-y-4">
-            <div className="text-center space-y-1">
-              <p className="text-lg font-bold text-foreground">
-                Empréstimo de até <span className="text-primary">R$ 2.500!</span>
-              </p>
-              <p className="text-primary font-semibold">Simule já.</p>
+            <div className="bg-background rounded-2xl p-6 shadow-lg space-y-4">
+              <div className="text-center space-y-1">
+                <p className="text-lg font-bold text-foreground">
+                  Empréstimo de até <span className="text-primary">R$ 2.500!</span>
+                </p>
+                <p className="text-primary font-semibold">Simule já.</p>
+              </div>
+              <LoanForm />
             </div>
-            <LoanForm />
           </div>
         </div>
       </section>
