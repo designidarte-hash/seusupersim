@@ -1,14 +1,19 @@
 import LoanForm from "@/components/LoanForm";
 import logo from "@/assets/logo.png";
 import heroImage from "@/assets/hero-image.png";
-import { Zap, CheckCircle, Percent, DollarSign, FileCheck, ClipboardList, UserCheck, CreditCard, Send, Quote } from "lucide-react";
+import iconPix from "@/assets/icon-pix.png";
+import iconInclusao from "@/assets/icon-inclusao.png";
+import iconJuros from "@/assets/icon-juros.png";
+import iconParcelas from "@/assets/icon-parcelas.png";
+import iconBurocracia from "@/assets/icon-burocracia.png";
+import { ClipboardList, UserCheck, CreditCard, Send, Quote } from "lucide-react";
 
 const benefits = [
-  { icon: Zap, title: "PIX na Hora", desc: "Rápido e descomplicado, dinheiro em instantes" },
-  { icon: CheckCircle, title: "Inclusão para todos", desc: "Oferta também para negativados" },
-  { icon: Percent, title: "Juros reduzidos", desc: "Flexibilidade nos próximos empréstimos" },
-  { icon: DollarSign, title: "Cabe no seu bolso", desc: "Parcelas que cabem no orçamento" },
-  { icon: FileCheck, title: "Sem burocracia", desc: "Sem papelada e enrolação" },
+  { img: iconPix, title: "PIX na Hora", desc: "Rápido e descomplicado, dinheiro em instantes" },
+  { img: iconInclusao, title: "Inclusão para todos", desc: "Oferta também para negativados" },
+  { img: iconJuros, title: "Juros reduzidos", desc: "Flexibilidade nos próximos empréstimos" },
+  { img: iconParcelas, title: "Cabe no seu bolso", desc: "Parcelas que cabem no orçamento" },
+  { img: iconBurocracia, title: "Sem burocracia", desc: "Sem papelada e enrolação" },
 ];
 
 const steps = [
@@ -87,10 +92,8 @@ const Index = () => {
 
           <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
             {benefits.map((b) => (
-              <div key={b.title} className="flex flex-col items-center gap-2 text-center">
-                <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
-                  <b.icon className="w-7 h-7 text-primary" />
-                </div>
+              <div key={b.title} className="flex flex-col items-center gap-3 text-center">
+                <img src={b.img} alt={b.title} className="w-12 h-12 object-contain" />
                 <h3 className="text-sm font-bold text-foreground">{b.title}</h3>
                 <p className="text-xs text-muted-foreground leading-relaxed">{b.desc}</p>
               </div>
