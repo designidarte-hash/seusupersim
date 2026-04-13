@@ -70,9 +70,7 @@ const Resultado = () => {
       {/* Hero strip matching Index primary band */}
       <div className="bg-primary py-6 px-4">
         <div className="max-w-lg mx-auto flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-primary-foreground/20 flex items-center justify-center">
-            <Sparkles className="w-6 h-6 text-primary-foreground" />
-          </div>
+          <img src={iconCheckOrange} alt="Sucesso" className="w-10 h-10" />
           <div>
             <h1 className="text-xl md:text-2xl font-extrabold text-primary-foreground">
               Consulta realizada!
