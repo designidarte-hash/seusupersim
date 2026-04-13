@@ -1,4 +1,13 @@
 import LoanForm from "@/components/LoanForm";
+import { Zap, CheckCircle, Percent, DollarSign, FileCheck } from "lucide-react";
+
+const benefits = [
+  { icon: Zap, title: "PIX na Hora", desc: "Rápido e descomplicado, dinheiro em instantes" },
+  { icon: CheckCircle, title: "Inclusão para todos", desc: "Oferta também para negativados" },
+  { icon: Percent, title: "Juros reduzidos", desc: "Flexibilidade nos próximos empréstimos" },
+  { icon: DollarSign, title: "Cabe no seu bolso", desc: "Parcelas que cabem no orçamento" },
+  { icon: FileCheck, title: "Sem burocracia", desc: "Sem papelada e enrolação" },
+];
 
 const Index = () => {
   return (
@@ -22,6 +31,42 @@ const Index = () => {
           <LoanForm />
         </div>
       </main>
+
+      {/* Benefits section */}
+      <section className="bg-muted/50 py-12 px-4">
+        <div className="max-w-4xl mx-auto text-center space-y-8">
+          <div className="space-y-2">
+            <p className="text-xs font-semibold tracking-[0.3em] text-muted-foreground uppercase">
+              Especial pra você
+            </p>
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+              Por que somos pra você?
+            </h2>
+            <p className="text-muted-foreground">
+              Nossa tecnologia e segurança de dados garantem para você:
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
+            {benefits.map((b) => (
+              <div key={b.title} className="flex flex-col items-center gap-2 text-center">
+                <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
+                  <b.icon className="w-7 h-7 text-primary" />
+                </div>
+                <h3 className="text-sm font-bold text-foreground">{b.title}</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">{b.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <button
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            className="mx-auto inline-block px-10 py-3 rounded-full bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition"
+          >
+            Quero um empréstimo
+          </button>
+        </div>
+      </section>
 
       {/* Footer */}
       <footer className="bg-muted px-6 py-8">
