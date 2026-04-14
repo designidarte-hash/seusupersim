@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useTransitionNavigate } from "@/components/PageTransition";
 import chamaNoPixImg from "@/assets/chama-no-pix.png";
 
 const ChamaNoPixSection = () => {

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useTransitionNavigate } from "@/components/PageTransition";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -44,7 +44,7 @@ const getCpfName = (source: unknown): string => {
 
 const LoanForm = () => {
   const { toast } = useToast();
-  const navigate = useNavigate();
+  const navigate = useTransitionNavigate();
   const [cpf, setCpf] = useState("");
   const [loading, setLoading] = useState(false);
 

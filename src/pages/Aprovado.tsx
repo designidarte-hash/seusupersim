@@ -1,4 +1,5 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { useTransitionNavigate } from "@/components/PageTransition";
 import Footer from "@/components/Footer";
 import ChamaNoPixSection from "@/components/ChamaNoPixSection";
 import { Button } from "@/components/ui/button";

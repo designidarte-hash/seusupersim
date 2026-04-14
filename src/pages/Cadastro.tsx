@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useTransitionNavigate } from "@/components/PageTransition";
 import logo from "@/assets/logo.png";
 import Footer from "@/components/Footer";
 
