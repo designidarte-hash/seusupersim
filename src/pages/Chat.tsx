@@ -118,6 +118,15 @@ const LoanConfirmCard = ({ details, onConfirm, confirmed }: { details: LoanDetai
 const PixSelectorCard = ({ onSelect }: { onSelect: (type: string) => void }) => (
   <div className="space-y-3">
     <p className="text-sm font-semibold text-foreground">Escolha o tipo de chave Pix para recebimento:</p>
+    <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 space-y-1.5">
+      <div className="flex items-center gap-2">
+        <CreditCard className="w-4 h-4 text-blue-600 shrink-0" />
+        <span className="text-xs font-semibold text-blue-800">Informação sobre parcelas</span>
+      </div>
+      <p className="text-[11px] text-blue-700 leading-relaxed">
+        O desconto das parcelas será realizado automaticamente na <strong>mesma conta cadastrada</strong> na chave Pix informada abaixo. Certifique-se de que a conta estará ativa e com saldo disponível na data de vencimento.
+      </p>
+    </div>
     <div className="space-y-2">
       <button onClick={() => onSelect("cpf")} className="w-full flex items-center gap-3 p-3 rounded-xl border border-border hover:bg-primary/5 transition-colors text-left">
         <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center"><KeyRound className="w-4 h-4 text-primary" /></div>
