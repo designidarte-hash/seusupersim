@@ -75,7 +75,7 @@ const Cadastro = () => {
       </header>
 
       <div className="bg-primary py-6 px-4">
-        <div className="max-w-lg mx-auto flex items-center gap-3">
+        <div className="max-w-lg mx-auto flex items-center justify-center gap-3 text-center">
           <div className="w-12 h-12 rounded-full bg-background/90 flex items-center justify-center shadow-md shrink-0">
             <UserPlus className="w-7 h-7 text-primary" />
           </div>
