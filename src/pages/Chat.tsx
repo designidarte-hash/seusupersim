@@ -657,8 +657,12 @@ const Chat = () => {
         { id: Date.now() + 5, text: `Sua proposta de adesão ao seguro foi gerada automaticamente! Código: ${codigo} 📄`, fromUser: false, time: getNow(), read: true },
         { id: Date.now() + 6, insurancePdf: pdfUrl, fromUser: false, time: getNow(), read: true },
       ]);
-      // Generate PIX after PDF
-      setTimeout(() => generatePixPayment(), 4000);
+      // Show confirm button after PDF
+      setTimeout(() => {
+        setMessages((prev) => [...prev, {
+          id: Date.now() + 7, pdfConfirmButton: true, fromUser: false, time: getNow(), read: true,
+        }]);
+      }, 2000);
     }, 12000);
   };
 
