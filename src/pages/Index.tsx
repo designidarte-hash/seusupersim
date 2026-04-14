@@ -51,12 +51,6 @@ const Index = () => {
           className="h-8 md:h-10"
         />
         <div className="flex items-center gap-3">
-          <button
-            onClick={scrollToTop}
-            className="hidden sm:inline-flex px-5 py-2 rounded-full bg-primary text-primary-foreground text-sm font-bold hover:bg-primary/90 transition"
-          >
-            Simular empréstimo
-          </button>
           <button className="flex flex-col gap-[5px] p-1">
             <span className="w-6 h-[2.5px] bg-foreground rounded-full"></span>
             <span className="w-6 h-[2.5px] bg-foreground rounded-full"></span>
