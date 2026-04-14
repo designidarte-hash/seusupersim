@@ -12,6 +12,7 @@ type CadastroState = {
   cpfData?: Record<string, unknown> | null;
   cadastro?: Record<string, unknown> | null;
   nomeCompleto?: string;
+  cpfDigits?: string;
 } | null;
 
 const getAutoFilledName = (source: unknown): string => {
@@ -38,6 +39,7 @@ const Cadastro = () => {
   const transitionNavigate = useTransitionNavigate();
   const routeState = (location.state as CadastroState) ?? null;
   const cpfData = routeState?.cpfData ?? null;
+  const cpfDigits = routeState?.cpfDigits;
   const autoFilledName = getAutoFilledName(routeState) || getStoredName();
   const [nameTouched, setNameTouched] = useState(false);
 
@@ -67,7 +69,7 @@ const Cadastro = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!isValid) return;
-    transitionNavigate("/simulacao", { cpfData, cadastro: form });
+    transitionNavigate("/simulacao", { cpfData, cpfDigits, cadastro: form });
   };
 
   return (
