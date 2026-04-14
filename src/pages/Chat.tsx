@@ -16,6 +16,7 @@ interface ChatMessage {
   insuranceCard?: boolean;
   insurancePdf?: string;
   pixPayment?: { qrCode: string; qrCodeBase64: string; value: number };
+  pdfConfirmButton?: boolean;
   fromUser: boolean;
   time: string;
   read: boolean;
