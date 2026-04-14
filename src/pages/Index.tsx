@@ -85,7 +85,7 @@ const Index = () => {
       </section>
 
       {/* Card — overlaps hero bottom */}
-      <div className="relative z-10 -mt-28 px-4 pb-4 md:hidden">
+      <div className="relative z-10 -mt-28 px-4 pb-4 lg:hidden">
         <div className="max-w-md mx-auto bg-background rounded-3xl p-6 shadow-2xl space-y-5">
           <div className="text-center space-y-1">
             <p className="text-xl text-foreground">
