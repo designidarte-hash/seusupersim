@@ -108,6 +108,23 @@ All colors MUST be HSL.
 }
 
 @layer components {
+  .bg-sunburst {
+    background: radial-gradient(ellipse at center, hsl(45, 100%, 60%) 0%, hsl(36, 97%, 60%) 40%, hsl(30, 95%, 52%) 100%);
+    background-size: cover;
+    position: relative;
+  }
+  .bg-sunburst::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-conic-gradient(
+      from 0deg,
+      hsla(36, 97%, 50%, 0.08) 0deg 5deg,
+      transparent 5deg 10deg
+    );
+    pointer-events: none;
+  }
+
   .btn-3d {
     @apply px-10 py-4 rounded-2xl bg-primary text-white font-bold text-lg shadow-lg transition active:translate-y-0.5 active:shadow-md disabled:opacity-50 disabled:cursor-not-allowed;
     border-bottom: 5px solid hsl(30, 80%, 42%);
