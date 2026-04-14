@@ -52,7 +52,7 @@ const Aprovado = () => {
 
           <button
             onClick={() => navigate("/cadastro", { state: { cpfData } })}
-            className="w-full max-w-sm mx-auto mt-4 px-10 py-4 rounded-full bg-gradient-to-r from-[hsl(30,95%,55%)] to-[hsl(350,80%,60%)] text-white font-bold text-lg hover:opacity-90 shadow-lg transition active:scale-[0.97]"
+            className="btn-3d w-full max-w-sm mx-auto mt-4"
           >
             Solicitar agora
           </button>
@@ -72,12 +72,12 @@ const Aprovado = () => {
             Nascemos para democratizar o acesso ao crédito no Brasil e por isso oferecemos as melhores condições para todos os perfis.
           </p>
           <img src={chamaNoPixImg} alt="Chama no PIX" className="w-64 md:w-80 mx-auto" />
-          <Button
+          <button
             onClick={() => navigate("/")}
-            className="mt-4 px-10 h-14 text-base font-bold rounded-full bg-background text-primary hover:bg-background/90 shadow-lg transition active:scale-[0.98]"
+            className="btn-3d mt-4 bg-background text-primary border-b-[5px] border-b-[hsl(220,13%,80%)]"
           >
             Receber empréstimo via PIX
-          </Button>
+          </button>
         </div>
       </section>
 
@@ -101,12 +101,12 @@ const Aprovado = () => {
           <p className="text-primary-foreground/80 leading-relaxed">
             O empréstimo da SuperSim tem um dos processos mais rápidos do mercado na concessão de empréstimos pessoais online. E aqui, a chance é para todos, incluindo negativados!
           </p>
-          <Button
+          <button
             onClick={() => navigate("/")}
-            className="mt-4 px-12 h-14 text-base font-bold rounded-full bg-background text-primary hover:bg-background/90 shadow-lg transition active:scale-[0.98]"
+            className="btn-3d mt-4 bg-background text-primary border-b-[5px] border-b-[hsl(220,13%,80%)]"
           >
             Solicitar agora
-          </Button>
+          </button>
         </div>
       </section>
     </div>

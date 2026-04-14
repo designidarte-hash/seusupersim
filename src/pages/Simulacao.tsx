@@ -157,7 +157,7 @@ const Simulacao = () => {
 
           <button
             onClick={handleConfirm}
-            className="w-full px-10 py-4 rounded-full bg-gradient-to-r from-[hsl(30,95%,55%)] to-[hsl(350,80%,60%)] text-white font-bold text-lg hover:opacity-90 shadow-lg transition active:scale-[0.97]"
+            className="btn-3d w-full"
           >
             Confirmar e solicitar 🚀
           </button>

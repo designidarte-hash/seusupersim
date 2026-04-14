@@ -76,15 +76,15 @@ const LoanForm = () => {
         />
       </div>
 
-      <Button
+      <button
         type="button"
         onClick={lookupCPF}
         disabled={loading}
-        className="w-full h-14 text-base font-bold rounded-full bg-gradient-to-r from-[hsl(30,95%,55%)] to-[hsl(350,80%,60%)] text-white hover:opacity-90 shadow-lg transition"
+        className="btn-3d w-full h-14 flex items-center justify-center"
       >
         {loading && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
         {loading ? "Consultando..." : "Continuar"}
-      </Button>
+      </button>
     </div>
   );
 };
