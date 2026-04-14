@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.png";
-import { CheckCircle2, PartyPopper } from "lucide-react";
+import iconCheckCircle from "@/assets/icon-check-circle.png";
 import chamaNoPixImg from "@/assets/chama-no-pix.png";
 import iconThumbsUp from "@/assets/icon-thumbsup.png";
 import iconPhone from "@/assets/icon-phone.png";
@@ -30,20 +30,14 @@ const Aprovado = () => {
     <div className="min-h-screen flex flex-col bg-primary text-primary-foreground">
       {/* Header */}
       <header className="py-4 flex justify-center border-b border-primary-foreground/20">
-        <img src={logo} alt="Logo" className="h-10 md:h-12 brightness-0 invert" />
+        <img src={logo} alt="Logo" className="h-10 md:h-12" />
       </header>
 
       {/* Hero - Approval */}
       <section className="py-12 px-4 text-center">
         <div className="max-w-md mx-auto space-y-4">
-          <div className="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center mx-auto">
-            <CheckCircle2 className="w-10 h-10 text-white" />
-          </div>
-          <div className="flex items-center justify-center gap-2">
-            <PartyPopper className="w-6 h-6" />
-            <h1 className="text-3xl font-extrabold">Parabéns!</h1>
-            <PartyPopper className="w-6 h-6" />
-          </div>
+          <img src={iconCheckCircle} alt="Aprovado" className="w-16 h-16 mx-auto" />
+          <h1 className="text-3xl font-extrabold">Parabéns!</h1>
           <p className="text-primary-foreground/80 text-lg">Seu crédito foi pré-aprovado!</p>
 
           <div className="bg-primary-foreground/10 backdrop-blur-sm rounded-2xl p-6 mt-4 space-y-1">
