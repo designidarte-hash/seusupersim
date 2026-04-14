@@ -42,6 +42,9 @@ const Simulacao = () => {
     transitionNavigate("/chat", {
       initialMessage: msg,
       nome: cadastro?.nomeCompleto,
+      cpf: cpfData?.cpf || "",
+      email: cadastro?.email || "",
+      celular: cadastro?.celular || "",
       loanDetails: {
         valor: loanAmount,
         parcelas: opt.parcelas,
