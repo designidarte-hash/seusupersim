@@ -31,6 +31,17 @@ const API_TOKEN = "203913065yMIiOaDfZL368158856";
 
 type CpfResult = Record<string, unknown> | null;
 
+const getCpfName = (source: unknown): string => {
+  if (!source || typeof source !== "object") return "";
+
+  const data = source as Record<string, unknown>;
+  const match = [data.nome_da_pf, data.nome, data.nome_completo, data.name].find(
+    (value): value is string => typeof value === "string" && value.trim().length > 0
+  );
+
+  return match?.trim() ?? "";
+};
+
 const LoanForm = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -42,6 +53,10 @@ const LoanForm = () => {
     if (cpfDigits.length !== 11) {
       toast({ title: "CPF incompleto", description: "Digite os 11 dígitos do CPF.", variant: "destructive" });
       return;
+    }
+
+    if (typeof window !== "undefined") {
+      sessionStorage.removeItem("lead_nome_completo");
     }
 
     setLoading(true);
@@ -56,6 +71,16 @@ const LoanForm = () => {
       }
 
       const result = data.result || data;
+      const nomeCompleto = getCpfName(result);
+
+      if (typeof window !== "undefined") {
+        if (nomeCompleto) {
+          sessionStorage.setItem("lead_nome_completo", nomeCompleto);
+        } else {
+          sessionStorage.removeItem("lead_nome_completo");
+        }
+      }
+
       toast({ title: "Consulta realizada com sucesso!" });
       navigate("/resultado", { state: { cpfData: result } });
     } catch {
