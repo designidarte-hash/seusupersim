@@ -694,6 +694,7 @@ const Chat = () => {
   const [insuranceShown, setInsuranceShown] = useState(false);
   const [insuranceAudioConfirmed, setInsuranceAudioConfirmed] = useState(false);
   const [pdfConfirmed, setPdfConfirmed] = useState(false);
+  const [manualConfirmed, setManualConfirmed] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [greetingSent, setGreetingSent] = useState(false);
   const [proceeded, setProceeded] = useState(false);
