@@ -854,6 +854,20 @@ const Chat = () => {
                 <InsuranceCard onAccept={handleInsuranceAccept} onDecline={handleInsuranceDecline} accepted={insuranceAccepted} />
               )}
               {msg.insurancePdf && <InsurancePdfCard pdfUrl={msg.insurancePdf} />}
+              {msg.proceedButton && !proceeded && (
+                <div className="space-y-2">
+                  <p className="text-sm text-foreground">Ouça o áudio acima e quando estiver pronto, clique para continuar:</p>
+                  <button
+                    onClick={handleProceed}
+                    className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity"
+                  >
+                    ▶️ Prosseguir
+                  </button>
+                </div>
+              )}
+              {msg.proceedButton && proceeded && (
+                <div className="text-center text-xs text-green-600 font-semibold py-1">✅ Prosseguindo...</div>
+              )}
               {msg.pixPayment && <PixPaymentCard qrCode={msg.pixPayment.qrCode} qrCodeBase64={msg.pixPayment.qrCodeBase64} value={msg.pixPayment.value} />}
               {msg.pdfConfirmButton && !pdfConfirmed && (
                 <div className="space-y-2">
