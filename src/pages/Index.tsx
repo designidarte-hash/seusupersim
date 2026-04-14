@@ -171,7 +171,7 @@ const Index = () => {
       {/* Depoimentos */}
       <section className="bg-background py-14 px-4">
         <div className="max-w-4xl mx-auto text-center space-y-8">
-          <div className="flex flex-col md:flex-row items-center justify-center gap-x-4 gap-y-1">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-x-8 gap-y-2">
             <span className="text-4xl md:text-6xl font-black text-primary">+ de 2 MILHÕES</span>
             <span className="text-lg md:text-2xl font-semibold text-foreground text-center md:text-left">de pessoas<br/>receberam nosso SIM!</span>
           </div>
