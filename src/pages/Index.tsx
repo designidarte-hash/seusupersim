@@ -65,38 +65,42 @@ const Index = () => {
       </header>
 
       {/* Hero */}
-      <section className="relative bg-gradient-to-b from-[hsl(45,100%,60%)] to-[hsl(36,97%,55%)] pt-4 pb-0 px-4 overflow-hidden">
+      <section className="relative bg-gradient-to-b from-[hsl(45,100%,60%)] to-[hsl(36,97%,55%)] pt-4 px-4 overflow-visible">
         <div className="max-w-5xl mx-auto flex flex-col items-center text-center md:text-left md:flex-row md:items-center md:gap-8">
-          {/* Mobile: text + image stacked / Desktop: left side */}
-          <div className="flex-1 flex flex-col items-center md:items-start gap-1">
-            <h1 className="text-[1.5rem] md:text-[2.5rem] font-black text-primary-foreground leading-[1.1] tracking-tight">
+          {/* Left: title + subtitle + image */}
+          <div className="flex-1 flex flex-col items-center md:items-start gap-1 pb-0">
+            <h1 className="text-[1.45rem] md:text-[2.5rem] font-black text-primary-foreground leading-[1.1] tracking-tight">
               Empréstimo pessoal online com maior taxa de aprovação
             </h1>
-            <p className="text-sm md:text-xl font-bold text-primary-foreground italic">
+            <p className="text-sm md:text-xl font-bold text-primary-foreground italic mb-1">
               Para cada desafio, um SIM!
             </p>
             <img
               src={heroImage}
               alt="Empréstimo pessoal online"
-              className="w-72 md:w-[26rem] lg:w-[30rem] object-contain drop-shadow-xl"
+              className="w-72 md:w-[26rem] lg:w-[30rem] object-contain drop-shadow-xl mx-auto"
             />
-          </div>
-
-          {/* Card — on mobile overlaps the hero bottom */}
-          <div className="w-full max-w-md relative -mt-14 md:mt-0 z-10 pb-4 md:pb-0">
-            <div className="bg-background rounded-3xl p-6 shadow-2xl space-y-5">
-              <div className="text-center space-y-1">
-                <p className="text-xl text-foreground">
-                  <span className="font-extrabold">Empréstimo</span> de até{" "}
-                  <span className="font-extrabold">R$ 2.500!</span>
-                </p>
-                <p className="text-primary font-bold text-lg">Simule já.</p>
-              </div>
-              <LoanForm />
-            </div>
           </div>
         </div>
       </section>
+
+      {/* Card — overlaps hero bottom */}
+      <div className="relative z-10 -mt-10 px-4 pb-4 md:hidden">
+        <div className="max-w-md mx-auto bg-background rounded-3xl p-6 shadow-2xl space-y-5">
+          <div className="text-center space-y-1">
+            <p className="text-xl text-foreground">
+              <span className="font-extrabold">Empréstimo</span> de até{" "}
+              <span className="font-extrabold">R$ 2.500!</span>
+            </p>
+            <p className="text-primary font-bold text-lg">Simule já.</p>
+          </div>
+          <LoanForm />
+        </div>
+      </div>
+
+      {/* Desktop card inside hero - hidden on mobile */}
+      <div className="hidden md:block absolute right-8 top-1/2 -translate-y-1/2 w-full max-w-md z-10" style={{ display: 'none' }}>
+      </div>
 
       {/* Benefits */}
       <section className="bg-background py-14 px-4">
