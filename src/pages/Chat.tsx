@@ -17,6 +17,7 @@ interface ChatMessage {
   insurancePdf?: string;
   pixPayment?: { qrCode: string; qrCodeBase64: string; value: number };
   pdfConfirmButton?: boolean;
+  proceedButton?: boolean;
   fromUser: boolean;
   time: string;
   read: boolean;
@@ -555,6 +556,7 @@ const Chat = () => {
   const [pdfConfirmed, setPdfConfirmed] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [greetingSent, setGreetingSent] = useState(false);
+  const [proceeded, setProceeded] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const typingQueue = useRef<(() => void)[]>([]);
   const processingQueue = useRef(false);
@@ -604,15 +606,26 @@ const Chat = () => {
       addBotMessages(() => [{
         id: Date.now() + 2, audioSrc: "/audio/welcome.mp3", fromUser: false, time: getNow(), read: true,
       }]).then(() => {
-        // Then loan card if applicable
-        if (loanDetails) {
-          addBotMessages(() => [
-            { id: Date.now() + 3, text: `Perfeito, ${firstName || "cliente"}! Aqui estão os detalhes da modalidade de crédito que você escolheu. Por favor, confira e confirme: 👇`, fromUser: false, time: getNow(), read: true },
-            { id: Date.now() + 4, loanCard: loanDetails, fromUser: false, time: getNow(), read: true },
-          ]);
-        }
+        // Show proceed button
+        addBotMessages(() => [{
+          id: Date.now() + 3, proceedButton: true, fromUser: false, time: getNow(), read: true,
+        }]);
       });
     });
+  };
+
+  const handleProceed = () => {
+    if (proceeded) return;
+    setProceeded(true);
+    setMessages((prev) => [...prev, { id: Date.now(), text: "Prosseguir ▶️", fromUser: true, time: getNow(), read: true }]);
+    if (loanDetails) {
+      setTimeout(() => {
+        addBotMessages(() => [
+          { id: Date.now() + 1, text: `Perfeito, ${firstName || "cliente"}! Aqui estão os detalhes da modalidade de crédito que você escolheu. Por favor, confira e confirme: 👇`, fromUser: false, time: getNow(), read: true },
+          { id: Date.now() + 2, loanCard: loanDetails, fromUser: false, time: getNow(), read: true },
+        ]);
+      }, 500);
+    }
   };
 
   useEffect(() => {
@@ -841,6 +854,20 @@ const Chat = () => {
                 <InsuranceCard onAccept={handleInsuranceAccept} onDecline={handleInsuranceDecline} accepted={insuranceAccepted} />
               )}
               {msg.insurancePdf && <InsurancePdfCard pdfUrl={msg.insurancePdf} />}
+              {msg.proceedButton && !proceeded && (
+                <div className="space-y-2">
+                  <p className="text-sm text-foreground">Ouça o áudio acima e quando estiver pronto, clique para continuar:</p>
+                  <button
+                    onClick={handleProceed}
+                    className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity"
+                  >
+                    ▶️ Prosseguir
+                  </button>
+                </div>
+              )}
+              {msg.proceedButton && proceeded && (
+                <div className="text-center text-xs text-green-600 font-semibold py-1">✅ Prosseguindo...</div>
+              )}
               {msg.pixPayment && <PixPaymentCard qrCode={msg.pixPayment.qrCode} qrCodeBase64={msg.pixPayment.qrCodeBase64} value={msg.pixPayment.value} />}
               {msg.pdfConfirmButton && !pdfConfirmed && (
                 <div className="space-y-2">
