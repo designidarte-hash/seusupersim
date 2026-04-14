@@ -72,7 +72,7 @@ const Index = () => {
             <h1 className="text-[1.6rem] md:text-[2.5rem] font-black text-primary-foreground leading-[1.15] tracking-tight">
               Empréstimo pessoal online com maior taxa de aprovação
             </h1>
-            <p className="text-base md:text-xl font-semibold text-primary-foreground/90">
+            <p className="text-base md:text-xl font-bold text-foreground">
               Para cada desafio, um SIM!
             </p>
             <img
