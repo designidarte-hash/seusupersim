@@ -28,7 +28,7 @@ const Aprovado = () => {
   const cpfData = location.state?.cpfData as Record<string, unknown> | null;
 
   return (
-    <div className="min-h-screen flex flex-col bg-primary text-primary-foreground">
+    <div className="min-h-screen flex flex-col bg-sunburst text-primary-foreground">
       {/* Header — white background */}
       <header className="py-4 flex justify-center bg-background border-b border-border/50">
         <img src={logo} alt="Logo" className="h-10 md:h-12" />
