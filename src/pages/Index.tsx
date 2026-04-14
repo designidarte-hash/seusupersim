@@ -85,11 +85,11 @@ const Index = () => {
           {/* Card — on mobile overlaps the hero bottom */}
           <div className="w-full max-w-md relative -mt-6 md:mt-0 z-10 pb-4 md:pb-0">
             <div className="bg-background rounded-2xl p-5 shadow-xl space-y-3">
-              <div className="text-center space-y-0.5">
-                <p className="text-lg font-extrabold text-foreground">
-                  Empréstimo de até <span className="text-primary text-xl font-black">R$ 2.500!</span>
+              <div className="text-center space-y-1">
+                <p className="text-xl text-foreground">
+                  <span className="font-extrabold">Empréstimo</span> de até <span className="font-extrabold">R$ 2.500!</span>
                 </p>
-                <p className="text-primary font-bold text-sm">Simule já.</p>
+                <p className="text-primary font-bold text-lg">Simule já.</p>
               </div>
               <LoanForm />
             </div>
