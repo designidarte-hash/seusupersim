@@ -65,25 +65,25 @@ const Index = () => {
       </header>
 
       {/* Hero */}
-      <section className="relative bg-gradient-to-b from-[hsl(45,100%,60%)] to-[hsl(36,97%,55%)] pt-6 pb-0 px-4 overflow-hidden">
+      <section className="relative bg-gradient-to-b from-[hsl(45,100%,60%)] to-[hsl(36,97%,55%)] pt-4 pb-0 px-4 overflow-hidden">
         <div className="max-w-5xl mx-auto flex flex-col items-center text-center md:text-left md:flex-row md:items-center md:gap-8">
           {/* Mobile: text + image stacked / Desktop: left side */}
-          <div className="flex-1 flex flex-col items-center md:items-start gap-2">
-            <h1 className="text-[1.6rem] md:text-[2.5rem] font-black text-primary-foreground leading-[1.15] tracking-tight">
+          <div className="flex-1 flex flex-col items-center md:items-start gap-1">
+            <h1 className="text-[1.5rem] md:text-[2.5rem] font-black text-primary-foreground leading-[1.1] tracking-tight">
               Empréstimo pessoal online com maior taxa de aprovação
             </h1>
-            <p className="text-base md:text-xl font-bold text-primary-foreground italic">
+            <p className="text-sm md:text-xl font-bold text-primary-foreground italic">
               Para cada desafio, um SIM!
             </p>
             <img
               src={heroImage}
               alt="Empréstimo pessoal online"
-              className="w-64 md:w-[26rem] lg:w-[30rem] object-contain drop-shadow-xl mt-1"
+              className="w-72 md:w-[26rem] lg:w-[30rem] object-contain drop-shadow-xl"
             />
           </div>
 
           {/* Card — on mobile overlaps the hero bottom */}
-          <div className="w-full max-w-md relative -mt-10 md:mt-0 z-10 pb-4 md:pb-0">
+          <div className="w-full max-w-md relative -mt-14 md:mt-0 z-10 pb-4 md:pb-0">
             <div className="bg-background rounded-3xl p-6 shadow-2xl space-y-5">
               <div className="text-center space-y-1">
                 <p className="text-xl text-foreground">
