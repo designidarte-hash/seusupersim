@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import logo from "@/assets/logo.png";
 import Footer from "@/components/Footer";
+import ChamaNoPixSection from "@/components/ChamaNoPixSection";
 import iconCadastro from "@/assets/icon-cadastro.png";
 import { ArrowLeft } from "lucide-react";
 
@@ -167,6 +168,7 @@ const Simulacao = () => {
           </button>
         </div>
       </main>
+      <ChamaNoPixSection />
       <Footer />
     </div>
   );
