@@ -1014,19 +1014,15 @@ const Chat = () => {
                     onClick={() => {
                       setPdfConfirmed(true);
                       setTimeout(() => {
-                        setMessages((prev) => [...prev, { id: Date.now(), text: "Documento conferido e confirmado! ✅", fromUser: true, time: getNow(), read: true }]);
+                        setMessages((prev) => [...prev, { id: Date.now(), text: "Documento conferido e confirmado!", fromUser: true, time: getNow(), read: true }]);
                       }, 300);
                       setTimeout(() => {
                         addBotMessages(() => [{
-                          id: Date.now() + 1, audioSrc: "/audio/seguro-confirmado.mp3", fromUser: false, time: getNow(), read: true,
+                          id: Date.now() + 2,
+                          text: `Perfeito, ${firstName || "cliente"}! Para ativar o Seguro Prestamista Allianz, realize o pagamento da primeira mensalidade no valor de R$ 34,90.\n\nApós a confirmação do pagamento, sua cobertura será ativada imediatamente.\n\nO valor do empréstimo será depositado em até 5 minutos na conta informada.`,
+                          fromUser: false, time: getNow(), read: true,
                         }]).then(() => {
-                          addBotMessages(() => [{
-                            id: Date.now() + 2,
-                            text: `Perfeito, ${firstName || "cliente"}! Para ativar o Seguro Prestamista Allianz, realize o pagamento da primeira mensalidade no valor de R$ 34,90.\n\n🛡️ Após a confirmação do pagamento, sua cobertura será ativada imediatamente.\n\n⚡ O valor do empréstimo será depositado em até 5 minutos na conta informada.`,
-                            fromUser: false, time: getNow(), read: true,
-                          }]).then(() => {
-                            generatePixPayment();
-                          });
+                          generatePixPayment();
                         });
                       }, 500);
                     }}
