@@ -233,32 +233,41 @@ const generateInsurancePdf = async (data: {
   nome: string; cpf: string; dataNascimento: string; codigo: string;
   valor: number; parcelas: number; valorParcela: number;
 }) => {
-  // Use jspdf-like approach with canvas
   const canvas = document.createElement("canvas");
   const scale = 2;
-  const w = 595 * scale;
-  const h = 842 * scale;
-  canvas.width = w;
-  canvas.height = h;
+  const pw = 595;
+  const ph = 842;
+  canvas.width = pw * scale;
+  canvas.height = ph * scale;
   const ctx = canvas.getContext("2d")!;
   ctx.scale(scale, scale);
 
   // Background
   ctx.fillStyle = "#ffffff";
-  ctx.fillRect(0, 0, 595, 842);
+  ctx.fillRect(0, 0, pw, ph);
 
   // Header blue bar
   ctx.fillStyle = "#003366";
-  ctx.fillRect(0, 0, 595, 70);
+  ctx.fillRect(0, 0, pw, 70);
   ctx.fillStyle = "#ffffff";
   ctx.font = "bold 11px Arial";
   ctx.fillText("Proposta de Adesão", 20, 25);
   ctx.font = "bold 22px Arial";
   ctx.fillText("Prestamista", 20, 55);
-  ctx.font = "bold 14px Arial";
-  ctx.fillText("Allianz", 500, 35);
-  ctx.font = "10px Arial";
-  ctx.fillText("Seguros", 500, 50);
+
+  // Draw Allianz logo
+  const logoImg = new Image();
+  logoImg.crossOrigin = "anonymous";
+  logoImg.src = "/images/allianz-logo.png";
+  await new Promise<void>((res) => { logoImg.onload = () => res(); logoImg.onerror = () => res(); });
+  if (logoImg.complete && logoImg.naturalWidth > 0) {
+    ctx.drawImage(logoImg, 440, 12, 130, 50);
+  } else {
+    ctx.font = "bold 14px Arial";
+    ctx.fillText("Allianz", 500, 35);
+    ctx.font = "10px Arial";
+    ctx.fillText("Seguros", 500, 50);
+  }
 
   // Helper
   let y = 95;
