@@ -261,7 +261,7 @@ const generateInsurancePdf = async (data: {
   await new Promise<void>((res) => { logoImg.onload = () => res(); logoImg.onerror = () => res(); });
   if (logoImg.complete && logoImg.naturalWidth > 0 && logoImg.naturalHeight > 0) {
     const maxLogoWidth = 170;
-    const maxLogoHeight = 22;
+    const maxLogoHeight = 44;
     const logoRatio = logoImg.naturalWidth / logoImg.naturalHeight;
     let logoWidth = maxLogoWidth;
     let logoHeight = logoWidth / logoRatio;
@@ -271,7 +271,7 @@ const generateInsurancePdf = async (data: {
       logoWidth = logoHeight * logoRatio;
     }
 
-    ctx.drawImage(logoImg, pw - 25 - logoWidth, 18, logoWidth, logoHeight);
+    ctx.drawImage(logoImg, pw - 25 - logoWidth, 14, logoWidth, logoHeight);
   } else {
     ctx.fillStyle = "#003366";
     ctx.font = "bold 16px Arial";
