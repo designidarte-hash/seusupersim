@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import logo from "@/assets/logo.png";
+import Footer from "@/components/Footer";
 import { ArrowLeft, UserPlus } from "lucide-react";
 
 const paymentDays = [5, 10, 15, 20, 25];
@@ -172,6 +173,7 @@ const Cadastro = () => {
           </form>
         </div>
       </main>
+      <Footer />
     </div>
   );
 };
