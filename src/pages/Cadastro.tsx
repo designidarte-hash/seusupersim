@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import logo from "@/assets/logo.png";
-import iconCadastro from "@/assets/icon-cadastro.png";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, UserPlus } from "lucide-react";
 
 const paymentDays = [5, 10, 15, 20, 25];
 
