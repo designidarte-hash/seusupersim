@@ -183,12 +183,6 @@ const Resultado = () => {
                 Descomplicado, fácil e sem papelada! É rapidinho!<br />
                 Veja o passo a passo.
               </p>
-              <button
-                onClick={() => navigate("/")}
-                className="mt-2 px-8 py-3 rounded-full bg-gradient-to-r from-[hsl(30,95%,55%)] to-[hsl(350,80%,60%)] text-white font-bold text-base hover:opacity-90 shadow-lg transition active:scale-[0.98]"
-              >
-                Solicitar empréstimo
-              </button>
             </div>
             <VideoPlayer />
           </div>
