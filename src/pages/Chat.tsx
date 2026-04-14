@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
-import logo from "@/assets/logo.png";
+import profileImg from "@/assets/profile-s.png";
 import { ArrowLeft, Send, Check, CheckCheck } from "lucide-react";
 import Footer from "@/components/Footer";
 
@@ -92,7 +92,7 @@ const Chat = () => {
           <ArrowLeft className="w-5 h-5" />
         </button>
         <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center overflow-hidden shadow-sm">
-          <img src={logo} alt="Logo" className="w-8 h-8 object-contain" />
+          <img src={profileImg} alt="Logo" className="w-8 h-8 object-contain" />
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-primary-foreground font-bold text-base truncate">Atendimento</p>
