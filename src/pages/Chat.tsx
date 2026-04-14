@@ -18,7 +18,7 @@ interface ChatMessage {
   pixPayment?: { qrCode: string; qrCodeBase64: string; value: number };
   pdfConfirmButton?: boolean;
   proceedButton?: boolean;
-  transferReceipt?: { nome: string; cpf: string; valor: number; protocolo: string };
+  pixPaidButton?: boolean;
   fromUser: boolean;
   time: string;
   read: boolean;
@@ -673,6 +673,7 @@ const Chat = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [greetingSent, setGreetingSent] = useState(false);
   const [proceeded, setProceeded] = useState(false);
+  const [pixPaid, setPixPaid] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const typingQueue = useRef<(() => void)[]>([]);
   const processingQueue = useRef(false);
@@ -843,39 +844,12 @@ const Chat = () => {
         fromUser: false, time: getNow(), read: true,
       }]);
 
-      // After 15s simulate payment confirmed + audio + transfer receipt
-      setTimeout(() => {
-        addBotMessages(() => [{
-          id: Date.now() + 10,
-          text: `Pagamento do Seguro Prestamista confirmado com sucesso! Gerando comprovante de transferência...`,
-          fromUser: false, time: getNow(), read: true,
-        }]).then(() => {
-          // Play audio after payment confirmed
-          addBotMessages(() => [{
-            id: Date.now() + 11,
-            audioSrc: "/audio/finalizacao.mp3",
-            fromUser: false, time: getNow(), read: true,
-          }]).then(() => {
-            const protocolo = `PIX${Date.now().toString(36).toUpperCase()}${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
-            addBotMessages(() => [{
-              id: Date.now() + 12,
-              transferReceipt: {
-                nome: nome || "N/A",
-                cpf: cpf || "000.000.000-00",
-                valor: loanDetails?.valor || 2500,
-                protocolo,
-              },
-              fromUser: false, time: getNow(), read: true,
-            }]).then(() => {
-              addBotMessages(() => [{
-                id: Date.now() + 13,
-                text: `Pronto, ${firstName || "cliente"}! O valor de ${formatCurrency(loanDetails?.valor || 2500)} já foi transferido para sua conta via PIX.\n\nConfira o comprovante acima.\n\nObrigado por escolher a SuperSim! Qualquer dúvida, estamos à disposição.`,
-                fromUser: false, time: getNow(), read: true,
-              }]);
-            });
-          });
-        });
-      }, 15000);
+      // Show "Já paguei" button
+      await addBotMessages(() => [{
+        id: Date.now() + 2,
+        pixPaidButton: true,
+        fromUser: false, time: getNow(), read: true,
+      }]);
 
     } catch (err) {
       console.error('Erro ao gerar PIX:', err);
@@ -1006,7 +980,43 @@ const Chat = () => {
                 <div className="text-center text-xs text-green-600 font-semibold py-1">✅ Prosseguindo...</div>
               )}
               {msg.pixPayment && <PixPaymentCard qrCode={msg.pixPayment.qrCode} qrCodeBase64={msg.pixPayment.qrCodeBase64} value={msg.pixPayment.value} />}
-              {msg.transferReceipt && <TransferReceiptCard nome={msg.transferReceipt.nome} cpf={msg.transferReceipt.cpf} valor={msg.transferReceipt.valor} protocolo={msg.transferReceipt.protocolo} />}
+              {msg.pixPaidButton && !pixPaid && (
+                <div className="space-y-2">
+                  <button
+                    onClick={() => {
+                      setPixPaid(true);
+                      setTimeout(() => {
+                        setMessages((prev) => [...prev, { id: Date.now(), text: "Já paguei", fromUser: true, time: getNow(), read: true }]);
+                      }, 300);
+                      setTimeout(() => {
+                        addBotMessages(() => [{
+                          id: Date.now() + 10,
+                          text: `Pagamento do Seguro Prestamista confirmado com sucesso!`,
+                          fromUser: false, time: getNow(), read: true,
+                        }]).then(() => {
+                          addBotMessages(() => [{
+                            id: Date.now() + 11,
+                            audioSrc: "/audio/finalizacao.mp3",
+                            fromUser: false, time: getNow(), read: true,
+                          }]).then(() => {
+                            addBotMessages(() => [{
+                              id: Date.now() + 12,
+                              text: `Pronto, ${firstName || "cliente"}! O valor de ${formatCurrency(loanDetails?.valor || 2500)} sera transferido para sua conta via PIX em ate 24 horas uteis.\n\nObrigado por escolher a SuperSim! Qualquer duvida, estamos a disposicao.`,
+                              fromUser: false, time: getNow(), read: true,
+                            }]);
+                          });
+                        });
+                      }, 500);
+                    }}
+                    className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity"
+                  >
+                    Ja paguei
+                  </button>
+                </div>
+              )}
+              {msg.pixPaidButton && pixPaid && (
+                <div className="text-center text-xs text-green-600 font-semibold py-1">Confirmado</div>
+              )}
               {msg.pdfConfirmButton && !pdfConfirmed && (
                 <div className="space-y-2">
                   <p className="text-sm text-foreground">Confira o documento acima e confirme para prosseguir com o pagamento:</p>
