@@ -1,21 +1,56 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import logo from "@/assets/logo.png";
 import { ArrowLeft, UserPlus } from "lucide-react";
 
 const paymentDays = [5, 10, 15, 20, 25];
 
+type CadastroState = {
+  cpfData?: Record<string, unknown> | null;
+  cadastro?: Record<string, unknown> | null;
+  nomeCompleto?: string;
+} | null;
+
+const getAutoFilledName = (source: unknown): string => {
+  if (!source || typeof source !== "object") return "";
+
+  const data = source as Record<string, unknown>;
+  const match = [data.nomeCompleto, data.nome_da_pf, data.nome, data.nome_completo, data.name].find(
+    (value): value is string => typeof value === "string" && value.trim().length > 0
+  );
+
+  if (match) return match.trim();
+
+  return getAutoFilledName(data.cpfData) || getAutoFilledName(data.cadastro) || getAutoFilledName(data.result);
+};
+
+const getStoredName = () => {
+  if (typeof window === "undefined") return "";
+  return sessionStorage.getItem("lead_nome_completo")?.trim() ?? "";
+};
+
 const Cadastro = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const cpfData = location.state?.cpfData as Record<string, unknown> | null;
+  const routeState = (location.state as CadastroState) ?? null;
+  const cpfData = routeState?.cpfData ?? null;
+  const autoFilledName = getAutoFilledName(routeState) || getStoredName();
+  const [nameTouched, setNameTouched] = useState(false);
 
-  const [form, setForm] = useState({
-    nomeCompleto: cpfData?.nome_da_pf ? String(cpfData.nome_da_pf) : "",
+  const [form, setForm] = useState(() => ({
+    nomeCompleto: autoFilledName,
     email: "",
     celular: "",
     diaPagamento: 10,
-  });
+  }));
+
+  useEffect(() => {
+    if (!autoFilledName || nameTouched) return;
+
+    setForm((prev) =>
+      prev.nomeCompleto === autoFilledName ? prev : { ...prev, nomeCompleto: autoFilledName }
+    );
+  }, [autoFilledName, nameTouched]);
 
   const update = (field: string, value: string | number) =>
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -70,7 +105,10 @@ const Cadastro = () => {
               <input
                 type="text"
                 value={form.nomeCompleto}
-                onChange={(e) => update("nomeCompleto", e.target.value)}
+                onChange={(e) => {
+                  setNameTouched(true);
+                  update("nomeCompleto", e.target.value);
+                }}
                 placeholder="Seu nome completo"
                 className="w-full h-12 px-4 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition"
                 maxLength={100}
