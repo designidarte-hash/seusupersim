@@ -7,13 +7,13 @@ import { ArrowLeft } from "lucide-react";
 const loanAmount = 8000;
 
 const installmentOptions = [
-  { parcelas: 6, taxa: 4.99 },
-  { parcelas: 12, taxa: 5.49 },
-  { parcelas: 18, taxa: 5.99 },
-  { parcelas: 24, taxa: 6.49 },
-  { parcelas: 30, taxa: 6.99 },
-  { parcelas: 36, taxa: 7.49 },
-  { parcelas: 48, taxa: 7.99 },
+  { parcelas: 6, taxa: 1.32 },
+  { parcelas: 12, taxa: 1.32 },
+  { parcelas: 18, taxa: 1.32 },
+  { parcelas: 24, taxa: 1.32 },
+  { parcelas: 30, taxa: 1.32 },
+  { parcelas: 36, taxa: 1.32 },
+  { parcelas: 48, taxa: 1.32 },
 ];
 
 const calcParcela = (valor: number, parcelas: number, taxaMensal: number) => {
