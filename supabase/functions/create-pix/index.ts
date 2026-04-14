@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -28,6 +29,10 @@ serve(async (req) => {
       });
     }
 
+    // Build webhook URL pointing to our pix-webhook edge function
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const webhookUrl = `${supabaseUrl}/functions/v1/pix-webhook`;
+
     const response = await fetch('https://api.pushinpay.com.br/api/pix/cashIn', {
       method: 'POST',
       headers: {
@@ -35,7 +40,7 @@ serve(async (req) => {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ value }),
+      body: JSON.stringify({ value, webhook_url: webhookUrl }),
     });
 
     const data = await response.json();
@@ -47,6 +52,18 @@ serve(async (req) => {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
+
+    // Store the initial payment record
+    const supabaseAdmin = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    );
+
+    await supabaseAdmin.from('pix_payments').upsert({
+      transaction_id: data.id,
+      status: 'created',
+      value: value,
+    }, { onConflict: 'transaction_id' });
 
     return new Response(JSON.stringify(data), {
       status: 200,
