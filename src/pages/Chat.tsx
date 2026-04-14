@@ -241,6 +241,26 @@ const InsurancePdfCard = ({ pdfUrl }: { pdfUrl: string }) => (
   </div>
 );
 
+
+const InsuranceInfoPdfCard = () => (
+  <div className="space-y-2">
+    <div className="flex items-center gap-2">
+      <ShieldCheck className="w-5 h-5 text-primary" />
+      <span className="text-sm font-semibold text-foreground">Seguro Prestamista - Informações</span>
+    </div>
+    <p className="text-xs text-muted-foreground">Confira abaixo os detalhes do seu seguro prestamista e como utilizar:</p>
+    <a
+      href="/docs/seguro-prestamista.pdf"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex items-center gap-2 py-2.5 px-4 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity justify-center"
+    >
+      <FileDown className="w-4 h-4" />
+      Abrir documento do seguro
+    </a>
+  </div>
+);
+
 const PixPaymentCard = ({ qrCode, qrCodeBase64, value }: { qrCode: string; qrCodeBase64: string; value: number }) => {
   const [copied, setCopied] = useState(false);
 
