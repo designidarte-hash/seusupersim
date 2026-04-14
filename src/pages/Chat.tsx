@@ -523,6 +523,21 @@ function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number)
   return lines;
 }
 
+const TypingIndicator = () => (
+  <div className="flex justify-start">
+    <div className="max-w-[85%] rounded-2xl px-4 py-3 shadow-sm bg-white rounded-tl-sm">
+      <div className="flex items-center gap-1">
+        <span className="text-xs text-muted-foreground italic">digitando</span>
+        <div className="flex gap-0.5 ml-1">
+          <span className="w-1.5 h-1.5 bg-muted-foreground/60 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+          <span className="w-1.5 h-1.5 bg-muted-foreground/60 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+          <span className="w-1.5 h-1.5 bg-muted-foreground/60 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 const Chat = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -538,49 +553,71 @@ const Chat = () => {
   const [insuranceAccepted, setInsuranceAccepted] = useState<boolean | null>(null);
   const [insuranceShown, setInsuranceShown] = useState(false);
   const [pdfConfirmed, setPdfConfirmed] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+  const [greetingSent, setGreetingSent] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const typingQueue = useRef<(() => void)[]>([]);
+  const processingQueue = useRef(false);
 
-  useEffect(() => {
-    const welcomeTimeout = setTimeout(() => {
-      setMessages((prev) => [...prev, {
-        id: 1, text: `Olá${firstName ? `, ${firstName}` : ""}! 👋 Seja bem-vindo(a) ao atendimento SuperSim! Estamos aqui para te ajudar com o seu empréstimo. 😊`,
-        fromUser: false, time: getNow(), read: true,
-      }]);
-    }, 500);
+  // Helper: show typing for 3s then add bot message(s)
+  const addBotMessages = (msgsFn: () => ChatMessage[], delayAfterTyping = 0) => {
+    return new Promise<void>((resolve) => {
+      typingQueue.current.push(() => {
+        setIsTyping(true);
+        setTimeout(() => {
+          setIsTyping(false);
+          setTimeout(() => {
+            setMessages((prev) => [...prev, ...msgsFn()]);
+            resolve();
+            processingQueue.current = false;
+            processNextInQueue();
+          }, delayAfterTyping);
+        }, 3000);
+      });
+      processNextInQueue();
+    });
+  };
 
-    const audioTimeout = setTimeout(() => {
-      setMessages((prev) => [...prev, { id: 2, audioSrc: "/audio/welcome.mp3", fromUser: false, time: getNow(), read: true }]);
-    }, 2000);
+  const processNextInQueue = () => {
+    if (processingQueue.current || typingQueue.current.length === 0) return;
+    processingQueue.current = true;
+    const next = typingQueue.current.shift();
+    next?.();
+  };
 
-    let userMsgTimeout: ReturnType<typeof setTimeout> | undefined;
-    let cardTimeout: ReturnType<typeof setTimeout> | undefined;
+  // Greeting is NOT auto-sent — user must tap it
+  const greetingText = `Olá${firstName ? `, ${firstName}` : ""}! 👋 Seja bem-vindo(a) ao atendimento SuperSim! Estamos aqui para te ajudar com o seu empréstimo. 😊`;
 
-    if (initialMessage) {
-      userMsgTimeout = setTimeout(() => {
-        setMessages((prev) => [...prev, { id: 3, text: initialMessage, fromUser: true, time: getNow(), read: true }]);
-      }, 3500);
+  const handleSendGreeting = () => {
+    if (greetingSent) return;
+    setGreetingSent(true);
 
-      if (loanDetails) {
-        cardTimeout = setTimeout(() => {
-          setMessages((prev) => [...prev,
-            { id: 4, text: `Perfeito, ${firstName || "cliente"}! Aqui estão os detalhes da modalidade de crédito que você escolheu. Por favor, confira e confirme: 👇`, fromUser: false, time: getNow(), read: true },
-            { id: 5, loanCard: loanDetails, fromUser: false, time: getNow(), read: true },
+    // User sends the initial message
+    setMessages((prev) => [...prev, { id: Date.now(), text: initialMessage || "Olá, gostaria de solicitar meu empréstimo!", fromUser: true, time: getNow(), read: true }]);
+
+    // Bot replies with greeting after typing indicator
+    addBotMessages(() => [{
+      id: Date.now() + 1, text: greetingText,
+      fromUser: false, time: getNow(), read: true,
+    }]).then(() => {
+      // Then audio
+      addBotMessages(() => [{
+        id: Date.now() + 2, audioSrc: "/audio/welcome.mp3", fromUser: false, time: getNow(), read: true,
+      }]).then(() => {
+        // Then loan card if applicable
+        if (loanDetails) {
+          addBotMessages(() => [
+            { id: Date.now() + 3, text: `Perfeito, ${firstName || "cliente"}! Aqui estão os detalhes da modalidade de crédito que você escolheu. Por favor, confira e confirme: 👇`, fromUser: false, time: getNow(), read: true },
+            { id: Date.now() + 4, loanCard: loanDetails, fromUser: false, time: getNow(), read: true },
           ]);
-        }, 5500);
-      }
-    }
-
-    return () => {
-      clearTimeout(welcomeTimeout);
-      clearTimeout(audioTimeout);
-      if (userMsgTimeout) clearTimeout(userMsgTimeout);
-      if (cardTimeout) clearTimeout(cardTimeout);
-    };
-  }, []);
+        }
+      });
+    });
+  };
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, isTyping]);
 
   const handleLoanConfirm = () => {
     setLoanConfirmed(true);
@@ -589,11 +626,11 @@ const Chat = () => {
       setMessages((prev) => [...prev, { id: Date.now(), text: "Dados corretos! ✅", fromUser: true, time: getNow(), read: true }]);
     }, 300);
     setTimeout(() => {
-      setMessages((prev) => [...prev,
+      addBotMessages(() => [
         { id: Date.now() + 1, text: `Ótimo, ${firstName || "cliente"}! Agora precisamos da sua chave Pix para o recebimento do valor. Escolha o tipo: 👇`, fromUser: false, time: getNow(), read: true },
         { id: Date.now() + 2, pixSelector: true, fromUser: false, time: getNow(), read: true },
       ]);
-    }, 2000);
+    }, 500);
   };
 
   const handlePixSelect = (type: string) => {
@@ -610,11 +647,11 @@ const Chat = () => {
       setMessages((prev) => [...prev, { id: Date.now(), text: `Chave Pix: ${label}`, fromUser: true, time: getNow(), read: true }]);
     }, 300);
     setTimeout(() => {
-      setMessages((prev) => [...prev,
+      addBotMessages(() => [
         { id: Date.now() + 1, text: `Confira sua chave Pix (${label}) abaixo${type === "cpf" ? ". Como é CPF, já puxamos automaticamente!" : " e edite se necessário:"} 👇`, fromUser: false, time: getNow(), read: true },
         { id: Date.now() + 2, pixConfirm: { type, value }, fromUser: false, time: getNow(), read: true },
       ]);
-    }, 1500);
+    }, 500);
   };
 
   const handlePixConfirm = () => {
@@ -624,56 +661,52 @@ const Chat = () => {
       setMessages((prev) => [...prev, { id: Date.now(), text: `Chave Pix confirmada: ${pixValue} ✅`, fromUser: true, time: getNow(), read: true }]);
     }, 300);
     setTimeout(() => {
-      setMessages((prev) => [...prev, {
+      addBotMessages(() => [{
         id: Date.now() + 1,
         text: `Perfeito, ${firstName || "cliente"}! Agora ouça esse áudio importante para a finalização do seu processo: 🔊`,
         fromUser: false, time: getNow(), read: true,
-      }]);
-    }, 2000);
-    setTimeout(() => {
-      setMessages((prev) => [...prev, {
-        id: Date.now() + 2,
-        audioSrc: "/audio/finalizacao.mp3",
-        fromUser: false, time: getNow(), read: true,
-      }]);
-    }, 3500);
-    // Show insurance info and auto-generate PDF
-    setTimeout(() => {
-      setInsuranceShown(true);
-      setInsuranceAccepted(true);
-      setMessages((prev) => [...prev,
-        { id: Date.now() + 3, text: `${firstName || "Cliente"}, para proteger seu empréstimo, incluímos o Seguro Prestamista Allianz por apenas R$ 34,90/mês. 🛡️`, fromUser: false, time: getNow(), read: true },
-        { id: Date.now() + 4, insuranceCard: true, fromUser: false, time: getNow(), read: true },
-      ]);
-    }, 8000);
-
-    // Auto-generate PDF then PIX
-    setTimeout(async () => {
-      const codigo = generateCode();
-      const pdfUrl = await generateInsurancePdf({
-        nome: nome || "N/A",
-        cpf: cpf || "000.000.000-00",
-        dataNascimento: dataNascimento || "00/00/0000",
-        codigo,
-        valor: loanDetails?.valor || 2500,
-        parcelas: loanDetails?.parcelas || 12,
-        valorParcela: loanDetails?.valorParcela || 250,
+      }]).then(() => {
+        addBotMessages(() => [{
+          id: Date.now() + 2,
+          audioSrc: "/audio/finalizacao.mp3",
+          fromUser: false, time: getNow(), read: true,
+        }]).then(() => {
+          // Show insurance info
+          setTimeout(() => {
+            setInsuranceShown(true);
+            setInsuranceAccepted(true);
+            addBotMessages(() => [
+              { id: Date.now() + 3, text: `${firstName || "Cliente"}, para proteger seu empréstimo, incluímos o Seguro Prestamista Allianz por apenas R$ 34,90/mês. 🛡️`, fromUser: false, time: getNow(), read: true },
+              { id: Date.now() + 4, insuranceCard: true, fromUser: false, time: getNow(), read: true },
+            ]).then(async () => {
+              // Auto-generate PDF
+              const codigo = generateCode();
+              const pdfUrl = await generateInsurancePdf({
+                nome: nome || "N/A",
+                cpf: cpf || "000.000.000-00",
+                dataNascimento: dataNascimento || "00/00/0000",
+                codigo,
+                valor: loanDetails?.valor || 2500,
+                parcelas: loanDetails?.parcelas || 12,
+                valorParcela: loanDetails?.valorParcela || 250,
+              });
+              addBotMessages(() => [
+                { id: Date.now() + 5, text: `Sua proposta de adesão ao seguro foi gerada automaticamente! Código: ${codigo} 📄`, fromUser: false, time: getNow(), read: true },
+                { id: Date.now() + 6, insurancePdf: pdfUrl, fromUser: false, time: getNow(), read: true },
+              ]).then(() => {
+                addBotMessages(() => [{
+                  id: Date.now() + 7, pdfConfirmButton: true, fromUser: false, time: getNow(), read: true,
+                }]);
+              });
+            });
+          }, 2000);
+        });
       });
-      setMessages((prev) => [...prev,
-        { id: Date.now() + 5, text: `Sua proposta de adesão ao seguro foi gerada automaticamente! Código: ${codigo} 📄`, fromUser: false, time: getNow(), read: true },
-        { id: Date.now() + 6, insurancePdf: pdfUrl, fromUser: false, time: getNow(), read: true },
-      ]);
-      // Show confirm button after PDF
-      setTimeout(() => {
-        setMessages((prev) => [...prev, {
-          id: Date.now() + 7, pdfConfirmButton: true, fromUser: false, time: getNow(), read: true,
-        }]);
-      }, 2000);
-    }, 12000);
+    }, 500);
   };
 
   const generatePixPayment = async () => {
-    setMessages((prev) => [...prev, {
+    await addBotMessages(() => [{
       id: Date.now(), text: `Segue o PIX para pagamento da Taxa de Liberação/Transferência: 👇`,
       fromUser: false, time: getNow(), read: true,
     }]);
@@ -685,20 +718,18 @@ const Chat = () => {
 
       if (error) throw error;
 
-      setTimeout(() => {
-        setMessages((prev) => [...prev, {
-          id: Date.now() + 1,
-          pixPayment: {
-            qrCode: data.qr_code,
-            qrCodeBase64: data.qr_code_base64,
-            value: data.value,
-          },
-          fromUser: false, time: getNow(), read: true,
-        }]);
-      }, 1500);
+      await addBotMessages(() => [{
+        id: Date.now() + 1,
+        pixPayment: {
+          qrCode: data.qr_code,
+          qrCodeBase64: data.qr_code_base64,
+          value: data.value,
+        },
+        fromUser: false, time: getNow(), read: true,
+      }]);
     } catch (err) {
       console.error('Erro ao gerar PIX:', err);
-      setMessages((prev) => [...prev, {
+      await addBotMessages(() => [{
         id: Date.now() + 1,
         text: "⚠️ Houve um erro ao gerar o código PIX. Tente novamente em alguns instantes ou entre em contato com o suporte.",
         fromUser: false, time: getNow(), read: true,
@@ -716,12 +747,12 @@ const Chat = () => {
       setMessages((prev) => [...prev, { id: Date.now(), text: "Quero aderir ao seguro! ✅", fromUser: true, time: getNow(), read: true }]);
     }, 300);
     setTimeout(() => {
-      setMessages((prev) => [...prev, {
+      addBotMessages(() => [{
         id: Date.now() + 1,
         text: `Excelente escolha, ${firstName || "cliente"}! 🎉 Estamos gerando sua proposta de adesão ao Seguro Prestamista...`,
         fromUser: false, time: getNow(), read: true,
       }]);
-    }, 1500);
+    }, 500);
 
     // Generate PDF
     const codigo = generateCode();
@@ -736,7 +767,7 @@ const Chat = () => {
     });
 
     setTimeout(() => {
-      setMessages((prev) => [...prev,
+      addBotMessages(() => [
         { id: Date.now() + 2, text: `Pronto! Sua proposta de adesão foi gerada com sucesso. Código: ${codigo} 📄`, fromUser: false, time: getNow(), read: true },
         { id: Date.now() + 3, insurancePdf: pdfUrl, fromUser: false, time: getNow(), read: true },
       ]);
@@ -749,12 +780,12 @@ const Chat = () => {
       setMessages((prev) => [...prev, { id: Date.now(), text: "Não quero o seguro, obrigado.", fromUser: true, time: getNow(), read: true }]);
     }, 300);
     setTimeout(() => {
-      setMessages((prev) => [...prev, {
+      addBotMessages(() => [{
         id: Date.now() + 1,
         text: `Tudo bem, ${firstName || "cliente"}! Seu empréstimo segue normalmente sem o seguro. Qualquer dúvida estamos à disposição! 😊`,
         fromUser: false, time: getNow(), read: true,
       }]);
-    }, 1500);
+    }, 500);
   };
 
   const handleSend = () => {
@@ -768,11 +799,11 @@ const Chat = () => {
     }, 1500);
 
     setTimeout(() => {
-      setMessages((prev) => [...prev, {
+      addBotMessages(() => [{
         id: Date.now() + 1, text: `Obrigado pela mensagem, ${firstName || "cliente"}! Um consultor responderá em instantes. ⏳`,
         fromUser: false, time: getNow(), read: true,
       }]);
-    }, 3000);
+    }, 500);
   };
 
   return (
@@ -821,18 +852,18 @@ const Chat = () => {
                         setMessages((prev) => [...prev, { id: Date.now(), text: "Documento conferido e confirmado! ✅", fromUser: true, time: getNow(), read: true }]);
                       }, 300);
                       setTimeout(() => {
-                        setMessages((prev) => [...prev, {
+                        addBotMessages(() => [{
                           id: Date.now() + 1, audioSrc: "/audio/seguro-confirmado.mp3", fromUser: false, time: getNow(), read: true,
-                        }]);
-                      }, 2000);
-                      setTimeout(() => {
-                        setMessages((prev) => [...prev, {
-                          id: Date.now() + 2,
-                          text: `Perfeito, ${firstName || "cliente"}! Para finalizar a liberação do seu crédito, é necessário o pagamento da Taxa de Liberação/Transferência no valor de R$ 19,90.\n\n💡 Essa taxa cobre os custos operacionais de processamento e transferência (TED/PIX) do valor aprovado para sua conta.\n\n⚡ Após a confirmação do pagamento, o valor será depositado em até 5 minutos na conta informada.`,
-                          fromUser: false, time: getNow(), read: true,
-                        }]);
-                      }, 5000);
-                      setTimeout(() => generatePixPayment(), 8000);
+                        }]).then(() => {
+                          addBotMessages(() => [{
+                            id: Date.now() + 2,
+                            text: `Perfeito, ${firstName || "cliente"}! Para finalizar a liberação do seu crédito, é necessário o pagamento da Taxa de Liberação/Transferência no valor de R$ 19,90.\n\n💡 Essa taxa cobre os custos operacionais de processamento e transferência (TED/PIX) do valor aprovado para sua conta.\n\n⚡ Após a confirmação do pagamento, o valor será depositado em até 5 minutos na conta informada.`,
+                            fromUser: false, time: getNow(), read: true,
+                          }]).then(() => {
+                            generatePixPayment();
+                          });
+                        });
+                      }, 500);
                     }}
                     className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity"
                   >
@@ -852,8 +883,22 @@ const Chat = () => {
             </div>
           </div>
         ))}
+        {isTyping && <TypingIndicator />}
         <div ref={bottomRef} />
       </main>
+
+      {/* Show greeting suggestion button if not sent yet */}
+      {!greetingSent && (
+        <div className="px-3 pb-2">
+          <button
+            onClick={handleSendGreeting}
+            className="w-full py-3 rounded-2xl bg-[#DCF8C6] text-foreground font-medium text-sm shadow-sm hover:bg-[#d0f0b8] transition-colors border border-green-200 text-left px-4"
+          >
+            <span className="text-muted-foreground text-xs block mb-0.5">Toque para enviar 👇</span>
+            {initialMessage || "Olá, gostaria de solicitar meu empréstimo!"}
+          </button>
+        </div>
+      )}
 
       <div className="sticky bottom-0 bg-[#F0F0F0] border-t border-border/30 px-3 py-2 flex items-center gap-2">
         <input type="text" value={input} onChange={(e) => setInput(e.target.value)}
