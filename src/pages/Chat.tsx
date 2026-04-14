@@ -674,13 +674,13 @@ const Chat = () => {
 
   const generatePixPayment = async () => {
     setMessages((prev) => [...prev, {
-      id: Date.now(), text: `${firstName || "Cliente"}, agora para finalizar, efetue o pagamento da taxa de adesão via PIX: 💰`,
+      id: Date.now(), text: `Segue o PIX para pagamento da Taxa de Liberação/Transferência: 👇`,
       fromUser: false, time: getNow(), read: true,
     }]);
 
     try {
       const { data, error } = await supabase.functions.invoke('create-pix', {
-        body: { value: 3490 },
+        body: { value: 1990 },
       });
 
       if (error) throw error;
