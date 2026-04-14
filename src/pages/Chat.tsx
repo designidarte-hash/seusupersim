@@ -2,11 +2,11 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import profileImg from "@/assets/profile-s.png";
 import { ArrowLeft, Send, Check, CheckCheck, BadgeCheck } from "lucide-react";
-import Footer from "@/components/Footer";
 
 interface ChatMessage {
   id: number;
-  text: string;
+  text?: string;
+  audioSrc?: string;
   fromUser: boolean;
   time: string;
   read: boolean;
@@ -26,25 +26,66 @@ const Chat = () => {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (initialMessage) {
-      setMessages([
-        { id: 1, text: initialMessage, fromUser: true, time: getNow(), read: true },
+    // Mensagem de boas-vindas automática
+    const welcomeTimeout = setTimeout(() => {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: 1,
+          text: `Olá${nome ? `, ${nome.split(" ")[0]}` : ""}! 👋 Seja bem-vindo(a) ao atendimento SuperSim! Estamos aqui para te ajudar com o seu empréstimo. 😊`,
+          fromUser: false,
+          time: getNow(),
+          read: true,
+        },
       ]);
-      // Simula resposta automática após 2s
-      const t = setTimeout(() => {
+    }, 500);
+
+    // Áudio após a mensagem de boas-vindas
+    const audioTimeout = setTimeout(() => {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: 2,
+          audioSrc: "/audio/welcome.mp3",
+          fromUser: false,
+          time: getNow(),
+          read: true,
+        },
+      ]);
+    }, 2000);
+
+    // Mensagem do usuário (se veio da simulação)
+    let userMsgTimeout: ReturnType<typeof setTimeout> | undefined;
+    let replyTimeout: ReturnType<typeof setTimeout> | undefined;
+
+    if (initialMessage) {
+      userMsgTimeout = setTimeout(() => {
+        setMessages((prev) => [
+          ...prev,
+          { id: 3, text: initialMessage, fromUser: true, time: getNow(), read: true },
+        ]);
+      }, 3500);
+
+      replyTimeout = setTimeout(() => {
         setMessages((prev) => [
           ...prev,
           {
-            id: 2,
-            text: `Olá${nome ? `, ${nome.split(" ")[0]}` : ""}! 😊 Recebemos sua solicitação de empréstimo. Um de nossos consultores irá analisar e retornar em breve. Fique à vontade para enviar qualquer dúvida aqui!`,
+            id: 4,
+            text: `Recebemos sua solicitação de empréstimo! ✅ Um de nossos consultores irá analisar e retornar em breve. Fique à vontade para enviar qualquer dúvida aqui!`,
             fromUser: false,
             time: getNow(),
             read: true,
           },
         ]);
-      }, 2000);
-      return () => clearTimeout(t);
+      }, 5500);
     }
+
+    return () => {
+      clearTimeout(welcomeTimeout);
+      clearTimeout(audioTimeout);
+      if (userMsgTimeout) clearTimeout(userMsgTimeout);
+      if (replyTimeout) clearTimeout(replyTimeout);
+    };
   }, []);
 
   useEffect(() => {
@@ -63,7 +104,6 @@ const Chat = () => {
     setMessages((prev) => [...prev, newMsg]);
     setInput("");
 
-    // Simula leitura e resposta
     setTimeout(() => {
       setMessages((prev) =>
         prev.map((m) => (m.id === newMsg.id ? { ...m, read: true } : m))
@@ -114,7 +154,14 @@ const Chat = () => {
                   : "bg-white text-foreground rounded-tl-sm"
               }`}
             >
-              <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.text}</p>
+              {msg.text && (
+                <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.text}</p>
+              )}
+              {msg.audioSrc && (
+                <audio controls className="w-full min-w-[200px]" preload="auto">
+                  <source src={msg.audioSrc} type="audio/mpeg" />
+                </audio>
+              )}
               <div className="flex items-center justify-end gap-1 mt-1">
                 <span className="text-[10px] text-muted-foreground">{msg.time}</span>
                 {msg.fromUser && (
