@@ -1,9 +1,9 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import Footer from "@/components/Footer";
+import ChamaNoPixSection from "@/components/ChamaNoPixSection";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.png";
 import iconCheckCircle from "@/assets/icon-check-circle.png";
-import chamaNoPixImg from "@/assets/chama-no-pix.png";
 import iconThumbsUp from "@/assets/icon-thumbsup.png";
 import iconPhone from "@/assets/icon-phone.png";
 
