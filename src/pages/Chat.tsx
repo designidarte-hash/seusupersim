@@ -532,6 +532,7 @@ const Chat = () => {
   const [pixConfirmed, setPixConfirmed] = useState(false);
   const [insuranceAccepted, setInsuranceAccepted] = useState<boolean | null>(null);
   const [insuranceShown, setInsuranceShown] = useState(false);
+  const [pdfConfirmed, setPdfConfirmed] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
