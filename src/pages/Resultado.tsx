@@ -145,20 +145,7 @@ const Resultado = () => {
                 Solicitar empréstimo
               </button>
             </div>
-            <div className="flex-1 w-full">
-              <div className="relative rounded-2xl overflow-hidden shadow-lg aspect-video">
-                <iframe
-                  src="https://www.youtube.com/embed/QW7cf7aeFL4"
-                  title="Como solicitar empréstimo"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="w-full h-full absolute inset-0"
-                />
-              </div>
-              <p className="text-xs text-muted-foreground text-center mt-3">
-                Confira, no vídeo, nossos 4 passos para solicitar seu empréstimo em até 5 minutinhos, sem sair de casa.
-              </p>
-            </div>
+            <VideoPlayer />
           </div>
         </section>
 
