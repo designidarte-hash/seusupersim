@@ -1194,10 +1194,9 @@ const Chat = () => {
         <div className="px-3 pb-2">
           <button
             onClick={handleSendGreeting}
-            className="w-full py-3 rounded-2xl bg-[#DCF8C6] text-foreground font-medium text-sm shadow-sm hover:bg-[#d0f0b8] transition-colors border border-green-200 text-left px-4"
+            className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity"
           >
-            <span className="text-muted-foreground text-xs block mb-0.5">Toque para enviar 👇</span>
-            {initialMessage || "Olá, gostaria de solicitar meu empréstimo!"}
+            📩 Toque para enviar
           </button>
         </div>
       )}
