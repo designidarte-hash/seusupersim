@@ -42,11 +42,13 @@ const testimonials = [
 const SPLASH_DURATION = 5000;
 
 const Index = () => {
-  const [showSplash, setShowSplash] = useState(true);
+  const alreadySeen = sessionStorage.getItem("splashSeen") === "true";
+  const [showSplash, setShowSplash] = useState(!alreadySeen);
   const [splashProgress, setSplashProgress] = useState(0);
   const [splashDone, setSplashDone] = useState(false);
 
   useEffect(() => {
+    if (alreadySeen) return;
     const startTime = Date.now();
     const interval = setInterval(() => {
       const elapsed = Date.now() - startTime;
@@ -58,7 +60,7 @@ const Index = () => {
       }
     }, 50);
     return () => clearInterval(interval);
-  }, []);
+  }, [alreadySeen]);
 
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
