@@ -244,7 +244,7 @@ const Resultado = () => {
           </div>
         </section>
       </main>
-      <ChamaNoPixSection />
+      
       <Footer />
     </div>
   );

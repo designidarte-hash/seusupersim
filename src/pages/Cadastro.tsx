@@ -174,7 +174,7 @@ const Cadastro = () => {
           </form>
         </div>
       </main>
-      <ChamaNoPixSection />
+      
       <Footer />
     </div>
   );

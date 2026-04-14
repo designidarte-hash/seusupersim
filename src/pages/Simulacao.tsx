@@ -168,7 +168,7 @@ const Simulacao = () => {
           </button>
         </div>
       </main>
-      <ChamaNoPixSection />
+      
       <Footer />
     </div>
   );
