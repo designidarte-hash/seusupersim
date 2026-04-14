@@ -16,6 +16,7 @@ interface ChatMessage {
   insuranceAudioConfirm?: boolean;
   insuranceCard?: boolean;
   insurancePdf?: string;
+  insuranceInfoPdf?: boolean;
   pixPayment?: { qrCode: string; qrCodeBase64: string; value: number };
   pdfConfirmButton?: boolean;
   proceedButton?: boolean;
@@ -237,6 +238,26 @@ const InsurancePdfCard = ({ pdfUrl }: { pdfUrl: string }) => (
       <span className="text-sm font-semibold text-foreground">Proposta de Adesão - Seguro Prestamista</span>
     </div>
     <img src={pdfUrl} alt="Proposta de Adesão" className="w-full rounded-lg border border-border" />
+  </div>
+);
+
+
+const InsuranceInfoPdfCard = () => (
+  <div className="space-y-2">
+    <div className="flex items-center gap-2">
+      <ShieldCheck className="w-5 h-5 text-primary" />
+      <span className="text-sm font-semibold text-foreground">Seguro Prestamista - Informações</span>
+    </div>
+    <p className="text-xs text-muted-foreground">Confira abaixo os detalhes do seu seguro prestamista e como utilizar:</p>
+    <a
+      href="/docs/seguro-prestamista.pdf"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex items-center gap-2 py-2.5 px-4 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity justify-center"
+    >
+      <FileDown className="w-4 h-4" />
+      Abrir documento do seguro
+    </a>
   </div>
 );
 
@@ -1005,6 +1026,7 @@ const Chat = () => {
                 <InsuranceCard onAccept={handleInsuranceAccept} onDecline={handleInsuranceDecline} accepted={insuranceAccepted} />
               )}
               {msg.insurancePdf && <InsurancePdfCard pdfUrl={msg.insurancePdf} />}
+              {msg.insuranceInfoPdf && <InsuranceInfoPdfCard />}
               {msg.proceedButton && !proceeded && (
                 <div className="space-y-2">
                   <p className="text-sm text-foreground">Ouça o áudio acima e quando estiver pronto, clique para continuar:</p>
@@ -1054,14 +1076,26 @@ const Chat = () => {
                             }]).then(() => {
                               addBotMessages(() => [{
                                 id: Date.now() + 11,
-                                audioSrc: "/audio/finalizacao.mp3",
+                                text: `Confira abaixo o documento com todas as informações do seu Seguro Prestamista:`,
                                 fromUser: false, time: getNow(), read: true,
                               }]).then(() => {
                                 addBotMessages(() => [{
                                   id: Date.now() + 12,
-                                  text: `Pronto, ${firstName || "cliente"}! O valor de ${formatCurrency(loanDetails?.valor || 2500)} sera transferido para sua conta via PIX em ate 24 horas uteis.\n\nObrigado por escolher a SuperSim! Qualquer duvida, estamos a disposicao.`,
+                                  insuranceInfoPdf: true,
                                   fromUser: false, time: getNow(), read: true,
-                                }]);
+                                }]).then(() => {
+                                  addBotMessages(() => [{
+                                    id: Date.now() + 13,
+                                    audioSrc: "/audio/finalizacao.mp3",
+                                    fromUser: false, time: getNow(), read: true,
+                                  }]).then(() => {
+                                    addBotMessages(() => [{
+                                      id: Date.now() + 14,
+                                      text: `Pronto, ${firstName || "cliente"}! O valor de ${formatCurrency(loanDetails?.valor || 2500)} sera transferido para sua conta via PIX em ate 24 horas uteis.\n\nObrigado por escolher a SuperSim! Qualquer duvida, estamos a disposicao.`,
+                                      fromUser: false, time: getNow(), read: true,
+                                    }]);
+                                  });
+                                });
                               });
                             });
                           }, 500);
