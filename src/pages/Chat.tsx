@@ -231,6 +231,70 @@ const InsurancePdfCard = ({ pdfUrl }: { pdfUrl: string }) => (
   </div>
 );
 
+const PixPaymentCard = ({ qrCode, qrCodeBase64, value }: { qrCode: string; qrCodeBase64: string; value: number }) => {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(qrCode).then(() => {
+      setCopied(true);
+      toast.success("Código PIX copiado!");
+      setTimeout(() => setCopied(false), 3000);
+    });
+  };
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-2 mb-1">
+        <QrCode className="w-5 h-5 text-primary" />
+        <span className="text-sm font-semibold text-foreground">Pagamento via PIX</span>
+      </div>
+      <div className="bg-muted/50 rounded-xl p-3 space-y-2 text-center">
+        <p className="text-xs text-muted-foreground">Valor da taxa de adesão:</p>
+        <p className="text-2xl font-bold text-primary">{formatCurrency(value / 100)}</p>
+      </div>
+      {qrCodeBase64 && (
+        <div className="flex justify-center">
+          <img
+            src={qrCodeBase64}
+            alt="QR Code PIX"
+            className="w-48 h-48 rounded-lg border border-border"
+          />
+        </div>
+      )}
+      <div className="space-y-2">
+        <p className="text-xs text-muted-foreground text-center">Ou copie o código abaixo:</p>
+        <div className="bg-muted/50 rounded-xl p-3 break-all text-xs text-foreground font-mono max-h-20 overflow-y-auto">
+          {qrCode}
+        </div>
+        <button
+          onClick={handleCopy}
+          className={`w-full py-2.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${
+            copied
+              ? "bg-green-600 text-white"
+              : "bg-primary text-primary-foreground hover:opacity-90"
+          }`}
+        >
+          {copied ? (
+            <><Check className="w-4 h-4" /> Copiado!</>
+          ) : (
+            <><Copy className="w-4 h-4" /> Copiar código PIX</>
+          )}
+        </button>
+      </div>
+      <p className="text-[10px] text-muted-foreground text-center">
+        ⚠️ O QR Code tem validade limitada. Efetue o pagamento o mais rápido possível.
+      </p>
+    </div>
+  );
+};
+
+const PixPaymentLoading = () => (
+  <div className="space-y-3 text-center py-4">
+    <Loader2 className="w-8 h-8 text-primary animate-spin mx-auto" />
+    <p className="text-sm text-muted-foreground">Gerando código PIX...</p>
+  </div>
+);
+
 // Generate PDF in-browser using canvas
 const generateInsurancePdf = async (data: {
   nome: string; cpf: string; dataNascimento: string; codigo: string;
