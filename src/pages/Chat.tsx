@@ -247,9 +247,9 @@ const InsuranceInfoPdfCard = () => (
   <div className="space-y-2">
     <div className="flex items-center gap-2">
       <ShieldCheck className="w-5 h-5 text-primary" />
-      <span className="text-sm font-semibold text-foreground">Seguro Prestamista - Informações</span>
+      <span className="text-sm font-semibold text-foreground">Manual do Seguro Prestamista</span>
     </div>
-    <p className="text-xs text-muted-foreground">Confira abaixo os detalhes do seu seguro prestamista e como utilizar:</p>
+    <p className="text-xs text-muted-foreground">Acesse o manual completo do seu seguro para entender todas as coberturas, como acionar e utilizar:</p>
     <a
       href="/docs/seguro-prestamista.pdf"
       target="_blank"
@@ -257,7 +257,7 @@ const InsuranceInfoPdfCard = () => (
       className="flex items-center gap-2 py-2.5 px-4 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity justify-center"
     >
       <FileDown className="w-4 h-4" />
-      Abrir documento do seguro
+      📖 Abrir Manual do Seguro
     </a>
   </div>
 );
