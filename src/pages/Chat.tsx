@@ -290,7 +290,7 @@ const PixPaymentCard = ({ qrCode, qrCodeBase64, value }: { qrCode: string; qrCod
         </button>
       </div>
       <p className="text-[10px] text-muted-foreground text-center">
-        ⚠️ O QR Code tem validade limitada. Efetue o pagamento o mais rápido possível.
+        &#x26A0;&#xFE0F; O QR Code tem validade limitada. Efetue o pagamento o mais rápido possível.
       </p>
     </div>
   );
