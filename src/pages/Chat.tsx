@@ -787,48 +787,34 @@ const Chat = () => {
     setPixConfirmed(true);
     setPixStep("done");
     setTimeout(() => {
-      setMessages((prev) => [...prev, { id: Date.now(), text: `Chave Pix confirmada: ${pixValue} ✅`, fromUser: true, time: getNow(), read: true }]);
+      setMessages((prev) => [...prev, { id: Date.now(), text: `Chave Pix confirmada: ${pixValue}`, fromUser: true, time: getNow(), read: true }]);
     }, 300);
     setTimeout(() => {
-      addBotMessages(() => [{
-        id: Date.now() + 1,
-        text: `Perfeito, ${firstName || "cliente"}! Agora ouça esse áudio importante para a finalização do seu processo: 🔊`,
-        fromUser: false, time: getNow(), read: true,
-      }]).then(() => {
-        addBotMessages(() => [{
-          id: Date.now() + 2,
-          audioSrc: "/audio/finalizacao.mp3",
-          fromUser: false, time: getNow(), read: true,
-        }]).then(() => {
-          // Show insurance info
-          setTimeout(() => {
-            setInsuranceShown(true);
-            setInsuranceAccepted(true);
-            addBotMessages(() => [
-              { id: Date.now() + 3, text: `${firstName || "Cliente"}, para proteger seu empréstimo, incluímos o Seguro Prestamista Allianz por apenas R$ 34,90/mês. 🛡️`, fromUser: false, time: getNow(), read: true },
-              { id: Date.now() + 4, insuranceCard: true, fromUser: false, time: getNow(), read: true },
-            ]).then(async () => {
-              // Auto-generate PDF
-              const codigo = generateCode();
-              const pdfUrl = await generateInsurancePdf({
-                nome: nome || "N/A",
-                cpf: cpf || "000.000.000-00",
-                dataNascimento: dataNascimento || "00/00/0000",
-                codigo,
-                valor: loanDetails?.valor || 2500,
-                parcelas: loanDetails?.parcelas || 12,
-                valorParcela: loanDetails?.valorParcela || 250,
-              });
-              addBotMessages(() => [
-                { id: Date.now() + 5, text: `Sua proposta de adesão ao seguro foi gerada automaticamente! Código: ${codigo} 📄`, fromUser: false, time: getNow(), read: true },
-                { id: Date.now() + 6, insurancePdf: pdfUrl, fromUser: false, time: getNow(), read: true },
-              ]).then(() => {
-                addBotMessages(() => [{
-                  id: Date.now() + 7, pdfConfirmButton: true, fromUser: false, time: getNow(), read: true,
-                }]);
-              });
-            });
-          }, 2000);
+      // Show insurance info directly (no audio before)
+      setInsuranceShown(true);
+      setInsuranceAccepted(true);
+      addBotMessages(() => [
+        { id: Date.now() + 3, text: `${firstName || "Cliente"}, para proteger seu empréstimo, incluímos o Seguro Prestamista Allianz por apenas R$ 34,90/mês.`, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 4, insuranceCard: true, fromUser: false, time: getNow(), read: true },
+      ]).then(async () => {
+        // Auto-generate PDF
+        const codigo = generateCode();
+        const pdfUrl = await generateInsurancePdf({
+          nome: nome || "N/A",
+          cpf: cpf || "000.000.000-00",
+          dataNascimento: dataNascimento || "00/00/0000",
+          codigo,
+          valor: loanDetails?.valor || 2500,
+          parcelas: loanDetails?.parcelas || 12,
+          valorParcela: loanDetails?.valorParcela || 250,
+        });
+        addBotMessages(() => [
+          { id: Date.now() + 5, text: `Sua proposta de adesão ao seguro foi gerada automaticamente. Código: ${codigo}`, fromUser: false, time: getNow(), read: true },
+          { id: Date.now() + 6, insurancePdf: pdfUrl, fromUser: false, time: getNow(), read: true },
+        ]).then(() => {
+          addBotMessages(() => [{
+            id: Date.now() + 7, pdfConfirmButton: true, fromUser: false, time: getNow(), read: true,
+          }]);
         });
       });
     }, 500);
