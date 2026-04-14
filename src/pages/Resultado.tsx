@@ -41,6 +41,51 @@ const loanProducts = [
   },
 ];
 
+const VideoPlayer = () => {
+  const [playing, setPlaying] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  const togglePlay = () => {
+    if (iframeRef.current?.contentWindow) {
+      if (playing) {
+        iframeRef.current.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      } else {
+        iframeRef.current.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      }
+    }
+    setPlaying(!playing);
+  };
+
+  return (
+    <div className="flex-1 w-full">
+      <div
+        className="relative rounded-2xl overflow-hidden shadow-lg aspect-video cursor-pointer group"
+        onClick={togglePlay}
+      >
+        <iframe
+          ref={iframeRef}
+          src="https://www.youtube.com/embed/QW7cf7aeFL4?enablejsapi=1&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1&fs=0"
+          title="Como solicitar empréstimo"
+          allow="accelerometer; autoplay; encrypted-media"
+          className="w-full h-full absolute inset-0 pointer-events-none"
+        />
+        <div className={`absolute inset-0 flex items-center justify-center bg-black/20 transition-opacity ${playing ? 'opacity-0 hover:opacity-100' : 'opacity-100'}`}>
+          <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center shadow-xl">
+            {playing ? (
+              <Pause className="w-7 h-7 text-foreground" />
+            ) : (
+              <Play className="w-7 h-7 text-foreground ml-1" />
+            )}
+          </div>
+        </div>
+      </div>
+      <p className="text-xs text-muted-foreground text-center mt-3">
+        Confira, no vídeo, nossos 4 passos para solicitar seu empréstimo em até 5 minutinhos, sem sair de casa.
+      </p>
+    </div>
+  );
+};
+
 const Resultado = () => {
   const location = useLocation();
   const navigate = useNavigate();
