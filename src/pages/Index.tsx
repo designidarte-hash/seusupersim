@@ -43,12 +43,25 @@ const Index = () => {
   return (
     <div className="flex flex-col min-h-screen bg-background">
       {/* Header */}
-      <header className="py-4 flex justify-center bg-background border-b border-border/50">
+      <header className="py-3 px-4 flex items-center justify-between bg-background border-b border-border/50">
         <img
           src={logo}
           alt="Logo"
-          className="h-10 md:h-12"
+          className="h-8 md:h-10"
         />
+        <div className="flex items-center gap-3">
+          <button
+            onClick={scrollToTop}
+            className="hidden sm:inline-flex px-5 py-2 rounded-full bg-primary text-primary-foreground text-sm font-bold hover:bg-primary/90 transition"
+          >
+            Simular empréstimo
+          </button>
+          <button className="flex flex-col gap-[5px] p-1">
+            <span className="w-6 h-[2.5px] bg-foreground rounded-full"></span>
+            <span className="w-6 h-[2.5px] bg-foreground rounded-full"></span>
+            <span className="w-6 h-[2.5px] bg-foreground rounded-full"></span>
+          </button>
+        </div>
       </header>
 
       {/* Hero */}
@@ -59,7 +72,7 @@ const Index = () => {
             <h1 className="text-[1.6rem] md:text-[2.5rem] font-black text-primary-foreground leading-[1.15] tracking-tight">
               Empréstimo pessoal online com maior taxa de aprovação
             </h1>
-            <p className="text-base md:text-xl font-semibold text-primary-foreground/90">
+            <p className="text-base md:text-xl font-bold text-foreground">
               Para cada desafio, um SIM!
             </p>
             <img
@@ -72,11 +85,11 @@ const Index = () => {
           {/* Card — on mobile overlaps the hero bottom */}
           <div className="w-full max-w-md relative -mt-6 md:mt-0 z-10 pb-4 md:pb-0">
             <div className="bg-background rounded-2xl p-5 shadow-xl space-y-3">
-              <div className="text-center space-y-0.5">
-                <p className="text-lg font-extrabold text-foreground">
-                  Empréstimo de até <span className="text-primary text-xl font-black">R$ 2.500!</span>
+              <div className="text-center space-y-1">
+                <p className="text-xl text-foreground">
+                  <span className="font-extrabold">Empréstimo</span> de até <span className="font-extrabold">R$ 2.500!</span>
                 </p>
-                <p className="text-primary font-bold text-sm">Simule já.</p>
+                <p className="text-primary font-bold text-lg">Simule já.</p>
               </div>
               <LoanForm />
             </div>
