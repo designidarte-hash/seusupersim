@@ -301,8 +301,7 @@ const generateInsurancePdf = async (data: {
   // Dados do Proponente
   drawSection("DADOS DO PROPONENTE");
   drawFieldRow([{ label: "Nome Completo", value: data.nome, width: 530 }]);
-  drawFieldRow([{ label: "CPF", value: data.cpf, width: 200 }, { label: "Data de Nascimento", value: data.dataNascimento, width: 150 }]);
-  drawFieldRow([{ label: "Sexo", value: "___", width: 80 }, { label: "Estado Civil", value: "___", width: 120 }, { label: "Data", value: new Date().toLocaleDateString("pt-BR"), width: 120 }]);
+  drawFieldRow([{ label: "CPF", value: data.cpf, width: 200 }, { label: "Data de Nascimento", value: data.dataNascimento, width: 150 }, { label: "Data", value: new Date().toLocaleDateString("pt-BR"), width: 120 }]);
 
   // Plano de Seguro
   drawSection("PLANO DE SEGURO");
