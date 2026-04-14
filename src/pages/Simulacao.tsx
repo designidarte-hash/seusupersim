@@ -11,6 +11,8 @@ const installmentOptions = [
   { parcelas: 12, taxa: 5.49 },
   { parcelas: 18, taxa: 5.99 },
   { parcelas: 24, taxa: 6.49 },
+  { parcelas: 30, taxa: 6.99 },
+  { parcelas: 36, taxa: 7.49 },
 ];
 
 const calcParcela = (valor: number, parcelas: number, taxaMensal: number) => {
