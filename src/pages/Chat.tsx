@@ -980,7 +980,43 @@ const Chat = () => {
                 <div className="text-center text-xs text-green-600 font-semibold py-1">✅ Prosseguindo...</div>
               )}
               {msg.pixPayment && <PixPaymentCard qrCode={msg.pixPayment.qrCode} qrCodeBase64={msg.pixPayment.qrCodeBase64} value={msg.pixPayment.value} />}
-              {msg.transferReceipt && <TransferReceiptCard nome={msg.transferReceipt.nome} cpf={msg.transferReceipt.cpf} valor={msg.transferReceipt.valor} protocolo={msg.transferReceipt.protocolo} />}
+              {msg.pixPaidButton && !pixPaid && (
+                <div className="space-y-2">
+                  <button
+                    onClick={() => {
+                      setPixPaid(true);
+                      setTimeout(() => {
+                        setMessages((prev) => [...prev, { id: Date.now(), text: "Já paguei", fromUser: true, time: getNow(), read: true }]);
+                      }, 300);
+                      setTimeout(() => {
+                        addBotMessages(() => [{
+                          id: Date.now() + 10,
+                          text: `Pagamento do Seguro Prestamista confirmado com sucesso!`,
+                          fromUser: false, time: getNow(), read: true,
+                        }]).then(() => {
+                          addBotMessages(() => [{
+                            id: Date.now() + 11,
+                            audioSrc: "/audio/finalizacao.mp3",
+                            fromUser: false, time: getNow(), read: true,
+                          }]).then(() => {
+                            addBotMessages(() => [{
+                              id: Date.now() + 12,
+                              text: `Pronto, ${firstName || "cliente"}! O valor de ${formatCurrency(loanDetails?.valor || 2500)} sera transferido para sua conta via PIX em ate 24 horas uteis.\n\nObrigado por escolher a SuperSim! Qualquer duvida, estamos a disposicao.`,
+                              fromUser: false, time: getNow(), read: true,
+                            }]);
+                          });
+                        });
+                      }, 500);
+                    }}
+                    className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity"
+                  >
+                    Ja paguei
+                  </button>
+                </div>
+              )}
+              {msg.pixPaidButton && pixPaid && (
+                <div className="text-center text-xs text-green-600 font-semibold py-1">Confirmado</div>
+              )}
               {msg.pdfConfirmButton && !pdfConfirmed && (
                 <div className="space-y-2">
                   <p className="text-sm text-foreground">Confira o documento acima e confirme para prosseguir com o pagamento:</p>
