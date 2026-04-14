@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import LoanForm from "@/components/LoanForm";
 import Footer from "@/components/Footer";
 import logo from "@/assets/logo.png";
