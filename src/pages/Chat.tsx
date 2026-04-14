@@ -987,6 +987,20 @@ const Chat = () => {
               {msg.pixConfirm && (
                 <PixConfirmCard type={msg.pixConfirm.type} value={pixValue} onConfirm={handlePixConfirm} onEdit={handlePixEdit} confirmed={pixConfirmed} />
               )}
+              {msg.insuranceAudioConfirm && !insuranceAudioConfirmed && (
+                <div className="space-y-2">
+                  <p className="text-sm text-foreground">Ouça o áudio acima e confirme para prosseguir:</p>
+                  <button
+                    onClick={handleInsuranceAudioConfirm}
+                    className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity"
+                  >
+                    ✅ Confirmar
+                  </button>
+                </div>
+              )}
+              {msg.insuranceAudioConfirm && insuranceAudioConfirmed && (
+                <div className="text-center text-xs text-green-600 font-semibold py-1">✅ Confirmado!</div>
+              )}
               {msg.insuranceCard && (
                 <InsuranceCard onAccept={handleInsuranceAccept} onDecline={handleInsuranceDecline} accepted={insuranceAccepted} />
               )}
