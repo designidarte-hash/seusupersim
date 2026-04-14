@@ -1,4 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
+import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.png";
 import iconCheckCircle from "@/assets/icon-check-circle.png";
@@ -109,6 +110,7 @@ const Aprovado = () => {
           </button>
         </div>
       </section>
+      <Footer />
     </div>
   );
 };

@@ -1,4 +1,5 @@
 import LoanForm from "@/components/LoanForm";
+import Footer from "@/components/Footer";
 import logo from "@/assets/logo.png";
 import heroImage from "@/assets/hero-image.png";
 import iconPix from "@/assets/icon-pix.png";
