@@ -261,9 +261,7 @@ const generateInsurancePdf = async (data: {
   logoImg.src = "/images/allianz-logo.png";
   await new Promise<void>((res) => { logoImg.onload = () => res(); logoImg.onerror = () => res(); });
   if (logoImg.complete && logoImg.naturalWidth > 0) {
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(435, 8, 140, 56);
-    ctx.drawImage(logoImg, 440, 12, 130, 50);
+    ctx.drawImage(logoImg, 440, 10, 130, 50);
   } else {
     ctx.font = "bold 14px Arial";
     ctx.fillText("Allianz", 500, 35);
