@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import profileImg from "@/assets/profile-s.png";
-import { ArrowLeft, Send, Check, CheckCheck, BadgeCheck } from "lucide-react";
+import { ArrowLeft, Send, Check, CheckCheck, BadgeCheck, Play, Pause } from "lucide-react";
 
 interface ChatMessage {
   id: number;
@@ -17,22 +17,79 @@ const getNow = () => {
   return d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
 };
 
+const AudioPlayer = ({ src }: { src: string }) => {
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [playing, setPlaying] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [duration, setDuration] = useState(0);
+
+  const toggle = () => {
+    if (!audioRef.current) return;
+    if (playing) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play();
+    }
+    setPlaying(!playing);
+  };
+
+  const formatTime = (s: number) => {
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return `${m}:${sec.toString().padStart(2, "0")}`;
+  };
+
+  return (
+    <div className="flex items-center gap-2 min-w-[220px]">
+      <audio
+        ref={audioRef}
+        src={src}
+        preload="metadata"
+        onLoadedMetadata={() => setDuration(audioRef.current?.duration || 0)}
+        onTimeUpdate={() => {
+          const a = audioRef.current;
+          if (a && a.duration) setProgress((a.currentTime / a.duration) * 100);
+        }}
+        onEnded={() => { setPlaying(false); setProgress(0); }}
+      />
+      <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0 cursor-pointer" onClick={toggle}>
+        {playing
+          ? <Pause className="w-4 h-4 text-primary-foreground" />
+          : <Play className="w-4 h-4 text-primary-foreground ml-0.5" />
+        }
+      </div>
+      <div className="flex-1 flex flex-col gap-1">
+        <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+          <div
+            className="h-full bg-primary rounded-full transition-all duration-200"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+        <span className="text-[10px] text-muted-foreground">
+          {duration > 0 ? formatTime(playing ? (audioRef.current?.currentTime || 0) : duration) : "0:00"}
+        </span>
+      </div>
+      <img src={profileImg} alt="" className="w-8 h-8 rounded-full object-contain shrink-0" />
+    </div>
+  );
+};
+
 const Chat = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { initialMessage, nome } = (location.state as any) || {};
+  const firstName = nome ? nome.split(" ")[0] : "";
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Mensagem de boas-vindas automática
     const welcomeTimeout = setTimeout(() => {
       setMessages((prev) => [
         ...prev,
         {
           id: 1,
-          text: `Olá${nome ? `, ${nome.split(" ")[0]}` : ""}! 👋 Seja bem-vindo(a) ao atendimento SuperSim! Estamos aqui para te ajudar com o seu empréstimo. 😊`,
+          text: `Olá${firstName ? `, ${firstName}` : ""}! 👋 Seja bem-vindo(a) ao atendimento SuperSim! Estamos aqui para te ajudar com o seu empréstimo. 😊`,
           fromUser: false,
           time: getNow(),
           read: true,
@@ -40,7 +97,6 @@ const Chat = () => {
       ]);
     }, 500);
 
-    // Áudio após a mensagem de boas-vindas
     const audioTimeout = setTimeout(() => {
       setMessages((prev) => [
         ...prev,
@@ -54,7 +110,6 @@ const Chat = () => {
       ]);
     }, 2000);
 
-    // Mensagem do usuário (se veio da simulação)
     let userMsgTimeout: ReturnType<typeof setTimeout> | undefined;
     let replyTimeout: ReturnType<typeof setTimeout> | undefined;
 
@@ -71,7 +126,7 @@ const Chat = () => {
           ...prev,
           {
             id: 4,
-            text: `Recebemos sua solicitação de empréstimo! ✅ Um de nossos consultores irá analisar e retornar em breve. Fique à vontade para enviar qualquer dúvida aqui!`,
+            text: `Recebemos sua solicitação de empréstimo, ${firstName || "cliente"}! ✅ Um de nossos consultores irá analisar e retornar em breve. Fique à vontade para enviar qualquer dúvida aqui!`,
             fromUser: false,
             time: getNow(),
             read: true,
@@ -115,7 +170,7 @@ const Chat = () => {
         ...prev,
         {
           id: Date.now() + 1,
-          text: "Obrigado pela mensagem! Um consultor responderá em instantes. ⏳",
+          text: `Obrigado pela mensagem, ${firstName || "cliente"}! Um consultor responderá em instantes. ⏳`,
           fromUser: false,
           time: getNow(),
           read: true,
@@ -126,7 +181,6 @@ const Chat = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#ECE5DD]">
-      {/* Header estilo WhatsApp */}
       <header className="bg-primary sticky top-0 z-50 px-4 py-3 flex items-center gap-3 shadow-md">
         <button onClick={() => navigate(-1)} className="text-primary-foreground hover:opacity-80 transition-opacity">
           <ArrowLeft className="w-5 h-5" />
@@ -140,7 +194,6 @@ const Chat = () => {
         </div>
       </header>
 
-      {/* Chat area */}
       <main className="flex-1 overflow-y-auto px-3 py-4 space-y-2">
         {messages.map((msg) => (
           <div
@@ -157,11 +210,7 @@ const Chat = () => {
               {msg.text && (
                 <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.text}</p>
               )}
-              {msg.audioSrc && (
-                <audio controls className="w-full min-w-[200px]" preload="auto">
-                  <source src={msg.audioSrc} type="audio/mpeg" />
-                </audio>
-              )}
+              {msg.audioSrc && <AudioPlayer src={msg.audioSrc} />}
               <div className="flex items-center justify-end gap-1 mt-1">
                 <span className="text-[10px] text-muted-foreground">{msg.time}</span>
                 {msg.fromUser && (
@@ -176,7 +225,6 @@ const Chat = () => {
         <div ref={bottomRef} />
       </main>
 
-      {/* Input bar */}
       <div className="sticky bottom-0 bg-[#F0F0F0] border-t border-border/30 px-3 py-2 flex items-center gap-2">
         <input
           type="text"
