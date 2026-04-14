@@ -777,7 +777,7 @@ const Chat = () => {
     }, 300);
     setTimeout(() => {
       addBotMessages(() => [
-        { id: Date.now() + 1, text: `Confira sua chave Pix (${label}) abaixo${type === "cpf" ? ". Como é CPF, já puxamos automaticamente!" : " e edite se necessário:"} 👇`, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 1, text: `Confira sua chave Pix (${label}) abaixo${type === "cpf" ? ". Como é CPF, já puxamos automaticamente!" : " e edite se necessário:"}`, fromUser: false, time: getNow(), read: true },
         { id: Date.now() + 2, pixConfirm: { type, value }, fromUser: false, time: getNow(), read: true },
       ]);
     }, 500);
