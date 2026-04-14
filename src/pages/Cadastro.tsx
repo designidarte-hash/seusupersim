@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import logo from "@/assets/logo.png";
+import iconCadastro from "@/assets/icon-cadastro.png";
 import { ArrowLeft } from "lucide-react";
 
 const paymentDays = [5, 10, 15, 20, 25];
@@ -38,13 +39,18 @@ const Cadastro = () => {
       </header>
 
       <div className="bg-primary py-6 px-4">
-        <div className="max-w-lg mx-auto">
-          <h1 className="text-xl md:text-2xl font-extrabold text-primary-foreground">
-            Complete seu cadastro
-          </h1>
-          <p className="text-sm text-primary-foreground/70 mt-1">
-            Preencha seus dados para continuar com a solicitação.
-          </p>
+        <div className="max-w-lg mx-auto flex items-center gap-3">
+          <div className="w-12 h-12 rounded-full bg-background/90 flex items-center justify-center shadow-md shrink-0">
+            <img src={iconCadastro} alt="" className="w-7 h-7" />
+          </div>
+          <div>
+            <h1 className="text-xl md:text-2xl font-extrabold text-primary-foreground">
+              Complete seu cadastro
+            </h1>
+            <p className="text-sm text-primary-foreground/70 mt-0.5">
+              Preencha seus dados para continuar com a solicitação.
+            </p>
+          </div>
         </div>
       </div>
 
