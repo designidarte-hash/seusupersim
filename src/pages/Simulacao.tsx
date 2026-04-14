@@ -45,6 +45,7 @@ const Simulacao = () => {
       cpf: cpfData?.cpf || "",
       email: cadastro?.email || "",
       celular: cadastro?.celular || "",
+      dataNascimento: cpfData?.data_nascimento || cpfData?.dataNascimento || "",
       loanDetails: {
         valor: loanAmount,
         parcelas: opt.parcelas,
