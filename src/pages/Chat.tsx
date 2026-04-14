@@ -894,7 +894,7 @@ const Chat = () => {
   const handleInsuranceAccept = async () => {
     setInsuranceAccepted(true);
     setTimeout(() => {
-      setMessages((prev) => [...prev, { id: Date.now(), text: "Quero aderir ao seguro! ✅", fromUser: true, time: getNow(), read: true }]);
+      setMessages((prev) => [...prev, { id: Date.now(), text: "Quero aderir ao seguro!", fromUser: true, time: getNow(), read: true }]);
     }, 300);
     setTimeout(() => {
       addBotMessages(() => [{
