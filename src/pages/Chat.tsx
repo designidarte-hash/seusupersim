@@ -836,6 +836,11 @@ const Chat = () => {
 
       if (error) throw error;
 
+      // Store transaction ID for payment verification
+      if (data.id) {
+        setPixTransactionId(data.id);
+      }
+
       await addBotMessages(() => [{
         id: Date.now() + 1,
         pixPayment: {
