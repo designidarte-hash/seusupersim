@@ -46,7 +46,7 @@ const Aprovado = () => {
           <div className="bg-primary rounded-3xl p-10 mt-6 space-y-2 shadow-xl">
             <p className="text-primary-foreground/80 text-sm">Valor disponível de até</p>
             <p className="text-6xl md:text-7xl font-black text-primary-foreground tracking-tight">
-              R$ 8.000
+              R$ 3.000
             </p>
             <p className="text-primary-foreground/70 text-sm">em até <strong>24x</strong> no boleto ou Pix</p>
           </div>
