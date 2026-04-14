@@ -37,10 +37,8 @@ const Simulacao = () => {
 
   const handleConfirm = () => {
     const opt = installmentOptions[selected];
-    const whatsappMsg = encodeURIComponent(
-      `Olá! Quero solicitar meu empréstimo de ${formatCurrency(loanAmount)} em ${opt.parcelas}x de ${formatCurrency(calcParcela(loanAmount, opt.parcelas, opt.taxa))}. Nome: ${cadastro?.nomeCompleto || "N/A"}. Dia de pagamento: ${cadastro?.diaPagamento || "N/A"}.`
-    );
-    window.open(`https://wa.me/5511999999999?text=${whatsappMsg}`, "_blank");
+    const msg = `Olá! Quero solicitar meu empréstimo de ${formatCurrency(loanAmount)} em ${opt.parcelas}x de ${formatCurrency(calcParcela(loanAmount, opt.parcelas, opt.taxa))}. Nome: ${cadastro?.nomeCompleto || "N/A"}. Dia de pagamento: ${cadastro?.diaPagamento || "N/A"}.`;
+    transitionNavigate("/chat", { initialMessage: msg, nome: cadastro?.nomeCompleto });
   };
 
   return (
