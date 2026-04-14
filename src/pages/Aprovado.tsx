@@ -25,7 +25,7 @@ const benefits = [
 
 const Aprovado = () => {
   const location = useLocation();
-  const navigate = useNavigate();
+  const navigate = useTransitionNavigate();
   const cpfData = location.state?.cpfData as Record<string, unknown> | null;
 
   return (
