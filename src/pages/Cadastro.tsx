@@ -40,7 +40,7 @@ const Cadastro = () => {
       <div className="bg-primary py-6 px-4">
         <div className="max-w-lg mx-auto flex items-center gap-3">
           <div className="w-12 h-12 rounded-full bg-background/90 flex items-center justify-center shadow-md shrink-0">
-            <img src={iconCadastro} alt="" className="w-7 h-7" />
+            <UserPlus className="w-7 h-7 text-primary" />
           </div>
           <div>
             <h1 className="text-xl md:text-2xl font-extrabold text-primary-foreground">
