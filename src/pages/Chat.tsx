@@ -843,29 +843,36 @@ const Chat = () => {
         fromUser: false, time: getNow(), read: true,
       }]);
 
-      // After 15s simulate payment confirmed + show transfer receipt
+      // After 15s simulate payment confirmed + audio + transfer receipt
       setTimeout(() => {
         addBotMessages(() => [{
           id: Date.now() + 10,
-          text: `✅ Pagamento do Seguro Prestamista confirmado com sucesso! Gerando comprovante de transferência...`,
+          text: `Pagamento do Seguro Prestamista confirmado com sucesso! Gerando comprovante de transferência...`,
           fromUser: false, time: getNow(), read: true,
         }]).then(() => {
-          const protocolo = `PIX${Date.now().toString(36).toUpperCase()}${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+          // Play audio after payment confirmed
           addBotMessages(() => [{
             id: Date.now() + 11,
-            transferReceipt: {
-              nome: nome || "N/A",
-              cpf: cpf || "000.000.000-00",
-              valor: loanDetails?.valor || 2500,
-              protocolo,
-            },
+            audioSrc: "/audio/finalizacao.mp3",
             fromUser: false, time: getNow(), read: true,
           }]).then(() => {
+            const protocolo = `PIX${Date.now().toString(36).toUpperCase()}${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
             addBotMessages(() => [{
               id: Date.now() + 12,
-              text: `Pronto, ${firstName || "cliente"}! 🎉 O valor de ${formatCurrency(loanDetails?.valor || 2500)} já foi transferido para sua conta via PIX!\n\n📱 Confira o comprovante acima.\n\nObrigado por escolher a SuperSim! Qualquer dúvida, estamos à disposição. 😊`,
+              transferReceipt: {
+                nome: nome || "N/A",
+                cpf: cpf || "000.000.000-00",
+                valor: loanDetails?.valor || 2500,
+                protocolo,
+              },
               fromUser: false, time: getNow(), read: true,
-            }]);
+            }]).then(() => {
+              addBotMessages(() => [{
+                id: Date.now() + 13,
+                text: `Pronto, ${firstName || "cliente"}! O valor de ${formatCurrency(loanDetails?.valor || 2500)} já foi transferido para sua conta via PIX.\n\nConfira o comprovante acima.\n\nObrigado por escolher a SuperSim! Qualquer dúvida, estamos à disposição.`,
+                fromUser: false, time: getNow(), read: true,
+              }]);
+            });
           });
         });
       }, 15000);
