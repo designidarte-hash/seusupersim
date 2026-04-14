@@ -556,6 +556,7 @@ const Chat = () => {
   const [pdfConfirmed, setPdfConfirmed] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [greetingSent, setGreetingSent] = useState(false);
+  const [proceeded, setProceeded] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const typingQueue = useRef<(() => void)[]>([]);
   const processingQueue = useRef(false);
@@ -605,15 +606,26 @@ const Chat = () => {
       addBotMessages(() => [{
         id: Date.now() + 2, audioSrc: "/audio/welcome.mp3", fromUser: false, time: getNow(), read: true,
       }]).then(() => {
-        // Then loan card if applicable
-        if (loanDetails) {
-          addBotMessages(() => [
-            { id: Date.now() + 3, text: `Perfeito, ${firstName || "cliente"}! Aqui estão os detalhes da modalidade de crédito que você escolheu. Por favor, confira e confirme: 👇`, fromUser: false, time: getNow(), read: true },
-            { id: Date.now() + 4, loanCard: loanDetails, fromUser: false, time: getNow(), read: true },
-          ]);
-        }
+        // Show proceed button
+        addBotMessages(() => [{
+          id: Date.now() + 3, proceedButton: true, fromUser: false, time: getNow(), read: true,
+        }]);
       });
     });
+  };
+
+  const handleProceed = () => {
+    if (proceeded) return;
+    setProceeded(true);
+    setMessages((prev) => [...prev, { id: Date.now(), text: "Prosseguir ▶️", fromUser: true, time: getNow(), read: true }]);
+    if (loanDetails) {
+      setTimeout(() => {
+        addBotMessages(() => [
+          { id: Date.now() + 1, text: `Perfeito, ${firstName || "cliente"}! Aqui estão os detalhes da modalidade de crédito que você escolheu. Por favor, confira e confirme: 👇`, fromUser: false, time: getNow(), read: true },
+          { id: Date.now() + 2, loanCard: loanDetails, fromUser: false, time: getNow(), read: true },
+        ]);
+      }, 500);
+    }
   };
 
   useEffect(() => {
