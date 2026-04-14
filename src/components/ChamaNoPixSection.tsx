@@ -1,5 +1,5 @@
 import { useTransitionNavigate } from "@/components/PageTransition";
-import chamaNoPixImg from "@/assets/chama-no-pix.png";
+import chamaNoPixImg from "@/assets/chama-no-pix.webp";
 
 const ChamaNoPixSection = () => {
   const navigate = useTransitionNavigate();
