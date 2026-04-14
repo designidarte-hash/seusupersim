@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import LoanForm from "@/components/LoanForm";
 import Footer from "@/components/Footer";
 import logo from "@/assets/logo.png";
-import heroImage from "@/assets/hero-image.png";
+import heroImage from "@/assets/hero-image.webp";
 import iconPix from "@/assets/icon-pix.png";
 import iconInclusao from "@/assets/icon-inclusao.png";
 import iconJuros from "@/assets/icon-juros.png";
