@@ -34,7 +34,7 @@ const Aprovado = () => {
       </header>
 
       {/* Hero - Approval */}
-      <section className="bg-gradient-to-br from-[hsl(30,95%,55%)] to-[hsl(350,80%,60%)] py-12 px-4 text-center text-white">
+      <section className="bg-primary py-12 px-4 text-center text-primary-foreground">
         <div className="max-w-md mx-auto space-y-4">
           <div className="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center mx-auto">
             <CheckCircle2 className="w-10 h-10 text-white" />
