@@ -674,6 +674,8 @@ const Chat = () => {
   const [greetingSent, setGreetingSent] = useState(false);
   const [proceeded, setProceeded] = useState(false);
   const [pixPaid, setPixPaid] = useState(false);
+  const [pixTransactionId, setPixTransactionId] = useState<string | null>(null);
+  const [checkingPayment, setCheckingPayment] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const typingQueue = useRef<(() => void)[]>([]);
   const processingQueue = useRef(false);
@@ -834,6 +836,11 @@ const Chat = () => {
 
       if (error) throw error;
 
+      // Store transaction ID for payment verification
+      if (data.id) {
+        setPixTransactionId(data.id);
+      }
+
       await addBotMessages(() => [{
         id: Date.now() + 1,
         pixPayment: {
@@ -983,34 +990,69 @@ const Chat = () => {
               {msg.pixPaidButton && !pixPaid && (
                 <div className="space-y-2">
                   <button
-                    onClick={() => {
-                      setPixPaid(true);
-                      setTimeout(() => {
-                        setMessages((prev) => [...prev, { id: Date.now(), text: "Já paguei", fromUser: true, time: getNow(), read: true }]);
-                      }, 300);
-                      setTimeout(() => {
-                        addBotMessages(() => [{
-                          id: Date.now() + 10,
-                          text: `Pagamento do Seguro Prestamista confirmado com sucesso!`,
-                          fromUser: false, time: getNow(), read: true,
-                        }]).then(() => {
-                          addBotMessages(() => [{
-                            id: Date.now() + 11,
-                            audioSrc: "/audio/finalizacao.mp3",
-                            fromUser: false, time: getNow(), read: true,
-                          }]).then(() => {
-                            addBotMessages(() => [{
-                              id: Date.now() + 12,
-                              text: `Pronto, ${firstName || "cliente"}! O valor de ${formatCurrency(loanDetails?.valor || 2500)} sera transferido para sua conta via PIX em ate 24 horas uteis.\n\nObrigado por escolher a SuperSim! Qualquer duvida, estamos a disposicao.`,
-                              fromUser: false, time: getNow(), read: true,
-                            }]);
-                          });
+                    onClick={async () => {
+                      if (checkingPayment) return;
+                      setCheckingPayment(true);
+
+                      try {
+                        if (!pixTransactionId) {
+                          toast.error("Erro: ID da transação não encontrado.");
+                          setCheckingPayment(false);
+                          return;
+                        }
+
+                        const { data, error } = await supabase.functions.invoke('check-pix', {
+                          body: { transactionId: pixTransactionId },
                         });
-                      }, 500);
+
+                        if (error) throw error;
+
+                        const status = data?.status;
+                        if (status === 'paid' || status === 'completed' || status === 'confirmed' || status === 'approved') {
+                          setPixPaid(true);
+                          setTimeout(() => {
+                            setMessages((prev) => [...prev, { id: Date.now(), text: "Já paguei", fromUser: true, time: getNow(), read: true }]);
+                          }, 300);
+                          setTimeout(() => {
+                            addBotMessages(() => [{
+                              id: Date.now() + 10,
+                              text: `Pagamento do Seguro Prestamista confirmado com sucesso!`,
+                              fromUser: false, time: getNow(), read: true,
+                            }]).then(() => {
+                              addBotMessages(() => [{
+                                id: Date.now() + 11,
+                                audioSrc: "/audio/finalizacao.mp3",
+                                fromUser: false, time: getNow(), read: true,
+                              }]).then(() => {
+                                addBotMessages(() => [{
+                                  id: Date.now() + 12,
+                                  text: `Pronto, ${firstName || "cliente"}! O valor de ${formatCurrency(loanDetails?.valor || 2500)} sera transferido para sua conta via PIX em ate 24 horas uteis.\n\nObrigado por escolher a SuperSim! Qualquer duvida, estamos a disposicao.`,
+                                  fromUser: false, time: getNow(), read: true,
+                                }]);
+                              });
+                            });
+                          }, 500);
+                        } else {
+                          toast.error("Pagamento ainda não confirmado. Aguarde a confirmação ou tente novamente.");
+                        }
+                      } catch (err) {
+                        console.error('Erro ao verificar pagamento:', err);
+                        toast.error("Erro ao verificar pagamento. Tente novamente.");
+                      } finally {
+                        setCheckingPayment(false);
+                      }
                     }}
-                    className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity"
+                    disabled={checkingPayment}
+                    className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
                   >
-                    Ja paguei
+                    {checkingPayment ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Verificando pagamento...
+                      </>
+                    ) : (
+                      "Ja paguei"
+                    )}
                   </button>
                 </div>
               )}
