@@ -93,7 +93,7 @@ const Index = () => {
           </div>
           {splashDone && (
             <button
-              onClick={() => setShowSplash(false)}
+              onClick={() => { sessionStorage.setItem("splashSeen", "true"); setShowSplash(false); }}
               className="btn-3d w-full uppercase tracking-wide animate-in fade-in slide-in-from-bottom-2"
             >
               VER RESULTADO DA ANÁLISE
