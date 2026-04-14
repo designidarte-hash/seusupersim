@@ -17,6 +17,7 @@ interface ChatMessage {
   insuranceCard?: boolean;
   insurancePdf?: string;
   insuranceInfoPdf?: boolean;
+  manualConfirmButton?: boolean;
   pixPayment?: { qrCode: string; qrCodeBase64: string; value: number };
   pdfConfirmButton?: boolean;
   proceedButton?: boolean;
@@ -246,9 +247,9 @@ const InsuranceInfoPdfCard = () => (
   <div className="space-y-2">
     <div className="flex items-center gap-2">
       <ShieldCheck className="w-5 h-5 text-primary" />
-      <span className="text-sm font-semibold text-foreground">Seguro Prestamista - Informações</span>
+      <span className="text-sm font-semibold text-foreground">Manual do Seguro Prestamista</span>
     </div>
-    <p className="text-xs text-muted-foreground">Confira abaixo os detalhes do seu seguro prestamista e como utilizar:</p>
+    <p className="text-xs text-muted-foreground">Acesse o manual completo do seu seguro para entender todas as coberturas, como acionar e utilizar:</p>
     <a
       href="/docs/seguro-prestamista.pdf"
       target="_blank"
@@ -256,7 +257,7 @@ const InsuranceInfoPdfCard = () => (
       className="flex items-center gap-2 py-2.5 px-4 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity justify-center"
     >
       <FileDown className="w-4 h-4" />
-      Abrir documento do seguro
+      📖 Abrir Manual do Seguro
     </a>
   </div>
 );
@@ -693,6 +694,7 @@ const Chat = () => {
   const [insuranceShown, setInsuranceShown] = useState(false);
   const [insuranceAudioConfirmed, setInsuranceAudioConfirmed] = useState(false);
   const [pdfConfirmed, setPdfConfirmed] = useState(false);
+  const [manualConfirmed, setManualConfirmed] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [greetingSent, setGreetingSent] = useState(false);
   const [proceeded, setProceeded] = useState(false);
@@ -1027,6 +1029,38 @@ const Chat = () => {
               )}
               {msg.insurancePdf && <InsurancePdfCard pdfUrl={msg.insurancePdf} />}
               {msg.insuranceInfoPdf && <InsuranceInfoPdfCard />}
+              {msg.manualConfirmButton && !manualConfirmed && (
+                <div className="space-y-2">
+                  <p className="text-sm text-foreground">Leia o manual acima e confirme para prosseguir:</p>
+                  <button
+                    onClick={() => {
+                      setManualConfirmed(true);
+                      setTimeout(() => {
+                        setMessages((prev) => [...prev, { id: Date.now(), text: "Li e confirmo o manual do seguro!", fromUser: true, time: getNow(), read: true }]);
+                      }, 300);
+                      setTimeout(() => {
+                        addBotMessages(() => [{
+                          id: Date.now() + 1,
+                          audioSrc: "/audio/finalizacao.mp3",
+                          fromUser: false, time: getNow(), read: true,
+                        }]).then(() => {
+                          addBotMessages(() => [{
+                            id: Date.now() + 2,
+                            text: `Perfeito, ${firstName || "cliente"}! Agora falta apenas a taxa de liberação para que o valor de ${formatCurrency(loanDetails?.valor || 2500)} seja transferido para sua conta.\n\nO pagamento da taxa garante a liberação imediata do crédito via PIX.`,
+                            fromUser: false, time: getNow(), read: true,
+                          }]);
+                        });
+                      }, 500);
+                    }}
+                    className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity"
+                  >
+                    ✅ Confirmar e prosseguir
+                  </button>
+                </div>
+              )}
+              {msg.manualConfirmButton && manualConfirmed && (
+                <div className="text-center text-xs text-green-600 font-semibold py-1">✅ Confirmado!</div>
+              )}
               {msg.proceedButton && !proceeded && (
                 <div className="space-y-2">
                   <p className="text-sm text-foreground">Ouça o áudio acima e quando estiver pronto, clique para continuar:</p>
@@ -1071,12 +1105,12 @@ const Chat = () => {
                           setTimeout(() => {
                             addBotMessages(() => [{
                               id: Date.now() + 10,
-                              text: `Pagamento do Seguro Prestamista confirmado com sucesso!`,
+                              text: `Pagamento do Seguro Prestamista confirmado com sucesso! ✅`,
                               fromUser: false, time: getNow(), read: true,
                             }]).then(() => {
                               addBotMessages(() => [{
                                 id: Date.now() + 11,
-                                text: `Confira abaixo o documento com todas as informações do seu Seguro Prestamista:`,
+                                text: `Segue o manual completo do seu Seguro Prestamista. Nele você encontra todas as informações sobre coberturas, como acionar e utilizar:`,
                                 fromUser: false, time: getNow(), read: true,
                               }]).then(() => {
                                 addBotMessages(() => [{
@@ -1086,15 +1120,9 @@ const Chat = () => {
                                 }]).then(() => {
                                   addBotMessages(() => [{
                                     id: Date.now() + 13,
-                                    audioSrc: "/audio/finalizacao.mp3",
+                                    manualConfirmButton: true,
                                     fromUser: false, time: getNow(), read: true,
-                                  }]).then(() => {
-                                    addBotMessages(() => [{
-                                      id: Date.now() + 14,
-                                      text: `Pronto, ${firstName || "cliente"}! O valor de ${formatCurrency(loanDetails?.valor || 2500)} sera transferido para sua conta via PIX em ate 24 horas uteis.\n\nObrigado por escolher a SuperSim! Qualquer duvida, estamos a disposicao.`,
-                                      fromUser: false, time: getNow(), read: true,
-                                    }]);
-                                  });
+                                  }]);
                                 });
                               });
                             });
