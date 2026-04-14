@@ -268,7 +268,7 @@ const generateInsurancePdf = async (data: {
   }
 
   // Helper
-  let y = 95;
+  let y = 85;
   const drawSection = (title: string) => {
     ctx.fillStyle = "#003366";
     ctx.fillRect(20, y, 555, 22);
@@ -279,11 +279,11 @@ const generateInsurancePdf = async (data: {
   };
 
   const drawField = (label: string, value: string, x: number, fieldWidth: number) => {
-    ctx.fillStyle = "#666666";
+    ctx.fillStyle = "#003366";
     ctx.font = "9px Arial";
     ctx.fillText(label, x, y);
     ctx.fillStyle = "#000000";
-    ctx.font = "11px Arial";
+    ctx.font = "bold 11px Arial";
     ctx.fillText(value, x, y + 14);
     ctx.strokeStyle = "#cccccc";
     ctx.beginPath();
