@@ -279,10 +279,17 @@ const Chat = () => {
     setTimeout(() => {
       setMessages((prev) => [...prev, {
         id: Date.now() + 1,
-        text: `Excelente, ${firstName || "cliente"}! 🎉 Tudo certo! Sua solicitação de empréstimo foi finalizada com sucesso. O valor será enviado para a chave Pix informada. Um consultor entrará em contato em breve. Obrigado por escolher a SuperSim! 🚀`,
+        text: `Perfeito, ${firstName || "cliente"}! Agora ouça esse áudio importante para a finalização do seu processo: 🔊`,
         fromUser: false, time: getNow(), read: true,
       }]);
     }, 2000);
+    setTimeout(() => {
+      setMessages((prev) => [...prev, {
+        id: Date.now() + 2,
+        audioSrc: "/audio/finalizacao.mp3",
+        fromUser: false, time: getNow(), read: true,
+      }]);
+    }, 3500);
   };
 
   const handlePixEdit = (newVal: string) => {
