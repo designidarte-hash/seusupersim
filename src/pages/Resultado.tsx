@@ -123,7 +123,7 @@ const Resultado = () => {
 
           <Button
             onClick={() => navigate("/")}
-            className="w-full h-14 text-base font-bold rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-md transition active:scale-[0.98]"
+            className="w-full h-14 text-base font-bold rounded-full bg-gradient-to-r from-[hsl(30,95%,55%)] to-[hsl(350,80%,60%)] text-white hover:opacity-90 shadow-lg transition active:scale-[0.98]"
           >
             Nova consulta
           </Button>
