@@ -13,6 +13,7 @@ interface ChatMessage {
   loanCard?: LoanDetails;
   pixSelector?: boolean;
   pixConfirm?: { type: string; value: string };
+  insuranceAudioConfirm?: boolean;
   insuranceCard?: boolean;
   insurancePdf?: string;
   pixPayment?: { qrCode: string; qrCodeBase64: string; value: number };
@@ -669,6 +670,7 @@ const Chat = () => {
   const [pixConfirmed, setPixConfirmed] = useState(false);
   const [insuranceAccepted, setInsuranceAccepted] = useState<boolean | null>(null);
   const [insuranceShown, setInsuranceShown] = useState(false);
+  const [insuranceAudioConfirmed, setInsuranceAudioConfirmed] = useState(false);
   const [pdfConfirmed, setPdfConfirmed] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [greetingSent, setGreetingSent] = useState(false);
@@ -793,14 +795,31 @@ const Chat = () => {
       setMessages((prev) => [...prev, { id: Date.now(), text: `Chave Pix confirmada: ${pixValue}`, fromUser: true, time: getNow(), read: true }]);
     }, 300);
     setTimeout(() => {
-      // Show insurance info directly (no audio before)
+      addBotMessages(() => [
+        { id: Date.now() + 3, text: `${firstName || "Cliente"}, para proteger seu empréstimo, incluímos o Seguro Prestamista Allianz por apenas R$ 34,90/mês.`, fromUser: false, time: getNow(), read: true },
+      ]).then(() => {
+        addBotMessages(() => [
+          { id: Date.now() + 4, audioSrc: "/audio/seguro-confirmado.mp3", fromUser: false, time: getNow(), read: true },
+        ]).then(() => {
+          addBotMessages(() => [
+            { id: Date.now() + 5, insuranceAudioConfirm: true, fromUser: false, time: getNow(), read: true },
+          ]);
+        });
+      });
+    }, 500);
+  };
+
+  const handleInsuranceAudioConfirm = () => {
+    setInsuranceAudioConfirmed(true);
+    setTimeout(() => {
+      setMessages((prev) => [...prev, { id: Date.now(), text: "Confirmar seguro!", fromUser: true, time: getNow(), read: true }]);
+    }, 300);
+    setTimeout(() => {
       setInsuranceShown(true);
       setInsuranceAccepted(true);
       addBotMessages(() => [
-        { id: Date.now() + 3, text: `${firstName || "Cliente"}, para proteger seu empréstimo, incluímos o Seguro Prestamista Allianz por apenas R$ 34,90/mês.`, fromUser: false, time: getNow(), read: true },
-        { id: Date.now() + 4, insuranceCard: true, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 1, insuranceCard: true, fromUser: false, time: getNow(), read: true },
       ]).then(async () => {
-        // Auto-generate PDF
         const codigo = generateCode();
         const pdfUrl = await generateInsurancePdf({
           nome: nome || "N/A",
@@ -812,11 +831,11 @@ const Chat = () => {
           valorParcela: loanDetails?.valorParcela || 250,
         });
         addBotMessages(() => [
-          { id: Date.now() + 5, text: `Sua proposta de adesão ao seguro foi gerada automaticamente. Código: ${codigo}`, fromUser: false, time: getNow(), read: true },
-          { id: Date.now() + 6, insurancePdf: pdfUrl, fromUser: false, time: getNow(), read: true },
+          { id: Date.now() + 2, text: `Sua proposta de adesão ao seguro foi gerada automaticamente. Código: ${codigo}`, fromUser: false, time: getNow(), read: true },
+          { id: Date.now() + 3, insurancePdf: pdfUrl, fromUser: false, time: getNow(), read: true },
         ]).then(() => {
           addBotMessages(() => [{
-            id: Date.now() + 7, pdfConfirmButton: true, fromUser: false, time: getNow(), read: true,
+            id: Date.now() + 4, pdfConfirmButton: true, fromUser: false, time: getNow(), read: true,
           }]);
         });
       });
@@ -967,6 +986,20 @@ const Chat = () => {
               )}
               {msg.pixConfirm && (
                 <PixConfirmCard type={msg.pixConfirm.type} value={pixValue} onConfirm={handlePixConfirm} onEdit={handlePixEdit} confirmed={pixConfirmed} />
+              )}
+              {msg.insuranceAudioConfirm && !insuranceAudioConfirmed && (
+                <div className="space-y-2">
+                  <p className="text-sm text-foreground">Ouça o áudio acima e confirme para prosseguir:</p>
+                  <button
+                    onClick={handleInsuranceAudioConfirm}
+                    className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity"
+                  >
+                    ✅ Confirmar
+                  </button>
+                </div>
+              )}
+              {msg.insuranceAudioConfirm && insuranceAudioConfirmed && (
+                <div className="text-center text-xs text-green-600 font-semibold py-1">✅ Confirmado!</div>
               )}
               {msg.insuranceCard && (
                 <InsuranceCard onAccept={handleInsuranceAccept} onDecline={handleInsuranceDecline} accepted={insuranceAccepted} />
