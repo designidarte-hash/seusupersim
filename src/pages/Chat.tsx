@@ -277,7 +277,7 @@ const Chat = () => {
           <img src={profileImg} alt="Logo" className="w-8 h-8 object-contain" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-primary-foreground font-bold text-base truncate flex items-center gap-1.5">Atendimento SuperSim <img src={verifiedBadge} alt="Verificado" className="w-5 h-5 shrink-0 object-contain" /></p>
+          <p className="text-primary-foreground font-bold text-base truncate flex items-center gap-1.5">Atendimento SuperSim <img src={verifiedBadge} alt="Verificado" className="w-7 h-7 shrink-0 object-contain" /></p>
           <p className="text-primary-foreground/70 text-xs">online</p>
         </div>
       </header>
