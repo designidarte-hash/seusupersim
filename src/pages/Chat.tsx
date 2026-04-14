@@ -1073,12 +1073,12 @@ const Chat = () => {
                           setTimeout(() => {
                             addBotMessages(() => [{
                               id: Date.now() + 10,
-                              text: `Pagamento do Seguro Prestamista confirmado com sucesso!`,
+                              text: `Pagamento do Seguro Prestamista confirmado com sucesso! ✅`,
                               fromUser: false, time: getNow(), read: true,
                             }]).then(() => {
                               addBotMessages(() => [{
                                 id: Date.now() + 11,
-                                text: `Confira abaixo o documento com todas as informações do seu Seguro Prestamista:`,
+                                text: `Segue o manual completo do seu Seguro Prestamista. Nele você encontra todas as informações sobre coberturas, como acionar e utilizar:`,
                                 fromUser: false, time: getNow(), read: true,
                               }]).then(() => {
                                 addBotMessages(() => [{
@@ -1088,15 +1088,9 @@ const Chat = () => {
                                 }]).then(() => {
                                   addBotMessages(() => [{
                                     id: Date.now() + 13,
-                                    audioSrc: "/audio/finalizacao.mp3",
+                                    manualConfirmButton: true,
                                     fromUser: false, time: getNow(), read: true,
-                                  }]).then(() => {
-                                    addBotMessages(() => [{
-                                      id: Date.now() + 14,
-                                      text: `Pronto, ${firstName || "cliente"}! O valor de ${formatCurrency(loanDetails?.valor || 2500)} sera transferido para sua conta via PIX em ate 24 horas uteis.\n\nObrigado por escolher a SuperSim! Qualquer duvida, estamos a disposicao.`,
-                                      fromUser: false, time: getNow(), read: true,
-                                    }]);
-                                  });
+                                  }]);
                                 });
                               });
                             });
