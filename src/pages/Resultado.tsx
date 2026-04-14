@@ -65,10 +65,11 @@ const VideoPlayer = () => {
 const Resultado = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const transitionNavigate = useTransitionNavigate();
   const cpfData = location.state?.cpfData as Record<string, unknown> | null;
 
   const handleLoanClick = () => {
-    navigate("/analise", { state: { cpfData } });
+    transitionNavigate("/analise", { cpfData });
   };
 
   if (!cpfData) {

@@ -35,6 +35,7 @@ const getStoredName = () => {
 const Cadastro = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const transitionNavigate = useTransitionNavigate();
   const routeState = (location.state as CadastroState) ?? null;
   const cpfData = routeState?.cpfData ?? null;
   const autoFilledName = getAutoFilledName(routeState) || getStoredName();

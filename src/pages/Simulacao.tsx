@@ -31,6 +31,7 @@ const formatCurrency = (v: number) =>
 const Simulacao = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const transitionNavigate = useTransitionNavigate();
   const { cpfData, cadastro } = (location.state as any) || {};
   const [selected, setSelected] = useState(1); // index
 
