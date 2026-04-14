@@ -144,9 +144,9 @@ const Resultado = () => {
         </div>
 
         {/* Como Funciona — Video Section */}
-        <section className="w-full max-w-5xl mt-16">
-          <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
-            <div className="flex-1 space-y-4">
+        <section className="w-full max-w-lg mt-16">
+          <div className="flex flex-col items-center text-center gap-6">
+            <div className="space-y-3">
               <p className="text-xs font-semibold tracking-[0.3em] text-muted-foreground uppercase">
                 Como funciona
               </p>
@@ -157,14 +157,14 @@ const Resultado = () => {
                 Descomplicado, fácil e sem papelada! É rapidinho!<br />
                 Veja o passo a passo.
               </p>
-              <button
-                onClick={() => navigate("/")}
-                className="mt-2 px-8 py-3 rounded-full bg-gradient-to-r from-[hsl(30,95%,55%)] to-[hsl(350,80%,60%)] text-white font-bold text-base hover:opacity-90 shadow-lg transition active:scale-[0.98]"
-              >
-                Solicitar empréstimo
-              </button>
             </div>
             <VideoPlayer />
+            <button
+              onClick={() => navigate("/")}
+              className="mt-2 px-12 py-4 rounded-full bg-gradient-to-r from-[hsl(30,95%,55%)] to-[hsl(350,80%,60%)] text-white font-bold text-lg hover:opacity-90 shadow-lg transition active:scale-[0.98] w-full max-w-sm"
+            >
+              Solicitar empréstimo
+            </button>
           </div>
         </section>
 
