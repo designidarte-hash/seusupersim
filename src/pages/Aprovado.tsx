@@ -19,18 +19,6 @@ const benefits = [
     description:
       'Fácil, rápido e inclusivo. A nossa missão é dizer cada vez mais "sim" para a população brasileira através de um processo online e sem burocracia.',
   },
-  {
-    icon: Shield,
-    title: "Segurança garantida",
-    description:
-      "Seus dados são protegidos com criptografia de ponta a ponta. Processo 100% seguro e confiável.",
-  },
-  {
-    icon: Zap,
-    title: "Dinheiro rápido",
-    description:
-      "Receba o valor aprovado em até 24h direto na sua conta via PIX. Sem complicação, sem papelada.",
-  },
 ];
 
 const Aprovado = () => {
@@ -75,9 +63,7 @@ const Aprovado = () => {
           <h2 className="text-2xl md:text-3xl font-extrabold text-primary-foreground">
             Aqui sua chance é de verdade
           </h2>
-          <p className="text-primary-foreground/80">
-            Nascemos para democratizar o acesso ao crédito no Brasil e por isso oferecemos as melhores condições para todos os perfis.
-          </p>
+          <img src={chamaNoPixImg} alt="Chama no PIX" className="w-64 md:w-80 mx-auto" />
           <Button
             onClick={() => navigate("/")}
             className="mt-4 px-10 h-14 text-base font-bold rounded-full bg-background text-primary hover:bg-background/90 shadow-lg transition active:scale-[0.98]"
