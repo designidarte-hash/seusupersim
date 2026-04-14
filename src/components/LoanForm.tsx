@@ -82,7 +82,7 @@ const LoanForm = () => {
       }
 
       toast({ title: "Consulta realizada com sucesso!" });
-      navigate("/resultado", { cpfData: result });
+      navigate("/resultado", { cpfData: result, cpfDigits: cpfDigits });
     } catch {
       toast({ title: "Erro na consulta", description: "Não foi possível consultar o CPF.", variant: "destructive" });
     } finally {

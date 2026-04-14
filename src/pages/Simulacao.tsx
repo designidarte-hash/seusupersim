@@ -32,7 +32,7 @@ const Simulacao = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const transitionNavigate = useTransitionNavigate();
-  const { cpfData, cadastro } = (location.state as any) || {};
+  const { cpfData, cpfDigits, cadastro } = (location.state as any) || {};
   const [selected, setSelected] = useState(1); // index
 
   const handleConfirm = () => {
@@ -42,7 +42,9 @@ const Simulacao = () => {
     transitionNavigate("/chat", {
       initialMessage: msg,
       nome: cadastro?.nomeCompleto,
-      cpf: cpfData?.cpf || "",
+      cpf: cpfDigits
+        ? cpfDigits.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4")
+        : cpfData?.cpf || cpfData?.cpf_numero || "",
       email: cadastro?.email || "",
       celular: cadastro?.celular || "",
       dataNascimento: cpfData?.data_nascimento || cpfData?.dataNascimento || "",
