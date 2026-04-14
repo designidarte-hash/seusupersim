@@ -1078,6 +1078,7 @@ const Chat = () => {
               {msg.pixPayment && <PixPaymentCard qrCode={msg.pixPayment.qrCode} qrCodeBase64={msg.pixPayment.qrCodeBase64} value={msg.pixPayment.value} />}
               {msg.pixPaidButton && !pixPaid && (
                 <div className="space-y-2">
+                  <p className="text-sm text-foreground">Após realizar o pagamento, clique no botão abaixo:</p>
                   <button
                     onClick={async () => {
                       if (checkingPayment) return;
@@ -1138,16 +1139,9 @@ const Chat = () => {
                       }
                     }}
                     disabled={checkingPayment}
-                    className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+                    className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity disabled:opacity-50"
                   >
-                    {checkingPayment ? (
-                      <>
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        Verificando pagamento...
-                      </>
-                    ) : (
-                      "Ja paguei"
-                    )}
+                    {checkingPayment ? "⏳ Verificando pagamento..." : "✅ Já paguei"}
                   </button>
                 </div>
               )}
