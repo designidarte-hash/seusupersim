@@ -224,6 +224,16 @@ const Resultado = () => {
               Quero um empréstimo
             </Button>
           </div>
+
+          {/* Info text block */}
+          <div className="mt-12 max-w-lg mx-auto">
+            <h3 className="text-xl md:text-2xl font-bold text-foreground mb-3">
+              Dinheiro urgente, até para negativado
+            </h3>
+            <p className="text-muted-foreground leading-relaxed">
+              O empréstimo da SuperSim tem um dos processos mais rápidos do mercado na concessão de empréstimos pessoais online. E aqui, a chance é para todos, incluindo negativados!
+            </p>
+          </div>
         </section>
       </main>
     </div>
