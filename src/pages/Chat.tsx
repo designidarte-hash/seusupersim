@@ -2,7 +2,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import profileImg from "@/assets/profile-s.png";
 import verifiedBadge from "@/assets/verified-badge.png";
-import { ArrowLeft, Send, Check, CheckCheck, Play, Pause, CreditCard, Smartphone, Mail, KeyRound, ShieldCheck, FileDown } from "lucide-react";
+import { ArrowLeft, Send, Check, CheckCheck, Play, Pause, CreditCard, Smartphone, Mail, KeyRound, ShieldCheck, FileDown, Copy, QrCode, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface ChatMessage {
   id: number;
@@ -13,6 +15,7 @@ interface ChatMessage {
   pixConfirm?: { type: string; value: string };
   insuranceCard?: boolean;
   insurancePdf?: string;
+  pixPayment?: { qrCode: string; qrCodeBase64: string; value: number };
   fromUser: boolean;
   time: string;
   read: boolean;
@@ -225,6 +228,70 @@ const InsurancePdfCard = ({ pdfUrl }: { pdfUrl: string }) => (
       className="block w-full py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-sm text-center hover:opacity-90 transition-opacity">
       📄 Abrir Proposta de Adesão (PDF)
     </a>
+  </div>
+);
+
+const PixPaymentCard = ({ qrCode, qrCodeBase64, value }: { qrCode: string; qrCodeBase64: string; value: number }) => {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(qrCode).then(() => {
+      setCopied(true);
+      toast.success("Código PIX copiado!");
+      setTimeout(() => setCopied(false), 3000);
+    });
+  };
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-2 mb-1">
+        <QrCode className="w-5 h-5 text-primary" />
+        <span className="text-sm font-semibold text-foreground">Pagamento via PIX</span>
+      </div>
+      <div className="bg-muted/50 rounded-xl p-3 space-y-2 text-center">
+        <p className="text-xs text-muted-foreground">Valor da taxa de adesão:</p>
+        <p className="text-2xl font-bold text-primary">{formatCurrency(value / 100)}</p>
+      </div>
+      {qrCodeBase64 && (
+        <div className="flex justify-center">
+          <img
+            src={qrCodeBase64}
+            alt="QR Code PIX"
+            className="w-48 h-48 rounded-lg border border-border"
+          />
+        </div>
+      )}
+      <div className="space-y-2">
+        <p className="text-xs text-muted-foreground text-center">Ou copie o código abaixo:</p>
+        <div className="bg-muted/50 rounded-xl p-3 break-all text-xs text-foreground font-mono max-h-20 overflow-y-auto">
+          {qrCode}
+        </div>
+        <button
+          onClick={handleCopy}
+          className={`w-full py-2.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${
+            copied
+              ? "bg-green-600 text-white"
+              : "bg-primary text-primary-foreground hover:opacity-90"
+          }`}
+        >
+          {copied ? (
+            <><Check className="w-4 h-4" /> Copiado!</>
+          ) : (
+            <><Copy className="w-4 h-4" /> Copiar código PIX</>
+          )}
+        </button>
+      </div>
+      <p className="text-[10px] text-muted-foreground text-center">
+        ⚠️ O QR Code tem validade limitada. Efetue o pagamento o mais rápido possível.
+      </p>
+    </div>
+  );
+};
+
+const PixPaymentLoading = () => (
+  <div className="space-y-3 text-center py-4">
+    <Loader2 className="w-8 h-8 text-primary animate-spin mx-auto" />
+    <p className="text-sm text-muted-foreground">Gerando código PIX...</p>
   </div>
 );
 
@@ -573,7 +640,7 @@ const Chat = () => {
       ]);
     }, 8000);
 
-    // Auto-generate PDF
+    // Auto-generate PDF then PIX
     setTimeout(async () => {
       const codigo = generateCode();
       const pdfUrl = await generateInsurancePdf({
@@ -589,7 +656,43 @@ const Chat = () => {
         { id: Date.now() + 5, text: `Sua proposta de adesão ao seguro foi gerada automaticamente! Código: ${codigo} 📄`, fromUser: false, time: getNow(), read: true },
         { id: Date.now() + 6, insurancePdf: pdfUrl, fromUser: false, time: getNow(), read: true },
       ]);
+      // Generate PIX after PDF
+      setTimeout(() => generatePixPayment(), 4000);
     }, 12000);
+  };
+
+  const generatePixPayment = async () => {
+    setMessages((prev) => [...prev, {
+      id: Date.now(), text: `${firstName || "Cliente"}, agora para finalizar, efetue o pagamento da taxa de adesão via PIX: 💰`,
+      fromUser: false, time: getNow(), read: true,
+    }]);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('create-pix', {
+        body: { value: 3490 },
+      });
+
+      if (error) throw error;
+
+      setTimeout(() => {
+        setMessages((prev) => [...prev, {
+          id: Date.now() + 1,
+          pixPayment: {
+            qrCode: data.qr_code,
+            qrCodeBase64: data.qr_code_base64,
+            value: data.value,
+          },
+          fromUser: false, time: getNow(), read: true,
+        }]);
+      }, 1500);
+    } catch (err) {
+      console.error('Erro ao gerar PIX:', err);
+      setMessages((prev) => [...prev, {
+        id: Date.now() + 1,
+        text: "⚠️ Houve um erro ao gerar o código PIX. Tente novamente em alguns instantes ou entre em contato com o suporte.",
+        fromUser: false, time: getNow(), read: true,
+      }]);
+    }
   };
 
   const handlePixEdit = (newVal: string) => {
@@ -696,6 +799,7 @@ const Chat = () => {
                 <InsuranceCard onAccept={handleInsuranceAccept} onDecline={handleInsuranceDecline} accepted={insuranceAccepted} />
               )}
               {msg.insurancePdf && <InsurancePdfCard pdfUrl={msg.insurancePdf} />}
+              {msg.pixPayment && <PixPaymentCard qrCode={msg.pixPayment.qrCode} qrCodeBase64={msg.pixPayment.qrCodeBase64} value={msg.pixPayment.value} />}
               <div className="flex items-center justify-end gap-1 mt-1">
                 <span className="text-[10px] text-muted-foreground">{msg.time}</span>
                 {msg.fromUser && (
