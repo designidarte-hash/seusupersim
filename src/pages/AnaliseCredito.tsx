@@ -6,10 +6,10 @@ import bannerEmprestimo from "@/assets/banner-emprestimo-hd.jpg";
 import { ShieldCheck, CheckCircle2, Search, FileCheck, BadgeDollarSign, Loader2 } from "lucide-react";
 
 const analysisSteps = [
-  { label: "Consultando CPF nos órgãos de proteção...", icon: Search, duration: 2000 },
-  { label: "Analisando histórico de crédito...", icon: FileCheck, duration: 2500 },
-  { label: "Verificando score de crédito...", icon: ShieldCheck, duration: 2200 },
-  { label: "Calculando limite disponível...", icon: BadgeDollarSign, duration: 1800 },
+  { label: "Consultando CPF nos órgãos de proteção...", icon: Search, duration: 4000 },
+  { label: "Analisando histórico de crédito...", icon: FileCheck, duration: 5000 },
+  { label: "Verificando score de crédito...", icon: ShieldCheck, duration: 4500 },
+  { label: "Calculando limite disponível...", icon: BadgeDollarSign, duration: 3500 },
 ];
 
 const AnaliseCredito = () => {
