@@ -123,6 +123,44 @@ const Resultado = () => {
 
         </div>
 
+        {/* Como Funciona — Video Section */}
+        <section className="w-full max-w-5xl mt-16">
+          <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+            <div className="flex-1 space-y-4">
+              <p className="text-xs font-semibold tracking-[0.3em] text-muted-foreground uppercase">
+                Como funciona
+              </p>
+              <h2 className="text-2xl md:text-3xl font-bold text-primary leading-tight">
+                Solicitar seu empréstimo leva 5 minutos
+              </h2>
+              <p className="text-muted-foreground">
+                Descomplicado, fácil e sem papelada! É rapidinho!<br />
+                Veja o passo a passo.
+              </p>
+              <button
+                onClick={() => navigate("/")}
+                className="mt-2 px-8 py-3 rounded-full bg-gradient-to-r from-[hsl(30,95%,55%)] to-[hsl(350,80%,60%)] text-white font-bold text-base hover:opacity-90 shadow-lg transition active:scale-[0.98]"
+              >
+                Solicitar empréstimo
+              </button>
+            </div>
+            <div className="flex-1 w-full">
+              <div className="relative rounded-2xl overflow-hidden shadow-lg aspect-video">
+                <iframe
+                  src="https://www.youtube.com/embed/YOUR_VIDEO_ID"
+                  title="Como solicitar empréstimo"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full h-full absolute inset-0"
+                />
+              </div>
+              <p className="text-xs text-muted-foreground text-center mt-3">
+                Confira, no vídeo, nossos 4 passos para solicitar seu empréstimo em até 5 minutinhos, sem sair de casa.
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* Loan Products — matching Index style */}
         <section className="w-full max-w-5xl mt-16">
           <div className="text-center space-y-2 mb-10">
