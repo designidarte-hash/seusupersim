@@ -13,6 +13,7 @@ interface ChatMessage {
   loanCard?: LoanDetails;
   pixSelector?: boolean;
   pixConfirm?: { type: string; value: string };
+  insuranceAudioConfirm?: boolean;
   insuranceCard?: boolean;
   insurancePdf?: string;
   pixPayment?: { qrCode: string; qrCodeBase64: string; value: number };
