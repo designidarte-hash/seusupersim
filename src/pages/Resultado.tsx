@@ -1,8 +1,10 @@
-import { useState, useRef } from "react";
+import { useState, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.png";
-import { ArrowLeft, User, CalendarDays, Play, Pause } from "lucide-react";
+import { ArrowLeft, User, CalendarDays } from "lucide-react";
+import CreditAnalysisModal from "@/components/CreditAnalysisModal";
+import ApprovalResult from "@/components/ApprovalResult";
 import iconCheckOrange from "@/assets/icon-check-orange.png";
 import emprestimo1 from "@/assets/emprestimo1.jpg";
 import emprestimo2 from "@/assets/emprestimo2.jpg";
@@ -64,6 +66,17 @@ const Resultado = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const cpfData = location.state?.cpfData as Record<string, unknown> | null;
+  const [showAnalysis, setShowAnalysis] = useState(false);
+  const [showApproval, setShowApproval] = useState(false);
+
+  const handleLoanClick = () => {
+    setShowAnalysis(true);
+  };
+
+  const handleAnalysisComplete = useCallback(() => {
+    setShowAnalysis(false);
+    setShowApproval(true);
+  }, []);
 
   if (!cpfData) {
     return (
@@ -160,7 +173,7 @@ const Resultado = () => {
             </div>
             <VideoPlayer />
             <button
-              onClick={() => navigate("/")}
+              onClick={handleLoanClick}
               className="mt-2 px-12 py-4 rounded-full bg-gradient-to-r from-[hsl(30,95%,55%)] to-[hsl(350,80%,60%)] text-white font-bold text-lg hover:opacity-90 shadow-lg transition active:scale-[0.98] w-full max-w-sm"
             >
               Solicitar empréstimo
@@ -220,7 +233,10 @@ const Resultado = () => {
           </div>
 
           <div className="flex justify-center mt-10">
-            <Button className="px-12 h-14 text-base font-bold rounded-full bg-gradient-to-r from-[hsl(30,95%,55%)] to-[hsl(350,80%,60%)] text-white hover:opacity-90 shadow-lg transition active:scale-[0.98]">
+            <Button
+              onClick={handleLoanClick}
+              className="px-12 h-14 text-base font-bold rounded-full bg-gradient-to-r from-[hsl(30,95%,55%)] to-[hsl(350,80%,60%)] text-white hover:opacity-90 shadow-lg transition active:scale-[0.98]"
+            >
               Quero um empréstimo
             </Button>
           </div>
@@ -236,6 +252,9 @@ const Resultado = () => {
           </div>
         </section>
       </main>
+
+      <CreditAnalysisModal open={showAnalysis} onComplete={handleAnalysisComplete} />
+      <ApprovalResult open={showApproval} onClose={() => setShowApproval(false)} />
     </div>
   );
 };
