@@ -16,14 +16,15 @@ const AnaliseCredito = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const cpfData = location.state?.cpfData;
+  const cpfDigits = location.state?.cpfDigits;
   const [currentStep, setCurrentStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
 
   const handleComplete = useCallback(() => {
     setTimeout(() => {
-      navigate("/aprovado", { state: { cpfData } });
+      navigate("/aprovado", { state: { cpfData, cpfDigits } });
     }, 800);
-  }, [navigate, cpfData]);
+  }, [navigate, cpfData, cpfDigits]);
 
   useEffect(() => {
     let stepIndex = 0;

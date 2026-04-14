@@ -27,6 +27,7 @@ const Aprovado = () => {
   const location = useLocation();
   const navigate = useTransitionNavigate();
   const cpfData = location.state?.cpfData as Record<string, unknown> | null;
+  const cpfDigits = location.state?.cpfDigits as string | undefined;
 
   return (
     <div className="min-h-screen flex flex-col bg-sunburst text-primary-foreground">

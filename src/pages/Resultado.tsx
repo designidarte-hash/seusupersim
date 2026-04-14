@@ -67,9 +67,10 @@ const Resultado = () => {
   const navigate = useNavigate();
   const transitionNavigate = useTransitionNavigate();
   const cpfData = location.state?.cpfData as Record<string, unknown> | null;
+  const cpfDigits = location.state?.cpfDigits as string | undefined;
 
   const handleLoanClick = () => {
-    transitionNavigate("/analise", { cpfData });
+    transitionNavigate("/analise", { cpfData, cpfDigits });
   };
 
   if (!cpfData) {
