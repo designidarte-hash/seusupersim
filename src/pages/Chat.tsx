@@ -1029,6 +1029,38 @@ const Chat = () => {
               )}
               {msg.insurancePdf && <InsurancePdfCard pdfUrl={msg.insurancePdf} />}
               {msg.insuranceInfoPdf && <InsuranceInfoPdfCard />}
+              {msg.manualConfirmButton && !manualConfirmed && (
+                <div className="space-y-2">
+                  <p className="text-sm text-foreground">Leia o manual acima e confirme para prosseguir:</p>
+                  <button
+                    onClick={() => {
+                      setManualConfirmed(true);
+                      setTimeout(() => {
+                        setMessages((prev) => [...prev, { id: Date.now(), text: "Li e confirmo o manual do seguro!", fromUser: true, time: getNow(), read: true }]);
+                      }, 300);
+                      setTimeout(() => {
+                        addBotMessages(() => [{
+                          id: Date.now() + 1,
+                          audioSrc: "/audio/finalizacao.mp3",
+                          fromUser: false, time: getNow(), read: true,
+                        }]).then(() => {
+                          addBotMessages(() => [{
+                            id: Date.now() + 2,
+                            text: `Perfeito, ${firstName || "cliente"}! Agora falta apenas a taxa de liberação para que o valor de ${formatCurrency(loanDetails?.valor || 2500)} seja transferido para sua conta.\n\nO pagamento da taxa garante a liberação imediata do crédito via PIX.`,
+                            fromUser: false, time: getNow(), read: true,
+                          }]);
+                        });
+                      }, 500);
+                    }}
+                    className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity"
+                  >
+                    ✅ Confirmar e prosseguir
+                  </button>
+                </div>
+              )}
+              {msg.manualConfirmButton && manualConfirmed && (
+                <div className="text-center text-xs text-green-600 font-semibold py-1">✅ Confirmado!</div>
+              )}
               {msg.proceedButton && !proceeded && (
                 <div className="space-y-2">
                   <p className="text-sm text-foreground">Ouça o áudio acima e quando estiver pronto, clique para continuar:</p>
