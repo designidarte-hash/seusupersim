@@ -1,17 +1,20 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.png";
-import { CheckCircle2, PartyPopper, ThumbsUp, Smartphone, Shield, Zap } from "lucide-react";
+import { CheckCircle2, PartyPopper } from "lucide-react";
+import chamaNoPixImg from "@/assets/chama-no-pix.png";
+import iconThumbsUp from "@/assets/icon-thumbsup.png";
+import iconPhone from "@/assets/icon-phone.png";
 
 const benefits = [
   {
-    icon: ThumbsUp,
+    image: iconThumbsUp,
     title: "Taxa de aprovação",
     description:
       "Maior taxa de aprovação do mercado de crédito! Desenvolvemos métodos flexíveis e decisões baseadas em inteligência artificial para oferecer empréstimos descomplicados para todos que precisam.",
   },
   {
-    icon: Smartphone,
+    image: iconPhone,
     title: "Online e para todos",
     description:
       'Fácil, rápido e inclusivo. A nossa missão é dizer cada vez mais "sim" para a população brasileira através de um processo online e sem burocracia.',
