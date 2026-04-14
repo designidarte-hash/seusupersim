@@ -161,7 +161,7 @@ const Index = () => {
 
           <button
             onClick={scrollToTop}
-            className="inline-block px-10 py-3 rounded-full bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition"
+            className="inline-block px-10 py-3 rounded-full bg-gradient-to-r from-[hsl(30,95%,55%)] to-[hsl(350,80%,60%)] text-white font-semibold hover:opacity-90 shadow-lg transition"
           >
             Solicitar empréstimo
           </button>
@@ -198,7 +198,7 @@ const Index = () => {
 
           <button
             onClick={scrollToTop}
-            className="inline-block px-10 py-3 rounded-full bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition"
+            className="inline-block px-10 py-3 rounded-full bg-gradient-to-r from-[hsl(30,95%,55%)] to-[hsl(350,80%,60%)] text-white font-semibold hover:opacity-90 shadow-lg transition"
           >
             Quero SIM também!
           </button>
