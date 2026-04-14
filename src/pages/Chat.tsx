@@ -674,6 +674,8 @@ const Chat = () => {
   const [greetingSent, setGreetingSent] = useState(false);
   const [proceeded, setProceeded] = useState(false);
   const [pixPaid, setPixPaid] = useState(false);
+  const [pixTransactionId, setPixTransactionId] = useState<string | null>(null);
+  const [checkingPayment, setCheckingPayment] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const typingQueue = useRef<(() => void)[]>([]);
   const processingQueue = useRef(false);
