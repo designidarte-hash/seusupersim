@@ -162,7 +162,7 @@ const Simulacao = () => {
             onClick={handleConfirm}
             className="btn-3d w-full"
           >
-            Confirmar e solicitar 🚀
+            Confirmar e solicitar
           </button>
         </div>
       </main>
