@@ -28,22 +28,22 @@ const Aprovado = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-primary text-primary-foreground">
-      {/* Header */}
-      <header className="py-4 flex justify-center border-b border-primary-foreground/20">
+      {/* Header — white background */}
+      <header className="py-4 flex justify-center bg-background border-b border-border/50">
         <img src={logo} alt="Logo" className="h-10 md:h-12" />
       </header>
 
-      {/* Hero - Approval */}
-      <section className="py-12 px-4 text-center">
-        <div className="max-w-md mx-auto space-y-4">
-          <img src={iconCheckCircle} alt="Aprovado" className="w-16 h-16 mx-auto" />
-          <h1 className="text-3xl font-extrabold">Parabéns!</h1>
-          <p className="text-primary-foreground/80 text-lg">Seu crédito foi pré-aprovado!</p>
+      {/* Hero - Approval — white background */}
+      <section className="py-14 px-4 text-center bg-background">
+        <div className="max-w-md mx-auto space-y-5">
+          <img src={iconCheckCircle} alt="Aprovado" className="w-20 h-20 mx-auto" />
+          <h1 className="text-3xl font-extrabold text-foreground">Parabéns!</h1>
+          <p className="text-muted-foreground text-lg">Seu crédito foi pré-aprovado!</p>
 
-          <div className="bg-primary-foreground/10 backdrop-blur-sm rounded-2xl p-6 mt-4 space-y-1">
-            <p className="text-primary-foreground/70 text-sm">Valor disponível de até</p>
-            <p className="text-5xl font-extrabold text-primary-foreground">R$ 8.000</p>
-            <p className="text-primary-foreground/60 text-sm">em até 24x no boleto ou Pix</p>
+          <div className="bg-primary rounded-2xl p-8 mt-6 space-y-2 shadow-lg">
+            <p className="text-primary-foreground/80 text-sm">Valor disponível de até</p>
+            <p className="text-6xl font-black text-primary-foreground tracking-tight">R$ 8.000</p>
+            <p className="text-primary-foreground/70 text-sm">em até 24x no boleto ou Pix</p>
           </div>
         </div>
       </section>
