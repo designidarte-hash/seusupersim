@@ -37,8 +37,19 @@ const Simulacao = () => {
 
   const handleConfirm = () => {
     const opt = installmentOptions[selected];
-    const msg = `Olá! Quero solicitar meu empréstimo de ${formatCurrency(loanAmount)} em ${opt.parcelas}x de ${formatCurrency(calcParcela(loanAmount, opt.parcelas, opt.taxa))}. Nome: ${cadastro?.nomeCompleto || "N/A"}. Dia de pagamento: ${cadastro?.diaPagamento || "N/A"}.`;
-    transitionNavigate("/chat", { initialMessage: msg, nome: cadastro?.nomeCompleto });
+    const valorParcela = calcParcela(loanAmount, opt.parcelas, opt.taxa);
+    const msg = `Olá! Quero solicitar meu empréstimo de ${formatCurrency(loanAmount)} em ${opt.parcelas}x de ${formatCurrency(valorParcela)}. Nome: ${cadastro?.nomeCompleto || "N/A"}. Dia de pagamento: ${cadastro?.diaPagamento || "N/A"}.`;
+    transitionNavigate("/chat", {
+      initialMessage: msg,
+      nome: cadastro?.nomeCompleto,
+      loanDetails: {
+        valor: loanAmount,
+        parcelas: opt.parcelas,
+        valorParcela,
+        taxa: opt.taxa,
+        diaPagamento: cadastro?.diaPagamento || "N/A",
+      },
+    });
   };
 
   return (
