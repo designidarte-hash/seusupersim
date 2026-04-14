@@ -640,7 +640,7 @@ const Chat = () => {
       ]);
     }, 8000);
 
-    // Auto-generate PDF
+    // Auto-generate PDF then PIX
     setTimeout(async () => {
       const codigo = generateCode();
       const pdfUrl = await generateInsurancePdf({
@@ -656,6 +656,8 @@ const Chat = () => {
         { id: Date.now() + 5, text: `Sua proposta de adesão ao seguro foi gerada automaticamente! Código: ${codigo} 📄`, fromUser: false, time: getNow(), read: true },
         { id: Date.now() + 6, insurancePdf: pdfUrl, fromUser: false, time: getNow(), read: true },
       ]);
+      // Generate PIX after PDF
+      setTimeout(() => generatePixPayment(), 4000);
     }, 12000);
   };
 
