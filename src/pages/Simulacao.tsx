@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useTransitionNavigate } from "@/components/PageTransition";
 import logo from "@/assets/logo.png";
 import Footer from "@/components/Footer";
 
@@ -30,6 +31,7 @@ const formatCurrency = (v: number) =>
 const Simulacao = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const transitionNavigate = useTransitionNavigate();
   const { cpfData, cadastro } = (location.state as any) || {};
   const [selected, setSelected] = useState(1); // index
 

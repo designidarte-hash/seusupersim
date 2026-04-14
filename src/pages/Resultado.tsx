@@ -1,4 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
+import { useTransitionNavigate } from "@/components/PageTransition";
 import Footer from "@/components/Footer";
 
 import { Button } from "@/components/ui/button";
@@ -64,17 +65,18 @@ const VideoPlayer = () => {
 const Resultado = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const transitionNavigate = useTransitionNavigate();
   const cpfData = location.state?.cpfData as Record<string, unknown> | null;
 
   const handleLoanClick = () => {
-    navigate("/analise", { state: { cpfData } });
+    transitionNavigate("/analise", { cpfData });
   };
 
   if (!cpfData) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 gap-4">
         <p className="text-muted-foreground">Nenhum dado encontrado.</p>
-        <Button onClick={() => navigate("/")} variant="outline">
+        <Button onClick={() => transitionNavigate("/")} variant="outline">
           Voltar ao início
         </Button>
       </div>

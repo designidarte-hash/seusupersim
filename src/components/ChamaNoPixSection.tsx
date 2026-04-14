@@ -1,8 +1,8 @@
-import { useNavigate } from "react-router-dom";
+import { useTransitionNavigate } from "@/components/PageTransition";
 import chamaNoPixImg from "@/assets/chama-no-pix.png";
 
 const ChamaNoPixSection = () => {
-  const navigate = useNavigate();
+  const navigate = useTransitionNavigate();
 
   return (
     <section className="py-12 px-4">

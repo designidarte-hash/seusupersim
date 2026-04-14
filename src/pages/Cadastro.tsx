@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useTransitionNavigate } from "@/components/PageTransition";
 import logo from "@/assets/logo.png";
 import Footer from "@/components/Footer";
 
@@ -34,6 +35,7 @@ const getStoredName = () => {
 const Cadastro = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const transitionNavigate = useTransitionNavigate();
   const routeState = (location.state as CadastroState) ?? null;
   const cpfData = routeState?.cpfData ?? null;
   const autoFilledName = getAutoFilledName(routeState) || getStoredName();
@@ -65,7 +67,7 @@ const Cadastro = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!isValid) return;
-    navigate("/simulacao", { state: { cpfData, cadastro: form } });
+    transitionNavigate("/simulacao", { cpfData, cadastro: form });
   };
 
   return (
