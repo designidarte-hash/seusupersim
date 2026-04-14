@@ -164,7 +164,7 @@ const Resultado = () => {
             <VideoPlayer />
             <button
               onClick={handleLoanClick}
-              className="mt-2 px-12 py-4 rounded-full bg-gradient-to-r from-[hsl(30,95%,55%)] to-[hsl(350,80%,60%)] text-white font-bold text-lg hover:opacity-90 shadow-lg transition active:scale-[0.98] w-full max-w-sm"
+              className="btn-3d mt-2 w-full max-w-sm"
             >
               Solicitar empréstimo
             </button>
@@ -223,12 +223,12 @@ const Resultado = () => {
           </div>
 
           <div className="flex justify-center mt-10">
-            <Button
+            <button
               onClick={handleLoanClick}
-              className="px-12 h-14 text-base font-bold rounded-full bg-gradient-to-r from-[hsl(30,95%,55%)] to-[hsl(350,80%,60%)] text-white hover:opacity-90 shadow-lg transition active:scale-[0.98]"
+              className="btn-3d px-12"
             >
               Quero um empréstimo
-            </Button>
+            </button>
           </div>
 
           {/* Info text block */}

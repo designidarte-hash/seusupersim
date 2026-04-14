@@ -106,3 +106,16 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .btn-3d {
+    @apply px-10 py-4 rounded-2xl bg-primary text-white font-bold text-lg shadow-lg transition active:translate-y-0.5 active:shadow-md disabled:opacity-50 disabled:cursor-not-allowed;
+    border-bottom: 5px solid hsl(30, 80%, 42%);
+  }
+  .btn-3d:hover {
+    filter: brightness(1.05);
+  }
+  .btn-3d:active {
+    border-bottom-width: 2px;
+  }
+}

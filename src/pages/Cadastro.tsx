@@ -127,7 +127,7 @@ const Cadastro = () => {
             <button
               type="submit"
               disabled={!isValid}
-              className="w-full mt-4 px-10 py-4 rounded-full bg-gradient-to-r from-[hsl(30,95%,55%)] to-[hsl(350,80%,60%)] text-white font-bold text-lg hover:opacity-90 shadow-lg transition active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="btn-3d w-full mt-4"
             >
               Continuar
             </button>
