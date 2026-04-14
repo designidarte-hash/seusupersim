@@ -1,7 +1,8 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import profileImg from "@/assets/profile-s.png";
-import { ArrowLeft, Send, Check, CheckCheck, BadgeCheck, Play, Pause, CreditCard } from "lucide-react";
+import verifiedBadge from "@/assets/verified-badge.png";
+import { ArrowLeft, Send, Check, CheckCheck, Play, Pause, CreditCard } from "lucide-react";
 
 interface ChatMessage {
   id: number;
@@ -276,7 +277,7 @@ const Chat = () => {
           <img src={profileImg} alt="Logo" className="w-8 h-8 object-contain" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-primary-foreground font-bold text-base truncate flex items-center gap-1">Atendimento SuperSim <BadgeCheck className="w-4 h-4 text-green-400 shrink-0" /></p>
+          <p className="text-primary-foreground font-bold text-base truncate flex items-center gap-1">Atendimento SuperSim <img src={verifiedBadge} alt="Verificado" className="w-4 h-4 shrink-0" /></p>
           <p className="text-primary-foreground/70 text-xs">online</p>
         </div>
       </header>
