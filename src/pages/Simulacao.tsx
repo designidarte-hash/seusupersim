@@ -7,7 +7,7 @@ import Footer from "@/components/Footer";
 import iconCadastro from "@/assets/icon-cadastro.png";
 import { ArrowLeft } from "lucide-react";
 
-const loanAmount = 8000;
+const loanAmount = 3000;
 
 const installmentOptions = [
   { parcelas: 6, taxa: 1.32 },
