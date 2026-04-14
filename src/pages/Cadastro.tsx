@@ -67,7 +67,7 @@ const Cadastro = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!isValid) return;
-    navigate("/simulacao", { state: { cpfData, cadastro: form } });
+    transitionNavigate("/simulacao", { cpfData, cadastro: form });
   };
 
   return (
