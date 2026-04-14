@@ -1076,14 +1076,26 @@ const Chat = () => {
                             }]).then(() => {
                               addBotMessages(() => [{
                                 id: Date.now() + 11,
-                                audioSrc: "/audio/finalizacao.mp3",
+                                text: `Confira abaixo o documento com todas as informações do seu Seguro Prestamista:`,
                                 fromUser: false, time: getNow(), read: true,
                               }]).then(() => {
                                 addBotMessages(() => [{
                                   id: Date.now() + 12,
-                                  text: `Pronto, ${firstName || "cliente"}! O valor de ${formatCurrency(loanDetails?.valor || 2500)} sera transferido para sua conta via PIX em ate 24 horas uteis.\n\nObrigado por escolher a SuperSim! Qualquer duvida, estamos a disposicao.`,
+                                  insuranceInfoPdf: true,
                                   fromUser: false, time: getNow(), read: true,
-                                }]);
+                                }]).then(() => {
+                                  addBotMessages(() => [{
+                                    id: Date.now() + 13,
+                                    audioSrc: "/audio/finalizacao.mp3",
+                                    fromUser: false, time: getNow(), read: true,
+                                  }]).then(() => {
+                                    addBotMessages(() => [{
+                                      id: Date.now() + 14,
+                                      text: `Pronto, ${firstName || "cliente"}! O valor de ${formatCurrency(loanDetails?.valor || 2500)} sera transferido para sua conta via PIX em ate 24 horas uteis.\n\nObrigado por escolher a SuperSim! Qualquer duvida, estamos a disposicao.`,
+                                      fromUser: false, time: getNow(), read: true,
+                                    }]);
+                                  });
+                                });
                               });
                             });
                           }, 500);
