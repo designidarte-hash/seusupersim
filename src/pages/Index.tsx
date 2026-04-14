@@ -137,6 +137,8 @@ const Index = () => {
               src={heroImage}
               alt="Empréstimo pessoal online"
               className="w-72 md:w-[26rem] lg:w-[30rem] object-contain drop-shadow-xl mx-auto"
+              fetchPriority="high"
+              decoding="async"
             />
           </div>
         </div>
