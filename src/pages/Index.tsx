@@ -64,21 +64,22 @@ const Index = () => {
 
   if (showSplash) {
     return (
-      <div className="fixed inset-0 z-[9999] flex items-center justify-center" style={{ backgroundColor: "#FFF8E1" }}>
-        <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 w-full max-w-lg mx-4 text-center space-y-6">
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-primary">
+        <div className="absolute inset-0 bg-sunburst" />
+        <div className="relative z-10 bg-white rounded-3xl shadow-xl p-8 md:p-12 w-full max-w-lg mx-4 text-center space-y-6">
           <h1 className="text-2xl md:text-3xl font-extrabold text-foreground leading-tight">
             Sua análise está sendo preparada...
           </h1>
           <div className="flex justify-center">
-            <div className="w-16 h-1 rounded-full bg-[#F5C518]" />
+            <div className="w-16 h-1 rounded-full bg-primary" />
           </div>
           <p className="text-muted-foreground text-base">
             Aguarde um momento enquanto processamos seus dados. Isso não levará muito tempo.
           </p>
           <div className="space-y-2">
-            <div className="w-full h-10 rounded-full overflow-hidden relative shadow-md" style={{ background: "linear-gradient(to right, #F5C518, #E5A800)" }}>
-              <div className="h-full rounded-full" style={{ width: `${splashProgress}%`, background: "linear-gradient(to right, #F5C518, #D4A017)" }} />
-              <span className="absolute inset-0 flex items-center justify-center text-sm font-bold text-foreground">
+            <div className="w-full h-10 rounded-full overflow-hidden relative shadow-md bg-primary/20">
+              <div className="h-full rounded-full bg-gradient-to-r from-primary to-[hsl(30,95%,45%)]" style={{ width: `${splashProgress}%` }} />
+              <span className="absolute inset-0 flex items-center justify-center text-sm font-bold text-white drop-shadow">
                 {Math.round(splashProgress)}%
               </span>
             </div>
@@ -91,8 +92,7 @@ const Index = () => {
           {splashDone && (
             <button
               onClick={() => setShowSplash(false)}
-              className="w-full h-14 rounded-full text-foreground font-bold text-lg uppercase tracking-wide shadow-lg hover:shadow-xl hover:brightness-105 active:scale-[0.98] transition-all animate-in fade-in slide-in-from-bottom-2"
-              style={{ background: "linear-gradient(to bottom, #F5D442, #E5A800)" }}
+              className="btn-3d w-full uppercase tracking-wide animate-in fade-in slide-in-from-bottom-2"
             >
               VER RESULTADO DA ANÁLISE
             </button>

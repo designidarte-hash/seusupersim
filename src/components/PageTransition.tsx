@@ -75,9 +75,9 @@ const PageTransition = () => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="fixed inset-0 z-[9999] flex items-center justify-center"
-          style={{ backgroundColor: "#FFF8E1" }}
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-primary"
         >
+          <div className="absolute inset-0 bg-sunburst" />
           <motion.div
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -87,24 +87,19 @@ const PageTransition = () => {
             <h1 className="text-2xl md:text-3xl font-extrabold text-foreground leading-tight">
               Sua análise está sendo preparada...
             </h1>
-
-            {/* Yellow line accent */}
             <div className="flex justify-center">
-              <div className="w-16 h-1 rounded-full bg-[#F5C518]" />
+              <div className="w-16 h-1 rounded-full bg-primary" />
             </div>
-
             <p className="text-muted-foreground text-base">
               Aguarde um momento enquanto processamos seus dados. Isso não levará muito tempo.
             </p>
-
-            {/* Progress bar */}
             <div className="space-y-2">
-              <div className="w-full h-10 bg-gradient-to-r from-[#F5C518] to-[#E5A800] rounded-full overflow-hidden relative shadow-md">
+              <div className="w-full h-10 rounded-full overflow-hidden relative shadow-md bg-primary/20">
                 <motion.div
-                  className="h-full rounded-full bg-gradient-to-r from-[#F5C518] to-[#D4A017]"
+                  className="h-full rounded-full bg-gradient-to-r from-primary to-[hsl(30,95%,45%)]"
                   style={{ width: `${progress}%` }}
                 />
-                <span className="absolute inset-0 flex items-center justify-center text-sm font-bold text-foreground">
+                <span className="absolute inset-0 flex items-center justify-center text-sm font-bold text-white drop-shadow">
                   {Math.round(progress)}%
                 </span>
               </div>
@@ -118,15 +113,13 @@ const PageTransition = () => {
                 </motion.p>
               )}
             </div>
-
-            {/* Button appears when done */}
             {done && (
               <motion.button
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
                 onClick={handleGoToResult}
-                className="w-full h-14 rounded-full bg-gradient-to-b from-[#F5D442] to-[#E5A800] text-foreground font-bold text-lg uppercase tracking-wide shadow-lg hover:shadow-xl hover:brightness-105 active:scale-[0.98] transition-all"
+                className="btn-3d w-full uppercase tracking-wide"
               >
                 VER RESULTADO DA ANÁLISE
               </motion.button>
