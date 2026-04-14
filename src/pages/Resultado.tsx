@@ -1,7 +1,8 @@
+import { useState, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.png";
-import { ArrowLeft, User, CalendarDays } from "lucide-react";
+import { ArrowLeft, User, CalendarDays, Play, Pause } from "lucide-react";
 import iconCheckOrange from "@/assets/icon-check-orange.png";
 import emprestimo1 from "@/assets/emprestimo1.jpg";
 import emprestimo2 from "@/assets/emprestimo2.jpg";
