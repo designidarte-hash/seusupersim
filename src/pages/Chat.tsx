@@ -752,11 +752,11 @@ const Chat = () => {
     setLoanConfirmed(true);
     setPixStep("selecting");
     setTimeout(() => {
-      setMessages((prev) => [...prev, { id: Date.now(), text: "Dados corretos! ✅", fromUser: true, time: getNow(), read: true }]);
+      setMessages((prev) => [...prev, { id: Date.now(), text: "Dados corretos!", fromUser: true, time: getNow(), read: true }]);
     }, 300);
     setTimeout(() => {
       addBotMessages(() => [
-        { id: Date.now() + 1, text: `Ótimo, ${firstName || "cliente"}! Agora precisamos da sua chave Pix para o recebimento do valor. Escolha o tipo: 👇`, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 1, text: `Ótimo, ${firstName || "cliente"}! Agora precisamos da sua chave Pix para o recebimento do valor. Escolha o tipo:`, fromUser: false, time: getNow(), read: true },
         { id: Date.now() + 2, pixSelector: true, fromUser: false, time: getNow(), read: true },
       ]);
     }, 500);
