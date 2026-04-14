@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import Footer from "@/components/Footer";
 import logo from "@/assets/logo.png";
 import bannerEmprestimo from "@/assets/banner-emprestimo-hd.jpg";
 import { ShieldCheck, CheckCircle2, Search, FileCheck, BadgeDollarSign, Loader2 } from "lucide-react";
@@ -121,6 +122,7 @@ const AnaliseCredito = () => {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   );
 };
