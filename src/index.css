@@ -109,19 +109,24 @@ All colors MUST be HSL.
 
 @layer components {
   .bg-sunburst {
-    background: radial-gradient(ellipse at center, hsl(45, 100%, 60%) 0%, hsl(36, 97%, 60%) 40%, hsl(30, 95%, 52%) 100%);
-    background-size: cover;
+    background: radial-gradient(ellipse at center, hsl(45, 100%, 65%) 0%, hsl(38, 97%, 58%) 35%, hsl(30, 95%, 52%) 100%);
     position: relative;
+    overflow: hidden;
   }
   .bg-sunburst::before {
     content: '';
     position: absolute;
-    inset: 0;
+    inset: -50%;
+    width: 200%;
+    height: 200%;
     background: repeating-conic-gradient(
       from 0deg,
-      hsla(36, 97%, 50%, 0.08) 0deg 5deg,
-      transparent 5deg 10deg
+      hsla(35, 90%, 45%, 0.12) 0deg 4deg,
+      transparent 4deg 8deg
     );
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     pointer-events: none;
   }
 
