@@ -2,7 +2,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import profileImg from "@/assets/profile-s.png";
 import verifiedBadge from "@/assets/verified-badge.png";
-import { ArrowLeft, Send, Check, CheckCheck, Play, Pause, CreditCard, Smartphone, Mail, KeyRound } from "lucide-react";
+import { ArrowLeft, Send, Check, CheckCheck, Play, Pause, CreditCard, Smartphone, Mail, KeyRound, ShieldCheck, FileDown } from "lucide-react";
 
 interface ChatMessage {
   id: number;
@@ -11,6 +11,8 @@ interface ChatMessage {
   loanCard?: LoanDetails;
   pixSelector?: boolean;
   pixConfirm?: { type: string; value: string };
+  insuranceCard?: boolean;
+  insurancePdf?: string;
   fromUser: boolean;
   time: string;
   read: boolean;
@@ -31,6 +33,13 @@ const getNow = () => {
 
 const formatCurrency = (v: number) =>
   v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+const generateCode = () => {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let code = "";
+  for (let i = 0; i < 10; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  return `SEG-${code}`;
+};
 
 const AudioPlayer = ({ src }: { src: string }) => {
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -131,9 +140,7 @@ const PixConfirmCard = ({ type, value, onConfirm, onEdit, confirmed }: { type: s
     return (
       <div className="space-y-2">
         <p className="text-sm text-foreground">Chave Pix ({label}):</p>
-        <div className="bg-muted/50 rounded-xl p-3 text-center">
-          <p className="font-semibold text-foreground">{value}</p>
-        </div>
+        <div className="bg-muted/50 rounded-xl p-3 text-center"><p className="font-semibold text-foreground">{value}</p></div>
         <div className="text-center text-xs text-green-600 font-semibold py-1">✅ Chave confirmada!</div>
       </div>
     );
@@ -144,32 +151,18 @@ const PixConfirmCard = ({ type, value, onConfirm, onEdit, confirmed }: { type: s
       <p className="text-sm text-foreground">Chave Pix ({label}):</p>
       {editing ? (
         <div className="space-y-2">
-          <input
-            type="text"
-            value={editValue}
-            onChange={(e) => setEditValue(e.target.value)}
-            className="w-full px-3 py-2 rounded-xl border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
-          />
-          <button
-            onClick={() => { onEdit(editValue); setEditing(false); }}
-            className="w-full py-2 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity"
-          >
-            Salvar
-          </button>
+          <input type="text" value={editValue} onChange={(e) => setEditValue(e.target.value)}
+            className="w-full px-3 py-2 rounded-xl border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50" />
+          <button onClick={() => { onEdit(editValue); setEditing(false); }}
+            className="w-full py-2 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity">Salvar</button>
         </div>
       ) : (
         <>
-          <div className="bg-muted/50 rounded-xl p-3 text-center">
-            <p className="font-semibold text-foreground">{value}</p>
-          </div>
+          <div className="bg-muted/50 rounded-xl p-3 text-center"><p className="font-semibold text-foreground">{value}</p></div>
           <div className="flex gap-2">
-            <button onClick={onConfirm} className="flex-1 py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity">
-              ✅ Confirmar
-            </button>
+            <button onClick={onConfirm} className="flex-1 py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity">✅ Confirmar</button>
             {type !== "cpf" && (
-              <button onClick={() => setEditing(true)} className="flex-1 py-2.5 rounded-xl border border-primary text-primary font-bold text-sm hover:bg-primary/5 transition-colors">
-                ✏️ Editar
-              </button>
+              <button onClick={() => setEditing(true)} className="flex-1 py-2.5 rounded-xl border border-primary text-primary font-bold text-sm hover:bg-primary/5 transition-colors">✏️ Editar</button>
             )}
           </div>
         </>
@@ -178,10 +171,272 @@ const PixConfirmCard = ({ type, value, onConfirm, onEdit, confirmed }: { type: s
   );
 };
 
+const InsuranceCard = ({ onAccept, onDecline, accepted }: { onAccept: () => void; onDecline: () => void; accepted: boolean | null }) => {
+  if (accepted === true) {
+    return (
+      <div className="space-y-2">
+        <div className="flex items-center gap-2"><ShieldCheck className="w-5 h-5 text-green-500" /><span className="text-sm font-semibold text-foreground">Seguro Prestamista</span></div>
+        <div className="text-center text-xs text-green-600 font-semibold py-1">✅ Seguro contratado!</div>
+      </div>
+    );
+  }
+  if (accepted === false) {
+    return (
+      <div className="space-y-2">
+        <div className="flex items-center gap-2"><ShieldCheck className="w-5 h-5 text-muted-foreground" /><span className="text-sm font-semibold text-foreground">Seguro Prestamista</span></div>
+        <div className="text-center text-xs text-muted-foreground font-semibold py-1">Seguro não contratado</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-2 mb-1">
+        <ShieldCheck className="w-5 h-5 text-primary" />
+        <span className="text-sm font-semibold text-foreground">Seguro Prestamista - Allianz</span>
+      </div>
+      <div className="bg-muted/50 rounded-xl p-3 space-y-2 text-sm">
+        <p className="text-muted-foreground text-xs">Proteja seu empréstimo com o Seguro Prestamista. Em caso de imprevistos, suas parcelas ficam cobertas.</p>
+        <div className="flex justify-between"><span className="text-muted-foreground">Coberturas</span><span className="font-semibold text-xs">Morte, IPA, IFPD</span></div>
+        <div className="flex justify-between"><span className="text-muted-foreground">Valor mensal</span><span className="font-semibold text-primary text-base">R$ 34,90</span></div>
+        <div className="flex justify-between"><span className="text-muted-foreground">Seguradora</span><span className="font-semibold">Allianz Seguros</span></div>
+        <div className="flex justify-between"><span className="text-muted-foreground">SUSEP</span><span className="font-semibold text-xs">15414.901719/2014-89</span></div>
+      </div>
+      <div className="flex gap-2">
+        <button onClick={onAccept} className="flex-1 py-2.5 rounded-xl bg-green-600 text-white font-bold text-sm hover:opacity-90 transition-opacity">
+          ✅ Aderir ao seguro
+        </button>
+        <button onClick={onDecline} className="flex-1 py-2.5 rounded-xl border border-border text-muted-foreground font-bold text-sm hover:bg-muted/50 transition-colors">
+          Não, obrigado
+        </button>
+      </div>
+    </div>
+  );
+};
+
+const InsurancePdfCard = ({ pdfUrl }: { pdfUrl: string }) => (
+  <div className="space-y-3">
+    <div className="flex items-center gap-2">
+      <FileDown className="w-5 h-5 text-primary" />
+      <span className="text-sm font-semibold text-foreground">Proposta de Adesão - Seguro Prestamista</span>
+    </div>
+    <p className="text-xs text-muted-foreground">Seu documento foi gerado com sucesso. Clique abaixo para visualizar:</p>
+    <a href={pdfUrl} target="_blank" rel="noopener noreferrer"
+      className="block w-full py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-sm text-center hover:opacity-90 transition-opacity">
+      📄 Abrir Proposta de Adesão (PDF)
+    </a>
+  </div>
+);
+
+// Generate PDF in-browser using canvas
+const generateInsurancePdf = async (data: {
+  nome: string; cpf: string; dataNascimento: string; codigo: string;
+  valor: number; parcelas: number; valorParcela: number;
+}) => {
+  // Use jspdf-like approach with canvas
+  const canvas = document.createElement("canvas");
+  const scale = 2;
+  const w = 595 * scale;
+  const h = 842 * scale;
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext("2d")!;
+  ctx.scale(scale, scale);
+
+  // Background
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, 595, 842);
+
+  // Header blue bar
+  ctx.fillStyle = "#003366";
+  ctx.fillRect(0, 0, 595, 70);
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "bold 11px Arial";
+  ctx.fillText("Proposta de Adesão", 20, 25);
+  ctx.font = "bold 22px Arial";
+  ctx.fillText("Prestamista", 20, 55);
+  ctx.font = "bold 14px Arial";
+  ctx.fillText("Allianz", 500, 35);
+  ctx.font = "10px Arial";
+  ctx.fillText("Seguros", 500, 50);
+
+  // Helper
+  let y = 95;
+  const drawSection = (title: string) => {
+    ctx.fillStyle = "#003366";
+    ctx.fillRect(20, y, 555, 22);
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 10px Arial";
+    ctx.fillText(title, 25, y + 15);
+    y += 30;
+  };
+
+  const drawField = (label: string, value: string, x: number, fieldWidth: number) => {
+    ctx.fillStyle = "#666666";
+    ctx.font = "9px Arial";
+    ctx.fillText(label, x, y);
+    ctx.fillStyle = "#000000";
+    ctx.font = "11px Arial";
+    ctx.fillText(value, x, y + 14);
+    ctx.strokeStyle = "#cccccc";
+    ctx.beginPath();
+    ctx.moveTo(x, y + 18);
+    ctx.lineTo(x + fieldWidth, y + 18);
+    ctx.stroke();
+  };
+
+  const drawFieldRow = (fields: { label: string; value: string; width: number }[]) => {
+    let x = 25;
+    for (const f of fields) {
+      drawField(f.label, f.value, x, f.width);
+      x += f.width + 15;
+    }
+    y += 32;
+  };
+
+  // Dados do Estipulante
+  drawSection("DADOS DO ESTIPULANTE");
+  drawFieldRow([{ label: "Estipulante", value: "SuperSim Serviços Financeiros LTDA", width: 350 }, { label: "Nº Apólice", value: data.codigo, width: 170 }]);
+
+  // Dados do Proponente
+  drawSection("DADOS DO PROPONENTE");
+  drawFieldRow([{ label: "Nome Completo", value: data.nome, width: 530 }]);
+  drawFieldRow([{ label: "CPF", value: data.cpf, width: 200 }, { label: "Data de Nascimento", value: data.dataNascimento, width: 150 }]);
+  drawFieldRow([{ label: "Sexo", value: "___", width: 80 }, { label: "Estado Civil", value: "___", width: 120 }, { label: "Data", value: new Date().toLocaleDateString("pt-BR"), width: 120 }]);
+
+  // Plano de Seguro
+  drawSection("PLANO DE SEGURO");
+  drawFieldRow([{ label: "Plano de Financiamento/Prestação", value: `${data.parcelas}x de ${formatCurrency(data.valorParcela)}`, width: 300 }, { label: "Início de Vigência", value: new Date().toLocaleDateString("pt-BR"), width: 200 }]);
+
+  const coberturas = [
+    { nome: "Morte", valor: formatCurrency(data.valor) },
+    { nome: "IPA - Invalidez Permanente Total por Acidente", valor: formatCurrency(data.valor) },
+    { nome: "IFPD - Invalidez Funcional Permanente Total por Doença", valor: formatCurrency(data.valor) },
+    { nome: "PR - Perda de Renda", valor: formatCurrency(data.valor) },
+  ];
+
+  ctx.fillStyle = "#f5f5f5";
+  ctx.fillRect(25, y, 545, 22);
+  ctx.fillStyle = "#003366";
+  ctx.font = "bold 9px Arial";
+  ctx.fillText("Coberturas", 30, y + 15);
+  ctx.fillText("Capital Segurado - R$", 400, y + 15);
+  y += 28;
+
+  for (const c of coberturas) {
+    ctx.fillStyle = "#333333";
+    ctx.font = "9px Arial";
+    ctx.fillText(c.nome, 30, y);
+    ctx.fillText(c.valor, 400, y);
+    ctx.strokeStyle = "#e0e0e0";
+    ctx.beginPath();
+    ctx.moveTo(25, y + 6);
+    ctx.lineTo(570, y + 6);
+    ctx.stroke();
+    y += 18;
+  }
+  y += 5;
+
+  ctx.fillStyle = "#003366";
+  ctx.font = "bold 10px Arial";
+  ctx.fillText(`Prêmio do Seguro Mensal: R$ 34,90`, 25, y);
+  y += 25;
+
+  // Declarações
+  drawSection("DECLARAÇÕES");
+  const declaracoes = [
+    "Respondo a perguntas de próprio punho, assinando por extenso a maquina SIM ou NÃO. Em caso afirmativo, forneça os detalhes.",
+    "1. Encontra-se em plena atividade de trabalho? Caso negativo,descreva o motivo.",
+    "2. É portador de alguma moléstia que o obriga a indicar tratamento médico ou clínico com acompanhamento médico? Caso positivo indentifique o diagnostico.",
+    "3. Encontra-se em fase de realização de exames laboratoriais para diagnóstico de doença? Caso positivo esclareça.",
+    "4. Se foi submetido a internação em regime de internação hospitalar? Caso positivo, informe a período e o motivo.",
+    "5. Se foi submetido a tratamento cirúrgico? Inclusive estético? Caso positivo informe o data e o diagnóstico pré-operatório.",
+  ];
+
+  ctx.fillStyle = "#333333";
+  ctx.font = "8px Arial";
+  for (const d of declaracoes) {
+    const lines = wrapText(ctx, d, 530);
+    for (const line of lines) {
+      ctx.fillText(line, 25, y);
+      y += 12;
+    }
+    y += 3;
+  }
+  y += 10;
+
+  // Termos
+  ctx.fillStyle = "#f0f0f0";
+  ctx.fillRect(20, y, 555, 60);
+  ctx.fillStyle = "#333333";
+  ctx.font = "7px Arial";
+  const termos = "Autorizo a referida inclusão, no seguro Allianz Prestamista, conforme as Condições Gerais e Especiais em poder do Estipulante, o quem concedo o direito de agir em meu nome no suprimento de todas as cláusulas contempladas neste seguro. Declaro todas as comunicações serão através da internet, com anuência e meu consentimento.";
+  const termoLines = wrapText(ctx, termos, 540);
+  let ty = y + 10;
+  for (const line of termoLines) {
+    ctx.fillText(line, 28, ty);
+    ty += 10;
+  }
+  y += 70;
+
+  // Assinatura
+  ctx.strokeStyle = "#333333";
+  ctx.beginPath();
+  ctx.moveTo(25, y);
+  ctx.lineTo(280, y);
+  ctx.stroke();
+  ctx.fillStyle = "#666666";
+  ctx.font = "8px Arial";
+  ctx.fillText("Assinatura do Proponente", 100, y + 12);
+
+  ctx.beginPath();
+  ctx.moveTo(320, y);
+  ctx.lineTo(570, y);
+  ctx.stroke();
+  ctx.fillText("Data: " + new Date().toLocaleDateString("pt-BR"), 400, y + 12);
+
+  y += 35;
+
+  // Footer
+  ctx.fillStyle = "#003366";
+  ctx.fillRect(0, 810, 595, 32);
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "7px Arial";
+  ctx.fillText("Allianz Seguros S.A. - CNPJ 61.573.796/0001-66 - Pág. 1 Processo SUSEP nº 15414.901719/2014-89", 100, 825);
+  ctx.fillText(`Código: ${data.codigo}`, 25, 825);
+
+  // Convert to blob
+  return new Promise<string>((resolve) => {
+    canvas.toBlob((blob) => {
+      if (blob) {
+        const url = URL.createObjectURL(blob);
+        resolve(url);
+      }
+    }, "image/png");
+  });
+};
+
+function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] {
+  const words = text.split(" ");
+  const lines: string[] = [];
+  let current = "";
+  for (const word of words) {
+    const test = current ? current + " " + word : word;
+    if (ctx.measureText(test).width > maxWidth) {
+      if (current) lines.push(current);
+      current = word;
+    } else {
+      current = test;
+    }
+  }
+  if (current) lines.push(current);
+  return lines;
+}
+
 const Chat = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { initialMessage, nome, cpf, email, celular, loanDetails } = (location.state as any) || {};
+  const { initialMessage, nome, cpf, email, celular, dataNascimento, loanDetails } = (location.state as any) || {};
   const firstName = nome ? nome.split(" ")[0] : "";
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -190,6 +445,8 @@ const Chat = () => {
   const [pixType, setPixType] = useState("");
   const [pixValue, setPixValue] = useState("");
   const [pixConfirmed, setPixConfirmed] = useState(false);
+  const [insuranceAccepted, setInsuranceAccepted] = useState<boolean | null>(null);
+  const [insuranceShown, setInsuranceShown] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -251,7 +508,6 @@ const Chat = () => {
   const handlePixSelect = (type: string) => {
     setPixType(type);
     setPixStep("confirming");
-
     let value = "";
     if (type === "cpf") value = cpf || "000.000.000-00";
     else if (type === "email") value = email || "";
@@ -290,10 +546,65 @@ const Chat = () => {
         fromUser: false, time: getNow(), read: true,
       }]);
     }, 3500);
+    // Show insurance after audio
+    setTimeout(() => {
+      setInsuranceShown(true);
+      setMessages((prev) => [...prev,
+        { id: Date.now() + 3, text: `${firstName || "Cliente"}, temos uma oferta especial para proteger seu empréstimo! 🛡️ Conheça o Seguro Prestamista Allianz por apenas R$ 34,90/mês:`, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 4, insuranceCard: true, fromUser: false, time: getNow(), read: true },
+      ]);
+    }, 8000);
   };
 
   const handlePixEdit = (newVal: string) => {
     setPixValue(newVal);
+  };
+
+  const handleInsuranceAccept = async () => {
+    setInsuranceAccepted(true);
+    setTimeout(() => {
+      setMessages((prev) => [...prev, { id: Date.now(), text: "Quero aderir ao seguro! ✅", fromUser: true, time: getNow(), read: true }]);
+    }, 300);
+    setTimeout(() => {
+      setMessages((prev) => [...prev, {
+        id: Date.now() + 1,
+        text: `Excelente escolha, ${firstName || "cliente"}! 🎉 Estamos gerando sua proposta de adesão ao Seguro Prestamista...`,
+        fromUser: false, time: getNow(), read: true,
+      }]);
+    }, 1500);
+
+    // Generate PDF
+    const codigo = generateCode();
+    const pdfUrl = await generateInsurancePdf({
+      nome: nome || "N/A",
+      cpf: cpf || "000.000.000-00",
+      dataNascimento: dataNascimento || "00/00/0000",
+      codigo,
+      valor: loanDetails?.valor || 2500,
+      parcelas: loanDetails?.parcelas || 12,
+      valorParcela: loanDetails?.valorParcela || 250,
+    });
+
+    setTimeout(() => {
+      setMessages((prev) => [...prev,
+        { id: Date.now() + 2, text: `Pronto! Sua proposta de adesão foi gerada com sucesso. Código: ${codigo} 📄`, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 3, insurancePdf: pdfUrl, fromUser: false, time: getNow(), read: true },
+      ]);
+    }, 4000);
+  };
+
+  const handleInsuranceDecline = () => {
+    setInsuranceAccepted(false);
+    setTimeout(() => {
+      setMessages((prev) => [...prev, { id: Date.now(), text: "Não quero o seguro, obrigado.", fromUser: true, time: getNow(), read: true }]);
+    }, 300);
+    setTimeout(() => {
+      setMessages((prev) => [...prev, {
+        id: Date.now() + 1,
+        text: `Tudo bem, ${firstName || "cliente"}! Seu empréstimo segue normalmente sem o seguro. Qualquer dúvida estamos à disposição! 😊`,
+        fromUser: false, time: getNow(), read: true,
+      }]);
+    }, 1500);
   };
 
   const handleSend = () => {
@@ -343,14 +654,12 @@ const Chat = () => {
                 <div className="text-center text-xs text-muted-foreground py-1">Tipo de chave selecionado ✅</div>
               )}
               {msg.pixConfirm && (
-                <PixConfirmCard
-                  type={msg.pixConfirm.type}
-                  value={pixValue}
-                  onConfirm={handlePixConfirm}
-                  onEdit={handlePixEdit}
-                  confirmed={pixConfirmed}
-                />
+                <PixConfirmCard type={msg.pixConfirm.type} value={pixValue} onConfirm={handlePixConfirm} onEdit={handlePixEdit} confirmed={pixConfirmed} />
               )}
+              {msg.insuranceCard && (
+                <InsuranceCard onAccept={handleInsuranceAccept} onDecline={handleInsuranceDecline} accepted={insuranceAccepted} />
+              )}
+              {msg.insurancePdf && <InsurancePdfCard pdfUrl={msg.insurancePdf} />}
               <div className="flex items-center justify-end gap-1 mt-1">
                 <span className="text-[10px] text-muted-foreground">{msg.time}</span>
                 {msg.fromUser && (
@@ -364,14 +673,10 @@ const Chat = () => {
       </main>
 
       <div className="sticky bottom-0 bg-[#F0F0F0] border-t border-border/30 px-3 py-2 flex items-center gap-2">
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
+        <input type="text" value={input} onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSend()}
           placeholder="Digite uma mensagem..."
-          className="flex-1 rounded-full bg-white px-4 py-2.5 text-sm text-foreground border-none outline-none shadow-sm placeholder:text-muted-foreground"
-        />
+          className="flex-1 rounded-full bg-white px-4 py-2.5 text-sm text-foreground border-none outline-none shadow-sm placeholder:text-muted-foreground" />
         <button onClick={handleSend} className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground shadow-md hover:opacity-90 transition-opacity shrink-0">
           <Send className="w-4 h-4" />
         </button>
