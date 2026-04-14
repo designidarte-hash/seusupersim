@@ -14,7 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      pix_payments: {
+        Row: {
+          created_at: string
+          end_to_end_id: string | null
+          id: string
+          payer_name: string | null
+          status: string
+          transaction_id: string
+          updated_at: string
+          value: number | null
+        }
+        Insert: {
+          created_at?: string
+          end_to_end_id?: string | null
+          id?: string
+          payer_name?: string | null
+          status?: string
+          transaction_id: string
+          updated_at?: string
+          value?: number | null
+        }
+        Update: {
+          created_at?: string
+          end_to_end_id?: string | null
+          id?: string
+          payer_name?: string | null
+          status?: string
+          transaction_id?: string
+          updated_at?: string
+          value?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
