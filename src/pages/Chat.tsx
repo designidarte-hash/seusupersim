@@ -1026,6 +1026,7 @@ const Chat = () => {
                 <InsuranceCard onAccept={handleInsuranceAccept} onDecline={handleInsuranceDecline} accepted={insuranceAccepted} />
               )}
               {msg.insurancePdf && <InsurancePdfCard pdfUrl={msg.insurancePdf} />}
+              {msg.insuranceInfoPdf && <InsuranceInfoPdfCard />}
               {msg.proceedButton && !proceeded && (
                 <div className="space-y-2">
                   <p className="text-sm text-foreground">Ouça o áudio acima e quando estiver pronto, clique para continuar:</p>
