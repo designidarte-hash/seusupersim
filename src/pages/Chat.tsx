@@ -18,7 +18,7 @@ interface ChatMessage {
   pixPayment?: { qrCode: string; qrCodeBase64: string; value: number };
   pdfConfirmButton?: boolean;
   proceedButton?: boolean;
-  transferReceipt?: { nome: string; cpf: string; valor: number; protocolo: string };
+  pixPaidButton?: boolean;
   fromUser: boolean;
   time: string;
   read: boolean;
@@ -673,6 +673,7 @@ const Chat = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [greetingSent, setGreetingSent] = useState(false);
   const [proceeded, setProceeded] = useState(false);
+  const [pixPaid, setPixPaid] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const typingQueue = useRef<(() => void)[]>([]);
   const processingQueue = useRef(false);
