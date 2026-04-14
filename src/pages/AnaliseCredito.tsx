@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import logo from "@/assets/logo.png";
-import bannerEmprestimo from "@/assets/banner-emprestimo.png";
+import bannerEmprestimo from "@/assets/banner-emprestimo-hd.jpg";
 import { ShieldCheck, CheckCircle2, Search, FileCheck, BadgeDollarSign, Loader2 } from "lucide-react";
 
 const analysisSteps = [
