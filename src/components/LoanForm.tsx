@@ -66,14 +66,13 @@ const LoanForm = () => {
   };
 
   return (
-    <div className="w-full space-y-6">
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-muted-foreground">CPF</label>
+    <div className="w-full space-y-5">
+      <div>
         <Input
-          placeholder="000.000.000-00"
+          placeholder="CPF"
           value={cpf}
           onChange={(e) => setCpf(formatCPF(e.target.value))}
-          className="h-14 border-input bg-background text-foreground placeholder:text-muted-foreground text-base rounded-xl"
+          className="h-14 border-2 border-border bg-background text-foreground placeholder:text-muted-foreground text-base rounded-full px-5"
         />
       </div>
 
