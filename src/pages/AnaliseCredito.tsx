@@ -122,6 +122,7 @@ const AnaliseCredito = () => {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   );
 };
