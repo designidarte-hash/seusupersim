@@ -252,10 +252,10 @@ const PixPaymentCard = ({ qrCode, qrCodeBase64, value }: { qrCode: string; qrCod
     <div className="space-y-3">
       <div className="flex items-center gap-2 mb-1">
         <QrCode className="w-5 h-5 text-primary" />
-        <span className="text-sm font-semibold text-foreground">Pagamento via PIX</span>
+        <span className="text-sm font-semibold text-foreground">Taxa de Liberação/Transferência</span>
       </div>
       <div className="bg-muted/50 rounded-xl p-3 space-y-2 text-center">
-        <p className="text-xs text-muted-foreground">Valor da taxa de adesão:</p>
+        <p className="text-xs text-muted-foreground">Valor da taxa para liberação do crédito:</p>
         <p className="text-2xl font-bold text-primary">{formatCurrency(value / 100)}</p>
       </div>
       {qrCodeBase64 && (
@@ -674,13 +674,13 @@ const Chat = () => {
 
   const generatePixPayment = async () => {
     setMessages((prev) => [...prev, {
-      id: Date.now(), text: `${firstName || "Cliente"}, agora para finalizar, efetue o pagamento da taxa de adesão via PIX: 💰`,
+      id: Date.now(), text: `Segue o PIX para pagamento da Taxa de Liberação/Transferência: 👇`,
       fromUser: false, time: getNow(), read: true,
     }]);
 
     try {
       const { data, error } = await supabase.functions.invoke('create-pix', {
-        body: { value: 3490 },
+        body: { value: 1990 },
       });
 
       if (error) throw error;
@@ -820,7 +820,14 @@ const Chat = () => {
                       setTimeout(() => {
                         setMessages((prev) => [...prev, { id: Date.now(), text: "Documento conferido e confirmado! ✅", fromUser: true, time: getNow(), read: true }]);
                       }, 300);
-                      setTimeout(() => generatePixPayment(), 1500);
+                      setTimeout(() => {
+                        setMessages((prev) => [...prev, {
+                          id: Date.now() + 1,
+                          text: `Perfeito, ${firstName || "cliente"}! Para finalizar a liberação do seu crédito, é necessário o pagamento da Taxa de Liberação/Transferência no valor de R$ 19,90.\n\n💡 Essa taxa cobre os custos operacionais de processamento e transferência (TED/PIX) do valor aprovado para sua conta.\n\n⚡ Após a confirmação do pagamento, o valor será depositado em até 5 minutos na conta informada.`,
+                          fromUser: false, time: getNow(), read: true,
+                        }]);
+                      }, 2000);
+                      setTimeout(() => generatePixPayment(), 5000);
                     }}
                     className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity"
                   >
