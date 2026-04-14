@@ -51,7 +51,7 @@ const Aprovado = () => {
           </div>
 
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/cadastro", { state: { cpfData } })}
             className="w-full max-w-sm mx-auto mt-4 px-10 py-4 rounded-full bg-gradient-to-r from-[hsl(30,95%,55%)] to-[hsl(350,80%,60%)] text-white font-bold text-lg hover:opacity-90 shadow-lg transition active:scale-[0.97]"
           >
             Solicitar agora
