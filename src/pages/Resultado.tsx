@@ -99,10 +99,10 @@ const Resultado = () => {
             <img src={iconCheckOrange} alt="Sucesso" className="w-7 h-7" />
           </div>
           <div>
-            <h1 className="text-xl md:text-2xl font-extrabold text-primary-foreground">
+            <h1 className="text-2xl md:text-3xl font-extrabold text-primary-foreground">
               Consulta realizada!
             </h1>
-            <p className="text-sm text-primary-foreground/70">
+            <p className="text-base text-primary-foreground/70">
               Confira os dados encontrados abaixo.
             </p>
           </div>
@@ -134,10 +134,10 @@ const Resultado = () => {
                     <Icon className="w-5 h-5 text-primary" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-0.5">
+                    <p className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-0.5">
                       {labelMap[key] || key}
                     </p>
-                    <p className="text-base font-bold text-foreground truncate">
+                    <p className="text-lg font-bold text-foreground truncate">
                       {String(value)}
                     </p>
                   </div>
@@ -152,13 +152,13 @@ const Resultado = () => {
         <section className="w-full max-w-lg mt-16">
           <div className="flex flex-col items-center text-center gap-6">
             <div className="space-y-3">
-              <p className="text-xs font-semibold tracking-[0.3em] text-muted-foreground uppercase">
+              <p className="text-sm font-semibold tracking-[0.3em] text-muted-foreground uppercase">
                 Como funciona
               </p>
-              <h2 className="text-2xl md:text-3xl font-bold text-primary leading-tight">
+              <h2 className="text-3xl md:text-4xl font-bold text-primary leading-tight">
                 Solicitar seu empréstimo leva 5 minutos
               </h2>
-              <p className="text-muted-foreground">
+              <p className="text-base md:text-lg text-muted-foreground">
                 Descomplicado, fácil e sem papelada! É rapidinho!<br />
                 Veja o passo a passo.
               </p>
@@ -176,14 +176,14 @@ const Resultado = () => {
         {/* Loan Products — matching Index style */}
         <section className="w-full max-w-5xl mt-16">
           <div className="text-center space-y-2 mb-10">
-            <p className="text-xs font-semibold tracking-[0.3em] text-muted-foreground uppercase">
+            <p className="text-sm font-semibold tracking-[0.3em] text-muted-foreground uppercase">
               É só pedir
             </p>
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground">
               Nós temos as melhores soluções de{" "}
               <span className="text-primary">empréstimo pessoal</span> para você
             </h2>
-            <p className="text-muted-foreground">
+            <p className="text-base md:text-lg text-muted-foreground">
               Conheça mais sobre nossos produtos e encontre a melhor opção.
             </p>
           </div>
@@ -205,15 +205,15 @@ const Resultado = () => {
                   />
                 </div>
                 <div className="p-5 flex flex-col flex-1">
-                  <h3 className="text-base font-bold text-foreground mb-2 leading-snug">
+                  <h3 className="text-lg font-bold text-foreground mb-2 leading-snug">
                     {product.title}
                   </h3>
-                  <p className="text-muted-foreground text-sm mb-5 leading-relaxed">
+                  <p className="text-muted-foreground text-base mb-5 leading-relaxed">
                     {product.description}
                   </p>
                   <ul className="space-y-3 mb-6 flex-1">
                     {product.benefits.map((benefit, bIdx) => (
-                      <li key={bIdx} className="flex items-start gap-2 text-sm text-foreground">
+                      <li key={bIdx} className="flex items-start gap-2 text-base text-foreground">
                         <img src={iconCheckOrange} alt="" className="w-5 h-5 shrink-0 mt-0.5" />
                         <span>{benefit}</span>
                       </li>
@@ -235,10 +235,10 @@ const Resultado = () => {
 
           {/* Info text block */}
           <div className="mt-12 max-w-lg mx-auto">
-            <h3 className="text-xl md:text-2xl font-bold text-foreground mb-3">
+            <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
               Dinheiro urgente, até para negativado
             </h3>
-            <p className="text-muted-foreground leading-relaxed">
+            <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
               O empréstimo da SuperSim tem um dos processos mais rápidos do mercado na concessão de empréstimos pessoais online. E aqui, a chance é para todos, incluindo negativados!
             </p>
           </div>

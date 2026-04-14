@@ -53,10 +53,10 @@ const Simulacao = () => {
             <img src={iconCadastro} alt="" className="w-7 h-7" />
           </div>
           <div>
-            <h1 className="text-xl md:text-2xl font-extrabold text-primary-foreground">
+            <h1 className="text-2xl md:text-3xl font-extrabold text-primary-foreground">
               Simulação do empréstimo
             </h1>
-            <p className="text-sm text-primary-foreground/70 mt-0.5">
+            <p className="text-base text-primary-foreground/70 mt-0.5">
               Escolha a melhor opção de parcelamento para você.
             </p>
           </div>
@@ -83,7 +83,7 @@ const Simulacao = () => {
 
           {/* Opções de parcelamento */}
           <div className="space-y-3 mb-8">
-            <p className="text-sm font-semibold text-foreground">Escolha o parcelamento:</p>
+            <p className="text-base font-semibold text-foreground">Escolha o parcelamento:</p>
             {installmentOptions.map((opt, idx) => {
               const valorParcela = calcParcela(loanAmount, opt.parcelas, opt.taxa);
               const totalPago = valorParcela * opt.parcelas;
@@ -101,10 +101,10 @@ const Simulacao = () => {
                 >
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-lg font-bold text-foreground">
+                      <p className="text-xl font-bold text-foreground">
                         {opt.parcelas}x de {formatCurrency(valorParcela)}
                       </p>
-                      <p className="text-xs text-muted-foreground mt-0.5">
+                      <p className="text-sm text-muted-foreground mt-0.5">
                         Taxa de {opt.taxa}% a.m. · Total: {formatCurrency(totalPago)}
                       </p>
                     </div>
@@ -125,7 +125,7 @@ const Simulacao = () => {
 
           {/* Resumo */}
           <div className="bg-muted rounded-2xl p-5 space-y-3 mb-8">
-            <p className="text-sm font-semibold text-foreground">Resumo:</p>
+            <p className="text-base font-semibold text-foreground">Resumo:</p>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Valor solicitado</span>
               <span className="font-bold text-foreground">{formatCurrency(loanAmount)}</span>

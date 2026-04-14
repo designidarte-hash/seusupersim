@@ -80,10 +80,10 @@ const Cadastro = () => {
             <UserPlus className="w-7 h-7 text-primary" />
           </div>
           <div>
-            <h1 className="text-xl md:text-2xl font-extrabold text-primary-foreground">
+            <h1 className="text-2xl md:text-3xl font-extrabold text-primary-foreground">
               Complete seu cadastro
             </h1>
-            <p className="text-sm text-primary-foreground/70 mt-0.5">
+            <p className="text-base text-primary-foreground/70 mt-0.5">
               Preencha seus dados para continuar com a solicitação.
             </p>
           </div>
@@ -103,7 +103,7 @@ const Cadastro = () => {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Nome Completo */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-foreground">Nome Completo</label>
+              <label className="text-base font-semibold text-foreground">Nome Completo</label>
               <input
                 type="text"
                 value={form.nomeCompleto}
@@ -119,7 +119,7 @@ const Cadastro = () => {
 
             {/* Email */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-foreground">E-mail</label>
+              <label className="text-base font-semibold text-foreground">E-mail</label>
               <input
                 type="email"
                 value={form.email}
@@ -132,7 +132,7 @@ const Cadastro = () => {
 
             {/* Celular */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-foreground">Celular (WhatsApp)</label>
+              <label className="text-base font-semibold text-foreground">Celular (WhatsApp)</label>
               <input
                 type="tel"
                 value={form.celular}
@@ -145,7 +145,7 @@ const Cadastro = () => {
 
             {/* Melhor dia de pagamento */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-foreground">Melhor dia para pagamento</label>
+              <label className="text-base font-semibold text-foreground">Melhor dia para pagamento</label>
               <div className="flex gap-3 flex-wrap">
                 {paymentDays.map((day) => (
                   <button

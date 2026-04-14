@@ -107,13 +107,13 @@ const Index = () => {
       <section className="bg-background py-14 px-4">
         <div className="max-w-4xl mx-auto text-center space-y-8">
           <div className="space-y-2">
-            <p className="text-xs font-semibold tracking-[0.3em] text-muted-foreground uppercase">
+            <p className="text-sm font-semibold tracking-[0.3em] text-muted-foreground uppercase">
               Especial pra você
             </p>
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground">
               Por que somos pra você?
             </h2>
-            <p className="text-muted-foreground">
+            <p className="text-base md:text-lg text-muted-foreground">
               Nossa tecnologia e segurança de dados garantem para você:
             </p>
           </div>
@@ -122,8 +122,8 @@ const Index = () => {
             {benefits.map((b) => (
               <div key={b.title} className="flex flex-col items-center gap-3 text-center w-[calc(50%-12px)] md:w-auto">
                 <img src={b.img} alt={b.title} className="w-12 h-12 object-contain" />
-                <h3 className="text-sm font-bold text-foreground">{b.title}</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">{b.desc}</p>
+                <h3 className="text-base font-bold text-foreground">{b.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{b.desc}</p>
               </div>
             ))}
           </div>
@@ -141,13 +141,13 @@ const Index = () => {
       <section className="bg-muted/50 py-14 px-4">
         <div className="max-w-4xl mx-auto text-center space-y-10">
           <div className="space-y-2">
-            <p className="text-xs font-semibold tracking-[0.3em] text-muted-foreground uppercase">
+            <p className="text-sm font-semibold tracking-[0.3em] text-muted-foreground uppercase">
               Como funciona
             </p>
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground">
               Solicitar seu empréstimo leva 5 minutos
             </h2>
-            <p className="text-muted-foreground">
+            <p className="text-base md:text-lg text-muted-foreground">
               Descomplicado, fácil e sem papelada!
             </p>
           </div>
@@ -158,9 +158,9 @@ const Index = () => {
                 <div className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center shadow-md">
                   <s.icon className="w-8 h-8 text-primary-foreground" />
                 </div>
-                <span className="text-xs font-bold text-primary">Passo {s.step}</span>
-                <h3 className="text-sm font-bold text-foreground">{s.title}</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">{s.desc}</p>
+                <span className="text-sm font-bold text-primary">Passo {s.step}</span>
+                <h3 className="text-base font-bold text-foreground">{s.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{s.desc}</p>
               </div>
             ))}
           </div>
@@ -178,10 +178,10 @@ const Index = () => {
       <section className="bg-background py-14 px-4">
         <div className="max-w-4xl mx-auto text-center space-y-8">
           <div className="space-y-2">
-            <p className="text-2xl md:text-3xl font-bold text-foreground">
+            <p className="text-3xl md:text-4xl font-bold text-foreground">
               + de 2 MILHÕES de pessoas
             </p>
-            <p className="text-muted-foreground font-semibold">receberam nosso SIM!</p>
+            <p className="text-base md:text-lg text-muted-foreground font-semibold">receberam nosso SIM!</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -194,10 +194,10 @@ const Index = () => {
                     {t.name.charAt(0)}
                   </div>
                 )}
-                <p className="text-sm text-muted-foreground leading-relaxed">
+                <p className="text-base text-muted-foreground leading-relaxed">
                   {t.text}
                 </p>
-                <p className="text-sm font-bold text-foreground italic">{t.name}</p>
+                <p className="text-base font-bold text-foreground italic">{t.name}</p>
               </div>
             ))}
           </div>
@@ -215,10 +215,10 @@ const Index = () => {
       <section className="bg-background py-14 px-4">
         <div className="max-w-3xl mx-auto space-y-8">
           <div className="text-center space-y-2">
-            <p className="text-xs font-semibold tracking-[0.3em] text-muted-foreground uppercase">
+            <p className="text-sm font-semibold tracking-[0.3em] text-muted-foreground uppercase">
               Precisa de ajuda?
             </p>
-            <h2 className="text-2xl md:text-3xl font-bold text-primary">
+            <h2 className="text-3xl md:text-4xl font-bold text-primary">
               Ainda tem dúvidas?
             </h2>
           </div>
@@ -259,11 +259,11 @@ const Index = () => {
                 className="group bg-muted/50 rounded-xl border border-border/50 overflow-hidden"
               >
                 <summary className="flex items-center justify-between px-5 py-4 cursor-pointer list-none">
-                  <span className="font-bold text-foreground text-sm md:text-base">{item.q}</span>
+                  <span className="font-bold text-foreground text-base md:text-lg">{item.q}</span>
                   <span className="text-primary text-xl group-open:rotate-180 transition-transform">▾</span>
                 </summary>
                 <div className="px-5 pb-4">
-                  <p className="text-sm text-muted-foreground leading-relaxed">{item.a}</p>
+                  <p className="text-base text-muted-foreground leading-relaxed">{item.a}</p>
                 </div>
               </details>
             ))}

@@ -7,13 +7,13 @@ const ChamaNoPixSection = () => {
   return (
     <section className="py-12 px-4">
       <div className="max-w-lg mx-auto text-center space-y-4">
-        <p className="text-xs font-semibold tracking-[0.3em] text-primary-foreground/60 uppercase">
+        <p className="text-sm font-semibold tracking-[0.3em] text-primary-foreground/60 uppercase">
           Chave para o sucesso
         </p>
-        <h2 className="text-2xl md:text-3xl font-extrabold text-primary-foreground">
+        <h2 className="text-3xl md:text-4xl font-extrabold text-primary-foreground">
           Aqui sua chance é de verdade
         </h2>
-        <p className="text-primary-foreground/80">
+        <p className="text-base md:text-lg text-primary-foreground/80">
           Nascemos para democratizar o acesso ao crédito no Brasil e por isso oferecemos as melhores condições para todos os perfis.
         </p>
         <div className="relative inline-block">
