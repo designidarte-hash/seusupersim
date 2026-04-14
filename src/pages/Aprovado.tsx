@@ -34,17 +34,29 @@ const Aprovado = () => {
       </header>
 
       {/* Hero - Approval — white background */}
-      <section className="py-14 px-4 text-center bg-background">
-        <div className="max-w-md mx-auto space-y-5">
-          <img src={iconCheckCircle} alt="Aprovado" className="w-20 h-20 mx-auto" />
-          <h1 className="text-3xl font-extrabold text-foreground">Parabéns!</h1>
-          <p className="text-muted-foreground text-lg">Seu crédito foi pré-aprovado!</p>
-
-          <div className="bg-primary rounded-2xl p-8 mt-6 space-y-2 shadow-lg">
-            <p className="text-primary-foreground/80 text-sm">Valor disponível de até</p>
-            <p className="text-6xl font-black text-primary-foreground tracking-tight">R$ 8.000</p>
-            <p className="text-primary-foreground/70 text-sm">em até 24x no boleto ou Pix</p>
+      <section className="py-16 px-4 text-center bg-background">
+        <div className="max-w-md mx-auto space-y-6">
+          <img src={iconCheckCircle} alt="Aprovado" className="w-24 h-24 mx-auto drop-shadow-lg animate-in zoom-in duration-500" />
+          <div>
+            <h1 className="text-4xl md:text-5xl font-black text-foreground">🎉 Parabéns!</h1>
+            <p className="text-muted-foreground text-xl mt-2">Seu crédito foi <span className="text-primary font-bold">pré-aprovado!</span></p>
           </div>
+
+          <div className="relative bg-gradient-to-br from-primary to-[hsl(var(--primary)/0.85)] rounded-3xl p-10 mt-6 space-y-3 shadow-2xl overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.15),transparent_60%)]" />
+            <p className="text-primary-foreground/80 text-sm relative z-10">Valor disponível de até</p>
+            <p className="text-7xl md:text-8xl font-black text-primary-foreground tracking-tighter relative z-10 drop-shadow-md">
+              R$ 8.000
+            </p>
+            <p className="text-primary-foreground/70 text-base relative z-10">em até <strong>24x</strong> no boleto ou Pix</p>
+          </div>
+
+          <button
+            onClick={() => navigate("/")}
+            className="w-full max-w-sm mx-auto mt-4 px-10 py-5 rounded-full bg-gradient-to-r from-[hsl(30,95%,55%)] to-[hsl(350,80%,60%)] text-white font-bold text-xl hover:opacity-90 shadow-xl transition active:scale-[0.97] animate-pulse"
+          >
+            Solicitar agora! 🚀
+          </button>
         </div>
       </section>
 
