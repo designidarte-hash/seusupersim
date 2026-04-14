@@ -32,12 +32,12 @@ const ApprovalResult = ({ open, onClose }: ApprovalResultProps) => {
         </div>
 
         <div className="space-y-3">
-          <Button
+          <button
             onClick={onClose}
-            className="w-full h-14 text-base font-bold rounded-full bg-gradient-to-r from-[hsl(30,95%,55%)] to-[hsl(350,80%,60%)] text-white hover:opacity-90 shadow-lg transition active:scale-[0.98]"
+            className="btn-3d w-full"
           >
             Solicitar agora
-          </Button>
+          </button>
           <button
             onClick={onClose}
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
