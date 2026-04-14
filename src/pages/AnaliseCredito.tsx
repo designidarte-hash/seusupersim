@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import logo from "@/assets/logo.png";
+import bannerEmprestimo from "@/assets/banner-emprestimo.png";
 import { ShieldCheck, CheckCircle2, Search, FileCheck, BadgeDollarSign, Loader2 } from "lucide-react";
 
 const analysisSteps = [
@@ -51,6 +52,11 @@ const AnaliseCredito = () => {
       <header className="py-4 flex justify-center bg-background border-b border-border/50">
         <img src={logo} alt="Logo" className="h-10 md:h-12" />
       </header>
+
+      {/* Banner */}
+      <div className="w-full">
+        <img src={bannerEmprestimo} alt="Empréstimo rápido e fácil" className="w-full h-auto" />
+      </div>
 
       <main className="flex-1 flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md space-y-8">
