@@ -147,7 +147,7 @@ const Resultado = () => {
             <div className="flex-1 w-full">
               <div className="relative rounded-2xl overflow-hidden shadow-lg aspect-video">
                 <iframe
-                  src="https://www.youtube.com/embed/YOUR_VIDEO_ID"
+                  src="https://www.youtube.com/embed/QW7cf7aeFL4"
                   title="Como solicitar empréstimo"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
