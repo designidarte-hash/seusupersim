@@ -881,7 +881,7 @@ const Chat = () => {
       console.error('Erro ao gerar PIX:', err);
       await addBotMessages(() => [{
         id: Date.now() + 1,
-        text: "⚠️ Houve um erro ao gerar o código PIX. Tente novamente em alguns instantes ou entre em contato com o suporte.",
+        text: "Houve um erro ao gerar o código PIX. Tente novamente em alguns instantes ou entre em contato com o suporte.",
         fromUser: false, time: getNow(), read: true,
       }]);
     }
