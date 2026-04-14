@@ -112,9 +112,9 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
+          <div className="flex flex-wrap justify-center md:grid md:grid-cols-5 gap-6">
             {benefits.map((b) => (
-              <div key={b.title} className="flex flex-col items-center gap-3 text-center">
+              <div key={b.title} className="flex flex-col items-center gap-3 text-center w-[calc(50%-12px)] md:w-auto">
                 <img src={b.img} alt={b.title} className="w-12 h-12 object-contain" />
                 <h3 className="text-sm font-bold text-foreground">{b.title}</h3>
                 <p className="text-xs text-muted-foreground leading-relaxed">{b.desc}</p>
