@@ -950,7 +950,7 @@ const Chat = () => {
 
     setTimeout(() => {
       addBotMessages(() => [{
-        id: Date.now() + 1, text: `Obrigado pela mensagem, ${firstName || "cliente"}! Um consultor responderá em instantes. ⏳`,
+        id: Date.now() + 1, text: `Obrigado pela mensagem, ${firstName || "cliente"}! Um consultor responderá em instantes.`,
         fromUser: false, time: getNow(), read: true,
       }]);
     }, 500);
