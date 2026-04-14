@@ -246,27 +246,25 @@ const generateInsurancePdf = async (data: {
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(0, 0, pw, ph);
 
-  // Header blue bar
+  // Header - white background with text
+  ctx.fillStyle = "#333333";
+  ctx.font = "12px Arial";
+  ctx.fillText("Proposta de Adesão", 25, 30);
   ctx.fillStyle = "#003366";
-  ctx.fillRect(0, 0, pw, 70);
-  ctx.fillStyle = "#ffffff";
-  ctx.font = "bold 11px Arial";
-  ctx.fillText("Proposta de Adesão", 20, 25);
-  ctx.font = "bold 22px Arial";
-  ctx.fillText("Prestamista", 20, 55);
+  ctx.font = "bold 26px Arial";
+  ctx.fillText("Prestamista", 25, 62);
 
-  // Draw Allianz logo
+  // Draw Allianz logo (transparent, on white bg)
   const logoImg = new Image();
   logoImg.crossOrigin = "anonymous";
   logoImg.src = "/images/allianz-logo.png";
   await new Promise<void>((res) => { logoImg.onload = () => res(); logoImg.onerror = () => res(); });
   if (logoImg.complete && logoImg.naturalWidth > 0) {
-    ctx.drawImage(logoImg, 440, 10, 130, 50);
+    ctx.drawImage(logoImg, 440, 15, 130, 50);
   } else {
-    ctx.font = "bold 14px Arial";
-    ctx.fillText("Allianz", 500, 35);
-    ctx.font = "10px Arial";
-    ctx.fillText("Seguros", 500, 50);
+    ctx.fillStyle = "#003366";
+    ctx.font = "bold 16px Arial";
+    ctx.fillText("Allianz", 460, 45);
   }
 
   // Helper
