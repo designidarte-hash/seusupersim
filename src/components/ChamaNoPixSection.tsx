@@ -20,7 +20,7 @@ const ChamaNoPixSection = () => {
           <img src={chamaNoPixImg} alt="Chama no PIX" className="w-64 md:w-80 mx-auto" />
           <button
             onClick={() => navigate("/")}
-            className="btn-3d absolute -bottom-6 left-1/2 -translate-x-1/2 bg-background text-primary border-b-[5px] border-b-[hsl(220,13%,80%)] whitespace-nowrap"
+            className="btn-3d absolute -bottom-6 left-1/2 -translate-x-1/2 bg-background text-primary border-b-[5px] border-b-[hsl(220,13%,80%)] whitespace-nowrap relative z-10 shadow-xl"
           >
             Receber empréstimo via PIX
           </button>
