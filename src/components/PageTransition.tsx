@@ -82,7 +82,7 @@ const PageTransition = () => {
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.4 }}
-            className="bg-white rounded-3xl shadow-xl p-8 md:p-12 w-full max-w-lg mx-4 text-center space-y-6"
+            className="relative z-10 bg-white rounded-3xl shadow-xl p-8 md:p-12 w-full max-w-lg mx-4 text-center space-y-6"
           >
             <h1 className="text-2xl md:text-3xl font-extrabold text-foreground leading-tight">
               Sua análise está sendo preparada...
