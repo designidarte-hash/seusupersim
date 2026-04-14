@@ -737,7 +737,7 @@ const Chat = () => {
     if (loanDetails) {
       setTimeout(() => {
         addBotMessages(() => [
-          { id: Date.now() + 1, text: `Perfeito, ${firstName || "cliente"}! Aqui estão os detalhes da modalidade de crédito que você escolheu. Por favor, confira e confirme: 👇`, fromUser: false, time: getNow(), read: true },
+          { id: Date.now() + 1, text: `Perfeito, ${firstName || "cliente"}! Aqui estão os detalhes da modalidade de crédito que você escolheu. Por favor, confira e confirme:`, fromUser: false, time: getNow(), read: true },
           { id: Date.now() + 2, loanCard: loanDetails, fromUser: false, time: getNow(), read: true },
         ]);
       }, 500);
