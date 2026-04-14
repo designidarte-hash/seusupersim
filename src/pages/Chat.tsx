@@ -1,21 +1,33 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import profileImg from "@/assets/profile-s.png";
-import { ArrowLeft, Send, Check, CheckCheck, BadgeCheck, Play, Pause } from "lucide-react";
+import { ArrowLeft, Send, Check, CheckCheck, BadgeCheck, Play, Pause, CreditCard } from "lucide-react";
 
 interface ChatMessage {
   id: number;
   text?: string;
   audioSrc?: string;
+  loanCard?: LoanDetails;
   fromUser: boolean;
   time: string;
   read: boolean;
+}
+
+interface LoanDetails {
+  valor: number;
+  parcelas: number;
+  valorParcela: number;
+  taxa: number;
+  diaPagamento: string;
 }
 
 const getNow = () => {
   const d = new Date();
   return d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
 };
+
+const formatCurrency = (v: number) =>
+  v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
 const AudioPlayer = ({ src }: { src: string }) => {
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -74,13 +86,51 @@ const AudioPlayer = ({ src }: { src: string }) => {
   );
 };
 
+const LoanConfirmCard = ({ details, onConfirm, confirmed }: { details: LoanDetails; onConfirm: () => void; confirmed: boolean }) => (
+  <div className="space-y-3">
+    <div className="flex items-center gap-2 mb-2">
+      <CreditCard className="w-4 h-4 text-primary" />
+      <span className="text-sm font-semibold text-foreground">Modalidade: Crédito Pessoal</span>
+    </div>
+    <div className="bg-muted/50 rounded-xl p-3 space-y-1.5 text-sm">
+      <div className="flex justify-between">
+        <span className="text-muted-foreground">Valor solicitado</span>
+        <span className="font-semibold">{formatCurrency(details.valor)}</span>
+      </div>
+      <div className="flex justify-between">
+        <span className="text-muted-foreground">Parcelas</span>
+        <span className="font-semibold">{details.parcelas}x de {formatCurrency(details.valorParcela)}</span>
+      </div>
+      <div className="flex justify-between">
+        <span className="text-muted-foreground">Taxa mensal</span>
+        <span className="font-semibold">{details.taxa}%</span>
+      </div>
+      <div className="flex justify-between">
+        <span className="text-muted-foreground">Dia de pagamento</span>
+        <span className="font-semibold">{details.diaPagamento}</span>
+      </div>
+    </div>
+    {!confirmed ? (
+      <button
+        onClick={onConfirm}
+        className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity"
+      >
+        ✅ Confirmar dados
+      </button>
+    ) : (
+      <div className="text-center text-xs text-green-600 font-semibold py-1">✅ Dados confirmados!</div>
+    )}
+  </div>
+);
+
 const Chat = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { initialMessage, nome } = (location.state as any) || {};
+  const { initialMessage, nome, loanDetails } = (location.state as any) || {};
   const firstName = nome ? nome.split(" ")[0] : "";
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
+  const [loanConfirmed, setLoanConfirmed] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -111,7 +161,7 @@ const Chat = () => {
     }, 2000);
 
     let userMsgTimeout: ReturnType<typeof setTimeout> | undefined;
-    let replyTimeout: ReturnType<typeof setTimeout> | undefined;
+    let cardTimeout: ReturnType<typeof setTimeout> | undefined;
 
     if (initialMessage) {
       userMsgTimeout = setTimeout(() => {
@@ -121,31 +171,68 @@ const Chat = () => {
         ]);
       }, 3500);
 
-      replyTimeout = setTimeout(() => {
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: 4,
-            text: `Recebemos sua solicitação de empréstimo, ${firstName || "cliente"}! ✅ Um de nossos consultores irá analisar e retornar em breve. Fique à vontade para enviar qualquer dúvida aqui!`,
-            fromUser: false,
-            time: getNow(),
-            read: true,
-          },
-        ]);
-      }, 5500);
+      if (loanDetails) {
+        cardTimeout = setTimeout(() => {
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: 4,
+              text: `Perfeito, ${firstName || "cliente"}! Aqui estão os detalhes da modalidade de crédito que você escolheu. Por favor, confira e confirme: 👇`,
+              fromUser: false,
+              time: getNow(),
+              read: true,
+            },
+            {
+              id: 5,
+              loanCard: loanDetails,
+              fromUser: false,
+              time: getNow(),
+              read: true,
+            },
+          ]);
+        }, 5500);
+      }
     }
 
     return () => {
       clearTimeout(welcomeTimeout);
       clearTimeout(audioTimeout);
       if (userMsgTimeout) clearTimeout(userMsgTimeout);
-      if (replyTimeout) clearTimeout(replyTimeout);
+      if (cardTimeout) clearTimeout(cardTimeout);
     };
   }, []);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  const handleLoanConfirm = () => {
+    setLoanConfirmed(true);
+    setTimeout(() => {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now(),
+          text: "Dados corretos! ✅",
+          fromUser: true,
+          time: getNow(),
+          read: true,
+        },
+      ]);
+    }, 300);
+    setTimeout(() => {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now() + 1,
+          text: `Excelente, ${firstName || "cliente"}! 🎉 Sua solicitação foi confirmada com sucesso! Um consultor entrará em contato em breve para finalizar o processo. Obrigado por escolher a SuperSim!`,
+          fromUser: false,
+          time: getNow(),
+          read: true,
+        },
+      ]);
+    }, 2000);
+  };
 
   const handleSend = () => {
     if (!input.trim()) return;
@@ -201,7 +288,7 @@ const Chat = () => {
             className={`flex ${msg.fromUser ? "justify-end" : "justify-start"}`}
           >
             <div
-              className={`max-w-[80%] rounded-2xl px-4 py-2.5 shadow-sm relative ${
+              className={`max-w-[85%] rounded-2xl px-4 py-2.5 shadow-sm relative ${
                 msg.fromUser
                   ? "bg-[#DCF8C6] text-foreground rounded-tr-sm"
                   : "bg-white text-foreground rounded-tl-sm"
@@ -211,6 +298,13 @@ const Chat = () => {
                 <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.text}</p>
               )}
               {msg.audioSrc && <AudioPlayer src={msg.audioSrc} />}
+              {msg.loanCard && (
+                <LoanConfirmCard
+                  details={msg.loanCard}
+                  onConfirm={handleLoanConfirm}
+                  confirmed={loanConfirmed}
+                />
+              )}
               <div className="flex items-center justify-end gap-1 mt-1">
                 <span className="text-[10px] text-muted-foreground">{msg.time}</span>
                 {msg.fromUser && (
