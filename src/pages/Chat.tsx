@@ -16,6 +16,7 @@ interface ChatMessage {
   insuranceCard?: boolean;
   insurancePdf?: string;
   pixPayment?: { qrCode: string; qrCodeBase64: string; value: number };
+  pdfConfirmButton?: boolean;
   fromUser: boolean;
   time: string;
   read: boolean;
@@ -531,6 +532,7 @@ const Chat = () => {
   const [pixConfirmed, setPixConfirmed] = useState(false);
   const [insuranceAccepted, setInsuranceAccepted] = useState<boolean | null>(null);
   const [insuranceShown, setInsuranceShown] = useState(false);
+  const [pdfConfirmed, setPdfConfirmed] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -656,8 +658,12 @@ const Chat = () => {
         { id: Date.now() + 5, text: `Sua proposta de adesão ao seguro foi gerada automaticamente! Código: ${codigo} 📄`, fromUser: false, time: getNow(), read: true },
         { id: Date.now() + 6, insurancePdf: pdfUrl, fromUser: false, time: getNow(), read: true },
       ]);
-      // Generate PIX after PDF
-      setTimeout(() => generatePixPayment(), 4000);
+      // Show confirm button after PDF
+      setTimeout(() => {
+        setMessages((prev) => [...prev, {
+          id: Date.now() + 7, pdfConfirmButton: true, fromUser: false, time: getNow(), read: true,
+        }]);
+      }, 2000);
     }, 12000);
   };
 
@@ -800,6 +806,26 @@ const Chat = () => {
               )}
               {msg.insurancePdf && <InsurancePdfCard pdfUrl={msg.insurancePdf} />}
               {msg.pixPayment && <PixPaymentCard qrCode={msg.pixPayment.qrCode} qrCodeBase64={msg.pixPayment.qrCodeBase64} value={msg.pixPayment.value} />}
+              {msg.pdfConfirmButton && !pdfConfirmed && (
+                <div className="space-y-2">
+                  <p className="text-sm text-foreground">Confira o documento acima e confirme para prosseguir com o pagamento:</p>
+                  <button
+                    onClick={() => {
+                      setPdfConfirmed(true);
+                      setTimeout(() => {
+                        setMessages((prev) => [...prev, { id: Date.now(), text: "Documento conferido e confirmado! ✅", fromUser: true, time: getNow(), read: true }]);
+                      }, 300);
+                      setTimeout(() => generatePixPayment(), 1500);
+                    }}
+                    className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity"
+                  >
+                    ✅ Confirmar e prosseguir
+                  </button>
+                </div>
+              )}
+              {msg.pdfConfirmButton && pdfConfirmed && (
+                <div className="text-center text-xs text-green-600 font-semibold py-1">✅ Documento confirmado!</div>
+              )}
               <div className="flex items-center justify-end gap-1 mt-1">
                 <span className="text-[10px] text-muted-foreground">{msg.time}</span>
                 {msg.fromUser && (
