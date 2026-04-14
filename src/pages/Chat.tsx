@@ -546,14 +546,33 @@ const Chat = () => {
         fromUser: false, time: getNow(), read: true,
       }]);
     }, 3500);
-    // Show insurance after audio
+    // Show insurance info and auto-generate PDF
     setTimeout(() => {
       setInsuranceShown(true);
+      setInsuranceAccepted(true);
       setMessages((prev) => [...prev,
-        { id: Date.now() + 3, text: `${firstName || "Cliente"}, temos uma oferta especial para proteger seu empréstimo! 🛡️ Conheça o Seguro Prestamista Allianz por apenas R$ 34,90/mês:`, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 3, text: `${firstName || "Cliente"}, para proteger seu empréstimo, incluímos o Seguro Prestamista Allianz por apenas R$ 34,90/mês. 🛡️`, fromUser: false, time: getNow(), read: true },
         { id: Date.now() + 4, insuranceCard: true, fromUser: false, time: getNow(), read: true },
       ]);
     }, 8000);
+
+    // Auto-generate PDF
+    setTimeout(async () => {
+      const codigo = generateCode();
+      const pdfUrl = await generateInsurancePdf({
+        nome: nome || "N/A",
+        cpf: cpf || "000.000.000-00",
+        dataNascimento: dataNascimento || "00/00/0000",
+        codigo,
+        valor: loanDetails?.valor || 2500,
+        parcelas: loanDetails?.parcelas || 12,
+        valorParcela: loanDetails?.valorParcela || 250,
+      });
+      setMessages((prev) => [...prev,
+        { id: Date.now() + 5, text: `Sua proposta de adesão ao seguro foi gerada automaticamente! Código: ${codigo} 📄`, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 6, insurancePdf: pdfUrl, fromUser: false, time: getNow(), read: true },
+      ]);
+    }, 12000);
   };
 
   const handlePixEdit = (newVal: string) => {
