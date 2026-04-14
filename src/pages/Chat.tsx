@@ -1013,6 +1013,7 @@ const Chat = () => {
                 <div className="text-center text-xs text-green-600 font-semibold py-1">✅ Prosseguindo...</div>
               )}
               {msg.pixPayment && <PixPaymentCard qrCode={msg.pixPayment.qrCode} qrCodeBase64={msg.pixPayment.qrCodeBase64} value={msg.pixPayment.value} />}
+              {msg.transferReceipt && <TransferReceiptCard nome={msg.transferReceipt.nome} cpf={msg.transferReceipt.cpf} valor={msg.transferReceipt.valor} protocolo={msg.transferReceipt.protocolo} />}
               {msg.pdfConfirmButton && !pdfConfirmed && (
                 <div className="space-y-2">
                   <p className="text-sm text-foreground">Confira o documento acima e confirme para prosseguir com o pagamento:</p>
