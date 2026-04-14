@@ -80,7 +80,7 @@ const Index = () => {
       </section>
 
       {/* Card — overlaps hero bottom */}
-      <div className="relative z-10 -mt-28 px-4 pb-4 lg:hidden">
+      <div className="relative z-10 -mt-28 px-4 pb-4">
         <div className="max-w-md mx-auto bg-background rounded-3xl p-6 shadow-2xl space-y-5">
           <div className="text-center space-y-1">
             <p className="text-xl text-foreground">
@@ -91,10 +91,6 @@ const Index = () => {
           </div>
           <LoanForm />
         </div>
-      </div>
-
-      {/* Desktop card inside hero - hidden on mobile */}
-      <div className="hidden md:block absolute right-8 top-1/2 -translate-y-1/2 w-full max-w-md z-10" style={{ display: 'none' }}>
       </div>
 
       {/* Benefits */}
