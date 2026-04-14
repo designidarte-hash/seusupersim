@@ -76,7 +76,7 @@ const Resultado = () => {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 gap-4">
         <p className="text-muted-foreground">Nenhum dado encontrado.</p>
-        <Button onClick={() => navigate("/")} variant="outline">
+        <Button onClick={() => transitionNavigate("/")} variant="outline">
           Voltar ao início
         </Button>
       </div>
