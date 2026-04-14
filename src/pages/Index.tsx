@@ -85,7 +85,7 @@ const Index = () => {
           <div className="text-center space-y-1">
             <p className="text-xl text-foreground">
               <span className="font-extrabold">Empréstimo</span> de até{" "}
-              <span className="font-extrabold">R$ 2.500!</span>
+              <span className="font-extrabold">R$ 8.000!</span>
             </p>
             <p className="text-primary font-bold text-lg">Simule já.</p>
           </div>
