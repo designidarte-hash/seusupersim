@@ -899,7 +899,7 @@ const Chat = () => {
     setTimeout(() => {
       addBotMessages(() => [{
         id: Date.now() + 1,
-        text: `Excelente escolha, ${firstName || "cliente"}! 🎉 Estamos gerando sua proposta de adesão ao Seguro Prestamista...`,
+        text: `Excelente escolha, ${firstName || "cliente"}! Estamos gerando sua proposta de adesão ao Seguro Prestamista...`,
         fromUser: false, time: getNow(), read: true,
       }]);
     }, 500);
