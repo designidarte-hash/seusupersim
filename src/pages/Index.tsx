@@ -65,7 +65,7 @@ const Index = () => {
       </header>
 
       {/* Hero */}
-      <section className="relative bg-primary pt-6 pb-0 px-4 overflow-hidden">
+      <section className="relative bg-gradient-to-b from-[hsl(45,100%,60%)] to-[hsl(36,97%,55%)] pt-6 pb-0 px-4 overflow-hidden">
         <div className="max-w-5xl mx-auto flex flex-col items-center text-center md:text-left md:flex-row md:items-center md:gap-8">
           {/* Mobile: text + image stacked / Desktop: left side */}
           <div className="flex-1 flex flex-col items-center md:items-start gap-2">
