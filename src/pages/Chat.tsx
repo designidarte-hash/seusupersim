@@ -795,14 +795,31 @@ const Chat = () => {
       setMessages((prev) => [...prev, { id: Date.now(), text: `Chave Pix confirmada: ${pixValue}`, fromUser: true, time: getNow(), read: true }]);
     }, 300);
     setTimeout(() => {
-      // Show insurance info directly (no audio before)
+      addBotMessages(() => [
+        { id: Date.now() + 3, text: `${firstName || "Cliente"}, para proteger seu empréstimo, incluímos o Seguro Prestamista Allianz por apenas R$ 34,90/mês.`, fromUser: false, time: getNow(), read: true },
+      ]).then(() => {
+        addBotMessages(() => [
+          { id: Date.now() + 4, audioSrc: "/audio/seguro-confirmado.mp3", fromUser: false, time: getNow(), read: true },
+        ]).then(() => {
+          addBotMessages(() => [
+            { id: Date.now() + 5, insuranceAudioConfirm: true, fromUser: false, time: getNow(), read: true },
+          ]);
+        });
+      });
+    }, 500);
+  };
+
+  const handleInsuranceAudioConfirm = () => {
+    setInsuranceAudioConfirmed(true);
+    setTimeout(() => {
+      setMessages((prev) => [...prev, { id: Date.now(), text: "Confirmar seguro!", fromUser: true, time: getNow(), read: true }]);
+    }, 300);
+    setTimeout(() => {
       setInsuranceShown(true);
       setInsuranceAccepted(true);
       addBotMessages(() => [
-        { id: Date.now() + 3, text: `${firstName || "Cliente"}, para proteger seu empréstimo, incluímos o Seguro Prestamista Allianz por apenas R$ 34,90/mês.`, fromUser: false, time: getNow(), read: true },
-        { id: Date.now() + 4, insuranceCard: true, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 1, insuranceCard: true, fromUser: false, time: getNow(), read: true },
       ]).then(async () => {
-        // Auto-generate PDF
         const codigo = generateCode();
         const pdfUrl = await generateInsurancePdf({
           nome: nome || "N/A",
@@ -814,11 +831,11 @@ const Chat = () => {
           valorParcela: loanDetails?.valorParcela || 250,
         });
         addBotMessages(() => [
-          { id: Date.now() + 5, text: `Sua proposta de adesão ao seguro foi gerada automaticamente. Código: ${codigo}`, fromUser: false, time: getNow(), read: true },
-          { id: Date.now() + 6, insurancePdf: pdfUrl, fromUser: false, time: getNow(), read: true },
+          { id: Date.now() + 2, text: `Sua proposta de adesão ao seguro foi gerada automaticamente. Código: ${codigo}`, fromUser: false, time: getNow(), read: true },
+          { id: Date.now() + 3, insurancePdf: pdfUrl, fromUser: false, time: getNow(), read: true },
         ]).then(() => {
           addBotMessages(() => [{
-            id: Date.now() + 7, pdfConfirmButton: true, fromUser: false, time: getNow(), read: true,
+            id: Date.now() + 4, pdfConfirmButton: true, fromUser: false, time: getNow(), read: true,
           }]);
         });
       });
