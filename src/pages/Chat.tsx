@@ -822,7 +822,7 @@ const Chat = () => {
         { id: Date.now() + 3, text: `${firstName || "Cliente"}, para proteger seu empréstimo, incluímos o Seguro Prestamista Allianz por apenas R$ 34,90/mês.`, fromUser: false, time: getNow(), read: true },
       ]).then(() => {
         addBotMessages(() => [
-          { id: Date.now() + 4, audioSrc: "/audio/seguro-confirmado.mp3", fromUser: false, time: getNow(), read: true },
+          { id: Date.now() + 4, audioSrc: "/audio/seguro-confirmado-v2.mp3", fromUser: false, time: getNow(), read: true },
         ]).then(() => {
           addBotMessages(() => [
             { id: Date.now() + 5, insuranceAudioConfirm: true, fromUser: false, time: getNow(), read: true },
