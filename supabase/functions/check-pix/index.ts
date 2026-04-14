@@ -28,7 +28,7 @@ serve(async (req) => {
       });
     }
 
-    const response = await fetch(`https://api.pushinpay.com.br/api/pix/cashIn/${transactionId}`, {
+    const response = await fetch(`https://api.pushinpay.com.br/api/transaction/${transactionId}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${PUSHINPAY_API_TOKEN}`,
