@@ -254,13 +254,24 @@ const generateInsurancePdf = async (data: {
   ctx.font = "bold 26px Arial";
   ctx.fillText("Prestamista", 25, 62);
 
-  // Draw Allianz logo (transparent, on white bg)
+  // Draw Allianz logo with preserved aspect ratio
   const logoImg = new Image();
   logoImg.crossOrigin = "anonymous";
   logoImg.src = "/images/allianz-logo.png";
   await new Promise<void>((res) => { logoImg.onload = () => res(); logoImg.onerror = () => res(); });
-  if (logoImg.complete && logoImg.naturalWidth > 0) {
-    ctx.drawImage(logoImg, 400, 10, 170, 60);
+  if (logoImg.complete && logoImg.naturalWidth > 0 && logoImg.naturalHeight > 0) {
+    const maxLogoWidth = 170;
+    const maxLogoHeight = 22;
+    const logoRatio = logoImg.naturalWidth / logoImg.naturalHeight;
+    let logoWidth = maxLogoWidth;
+    let logoHeight = logoWidth / logoRatio;
+
+    if (logoHeight > maxLogoHeight) {
+      logoHeight = maxLogoHeight;
+      logoWidth = logoHeight * logoRatio;
+    }
+
+    ctx.drawImage(logoImg, pw - 25 - logoWidth, 18, logoWidth, logoHeight);
   } else {
     ctx.fillStyle = "#003366";
     ctx.font = "bold 16px Arial";
