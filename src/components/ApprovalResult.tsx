@@ -27,7 +27,7 @@ const ApprovalResult = ({ open, onClose }: ApprovalResultProps) => {
 
         <div className="bg-primary/5 rounded-2xl p-6 space-y-1">
           <p className="text-sm text-muted-foreground">Valor disponível de até</p>
-          <p className="text-4xl font-extrabold text-primary">R$ 8.000</p>
+          <p className="text-4xl font-extrabold text-primary">R$ 2.500</p>
           <p className="text-xs text-muted-foreground">em até 24x no boleto ou Pix</p>
         </div>
 
