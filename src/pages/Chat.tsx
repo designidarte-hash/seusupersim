@@ -918,7 +918,7 @@ const Chat = () => {
 
     setTimeout(() => {
       addBotMessages(() => [
-        { id: Date.now() + 2, text: `Pronto! Sua proposta de adesão foi gerada com sucesso. Código: ${codigo} 📄`, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 2, text: `Pronto! Sua proposta de adesão foi gerada com sucesso. Código: ${codigo}`, fromUser: false, time: getNow(), read: true },
         { id: Date.now() + 3, insurancePdf: pdfUrl, fromUser: false, time: getNow(), read: true },
       ]);
     }, 4000);
