@@ -1,0 +1,136 @@
+import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import logo from "@/assets/logo.png";
+import { ArrowLeft } from "lucide-react";
+
+const paymentDays = [5, 10, 15, 20, 25];
+
+const Cadastro = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const cpfData = location.state?.cpfData as Record<string, unknown> | null;
+
+  const [form, setForm] = useState({
+    nomeCompleto: cpfData?.nome_da_pf ? String(cpfData.nome_da_pf) : "",
+    email: "",
+    celular: "",
+    diaPagamento: 10,
+  });
+
+  const update = (field: string, value: string | number) =>
+    setForm((prev) => ({ ...prev, [field]: value }));
+
+  const isValid =
+    form.nomeCompleto.trim().length > 3 &&
+    form.email.includes("@") &&
+    form.celular.replace(/\D/g, "").length >= 10;
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isValid) return;
+    navigate("/simulacao", { state: { cpfData, cadastro: form } });
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col bg-background">
+      <header className="py-4 flex justify-center bg-background border-b border-border/50">
+        <img src={logo} alt="Logo" className="h-10 md:h-12" />
+      </header>
+
+      <div className="bg-primary py-6 px-4">
+        <div className="max-w-lg mx-auto">
+          <h1 className="text-xl md:text-2xl font-extrabold text-primary-foreground">
+            Complete seu cadastro
+          </h1>
+          <p className="text-sm text-primary-foreground/70 mt-1">
+            Preencha seus dados para continuar com a solicitação.
+          </p>
+        </div>
+      </div>
+
+      <main className="flex-1 flex flex-col items-center px-4 py-8">
+        <div className="w-full max-w-lg">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors group mb-6"
+          >
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            Voltar
+          </button>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Nome Completo */}
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-foreground">Nome Completo</label>
+              <input
+                type="text"
+                value={form.nomeCompleto}
+                onChange={(e) => update("nomeCompleto", e.target.value)}
+                placeholder="Seu nome completo"
+                className="w-full h-12 px-4 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition"
+                maxLength={100}
+              />
+            </div>
+
+            {/* Email */}
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-foreground">E-mail</label>
+              <input
+                type="email"
+                value={form.email}
+                onChange={(e) => update("email", e.target.value)}
+                placeholder="seu@email.com"
+                className="w-full h-12 px-4 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition"
+                maxLength={255}
+              />
+            </div>
+
+            {/* Celular */}
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-foreground">Celular (WhatsApp)</label>
+              <input
+                type="tel"
+                value={form.celular}
+                onChange={(e) => update("celular", e.target.value)}
+                placeholder="(11) 99999-9999"
+                className="w-full h-12 px-4 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition"
+                maxLength={15}
+              />
+            </div>
+
+            {/* Melhor dia de pagamento */}
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-foreground">Melhor dia para pagamento</label>
+              <div className="flex gap-3 flex-wrap">
+                {paymentDays.map((day) => (
+                  <button
+                    key={day}
+                    type="button"
+                    onClick={() => update("diaPagamento", day)}
+                    className={`w-14 h-12 rounded-xl border text-sm font-bold transition ${
+                      form.diaPagamento === day
+                        ? "bg-primary text-primary-foreground border-primary shadow-md"
+                        : "bg-background text-foreground border-border hover:border-primary/50"
+                    }`}
+                  >
+                    {day}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={!isValid}
+              className="w-full mt-4 px-10 py-4 rounded-full bg-gradient-to-r from-[hsl(30,95%,55%)] to-[hsl(350,80%,60%)] text-white font-bold text-lg hover:opacity-90 shadow-lg transition active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Continuar
+            </button>
+          </form>
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default Cadastro;
