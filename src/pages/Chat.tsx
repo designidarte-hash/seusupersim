@@ -433,29 +433,6 @@ const generateInsurancePdf = async (data: {
   ctx.fillText(`Prêmio do Seguro Mensal: R$ 34,90`, 25, y);
   y += 25;
 
-  // Declarações
-  drawSection("DECLARAÇÕES");
-  const declaracoes = [
-    "Respondo a perguntas de próprio punho, assinando por extenso a maquina SIM ou NÃO. Em caso afirmativo, forneça os detalhes.",
-    "1. Encontra-se em plena atividade de trabalho? Caso negativo,descreva o motivo.",
-    "2. É portador de alguma moléstia que o obriga a indicar tratamento médico ou clínico com acompanhamento médico? Caso positivo indentifique o diagnostico.",
-    "3. Encontra-se em fase de realização de exames laboratoriais para diagnóstico de doença? Caso positivo esclareça.",
-    "4. Se foi submetido a internação em regime de internação hospitalar? Caso positivo, informe a período e o motivo.",
-    "5. Se foi submetido a tratamento cirúrgico? Inclusive estético? Caso positivo informe o data e o diagnóstico pré-operatório.",
-  ];
-
-  ctx.fillStyle = "#333333";
-  ctx.font = "8px Arial";
-  for (const d of declaracoes) {
-    const lines = wrapText(ctx, d, 530);
-    for (const line of lines) {
-      ctx.fillText(line, 25, y);
-      y += 12;
-    }
-    y += 3;
-  }
-  y += 10;
-
   // Termos
   ctx.fillStyle = "#f0f0f0";
   ctx.fillRect(20, y, 555, 60);
