@@ -174,7 +174,7 @@ const Index = () => {
           <div className="flex flex-wrap justify-center md:grid md:grid-cols-5 gap-6">
             {benefits.map((b) => (
               <div key={b.title} className="flex flex-col items-center gap-3 text-center w-[calc(50%-12px)] md:w-auto">
-                <img src={b.img} alt={b.title} className="w-12 h-12 object-contain" />
+                <img src={b.img} alt={b.title} className="w-12 h-12 object-contain" loading="lazy" decoding="async" />
                 <h3 className="text-base font-bold text-foreground">{b.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{b.desc}</p>
               </div>
@@ -239,7 +239,7 @@ const Index = () => {
             {testimonials.map((t) => (
               <div key={t.name} className="bg-background rounded-2xl p-6 text-center space-y-4 border border-border/50 shadow-sm">
                 {t.img ? (
-                  <img src={t.img} alt={t.name} className="w-16 h-16 rounded-full mx-auto object-cover border-2 border-primary/30" />
+                  <img src={t.img} alt={t.name} className="w-16 h-16 rounded-full mx-auto object-cover border-2 border-primary/30" loading="lazy" decoding="async" />
                 ) : (
                   <div className="w-16 h-16 rounded-full mx-auto bg-purple-500 flex items-center justify-center text-white text-2xl font-bold">
                     {t.name.charAt(0)}

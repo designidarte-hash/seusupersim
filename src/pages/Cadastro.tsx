@@ -140,7 +140,14 @@ const Cadastro = () => {
               <input
                 type="tel"
                 value={form.celular}
-                onChange={(e) => update("celular", e.target.value)}
+                onChange={(e) => {
+                  const digits = e.target.value.replace(/\D/g, "").slice(0, 11);
+                  let formatted = digits;
+                  if (digits.length > 2) formatted = `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+                  if (digits.length > 7) formatted = `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+                  else if (digits.length <= 2 && digits.length > 0) formatted = `(${digits}`;
+                  update("celular", formatted);
+                }}
                 placeholder="(11) 99999-9999"
                 className="w-full h-12 px-4 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition"
                 maxLength={15}

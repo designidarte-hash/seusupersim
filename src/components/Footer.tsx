@@ -28,7 +28,7 @@ const Footer = () => (
       <div className="flex flex-wrap items-center justify-center gap-4">
         {selos.map((selo) => (
           <div key={selo.alt} className="bg-muted rounded-lg px-4 py-2">
-            <img src={selo.src} alt={selo.alt} className="h-8 object-contain" />
+            <img src={selo.src} alt={selo.alt} className="h-8 object-contain" loading="lazy" decoding="async" />
           </div>
         ))}
       </div>
