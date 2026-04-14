@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
-import logo from "@/assets/logo.png";
+import profileImg from "@/assets/profile-s.png";
 import { ArrowLeft, Send, Check, CheckCheck } from "lucide-react";
 import Footer from "@/components/Footer";
 
