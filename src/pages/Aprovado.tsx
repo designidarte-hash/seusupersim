@@ -53,7 +53,7 @@ const Aprovado = () => {
 
           <button
             onClick={() => navigate("/cadastro", { state: { cpfData } })}
-            className="btn-3d w-full max-w-sm mx-auto mt-4"
+            className="btn-3d w-full max-w-sm mx-auto mt-4 relative z-10 shadow-xl"
           >
             Solicitar agora
           </button>
