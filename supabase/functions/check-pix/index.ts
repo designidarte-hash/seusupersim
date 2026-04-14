@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -11,14 +12,6 @@ serve(async (req) => {
   }
 
   try {
-    const PUSHINPAY_API_TOKEN = Deno.env.get('PUSHINPAY_API_TOKEN');
-    if (!PUSHINPAY_API_TOKEN) {
-      return new Response(JSON.stringify({ error: 'PUSHINPAY_API_TOKEN not configured' }), {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
     const { transactionId } = await req.json();
 
     if (!transactionId) {
@@ -28,20 +21,22 @@ serve(async (req) => {
       });
     }
 
-    const response = await fetch(`https://api.pushinpay.com.br/api/transaction/${transactionId}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${PUSHINPAY_API_TOKEN}`,
-        'Accept': 'application/json',
-      },
-    });
+    // Query our own database for payment status (updated by webhook)
+    const supabaseAdmin = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    );
 
-    const data = await response.json();
+    const { data, error } = await supabaseAdmin
+      .from('pix_payments')
+      .select('*')
+      .eq('transaction_id', transactionId)
+      .single();
 
-    if (!response.ok) {
-      console.error('PushInPay check error:', JSON.stringify(data));
-      return new Response(JSON.stringify({ error: data.message || `PushInPay API error [${response.status}]` }), {
-        status: response.status,
+    if (error) {
+      console.error('DB query error:', error);
+      return new Response(JSON.stringify({ error: 'Payment not found', status: 'created' }), {
+        status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
