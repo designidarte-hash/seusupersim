@@ -84,7 +84,7 @@ const Aprovado = () => {
           </p>
           <button
             onClick={() => navigate("/")}
-            className="btn-3d mt-4 bg-background text-primary border-b-[5px] border-b-[hsl(220,13%,80%)]"
+            className="btn-3d mt-4 bg-background text-primary border-b-[5px] border-b-[hsl(220,13%,80%)] relative z-10 shadow-xl"
           >
             Solicitar agora
           </button>
