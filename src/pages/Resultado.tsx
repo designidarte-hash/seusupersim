@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import Footer from "@/components/Footer";
-import ChamaNoPixSection from "@/components/ChamaNoPixSection";
+
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.png";
 import { ArrowLeft, User, CalendarDays } from "lucide-react";
