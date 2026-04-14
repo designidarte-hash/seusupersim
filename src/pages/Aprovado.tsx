@@ -60,30 +60,7 @@ const Aprovado = () => {
         </div>
       </section>
 
-      {/* CTA - Chama no PIX */}
-      <section className="py-12 px-4">
-        <div className="max-w-lg mx-auto text-center space-y-4">
-          <p className="text-xs font-semibold tracking-[0.3em] text-primary-foreground/60 uppercase">
-            Chave para o sucesso
-          </p>
-          <h2 className="text-2xl md:text-3xl font-extrabold text-primary-foreground">
-            Aqui sua chance é de verdade
-          </h2>
-          <p className="text-primary-foreground/80">
-            Nascemos para democratizar o acesso ao crédito no Brasil e por isso oferecemos as melhores condições para todos os perfis.
-          </p>
-          <div className="relative inline-block">
-            <img src={chamaNoPixImg} alt="Chama no PIX" className="w-64 md:w-80 mx-auto" />
-            <button
-              onClick={() => navigate("/")}
-              className="btn-3d absolute -bottom-6 left-1/2 -translate-x-1/2 bg-background text-primary border-b-[5px] border-b-[hsl(220,13%,80%)] whitespace-nowrap"
-            >
-              Receber empréstimo via PIX
-            </button>
-          </div>
-          <div className="h-8"></div>
-        </div>
-      </section>
+      <ChamaNoPixSection />
 
       {/* Benefits */}
       <section className="py-12 px-4 border-t border-primary-foreground/10">
