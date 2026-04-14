@@ -704,7 +704,7 @@ const Chat = () => {
   };
 
   // Greeting is NOT auto-sent — user must tap it
-  const greetingText = `Olá${firstName ? `, ${firstName}` : ""}! 👋 Seja bem-vindo(a) ao atendimento SuperSim! Estamos aqui para te ajudar com o seu empréstimo. 😊`;
+  const greetingText = `Olá${firstName ? `, ${firstName}` : ""}! Seja bem-vindo(a) ao atendimento SuperSim. Estamos aqui para te ajudar com o seu empréstimo.`;
 
   const handleSendGreeting = () => {
     if (greetingSent) return;
