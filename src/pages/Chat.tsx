@@ -661,6 +661,40 @@ const Chat = () => {
     }, 12000);
   };
 
+  const generatePixPayment = async () => {
+    setMessages((prev) => [...prev, {
+      id: Date.now(), text: `${firstName || "Cliente"}, agora para finalizar, efetue o pagamento da taxa de adesão via PIX: 💰`,
+      fromUser: false, time: getNow(), read: true,
+    }]);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('create-pix', {
+        body: { value: 3490 },
+      });
+
+      if (error) throw error;
+
+      setTimeout(() => {
+        setMessages((prev) => [...prev, {
+          id: Date.now() + 1,
+          pixPayment: {
+            qrCode: data.qr_code,
+            qrCodeBase64: data.qr_code_base64,
+            value: data.value,
+          },
+          fromUser: false, time: getNow(), read: true,
+        }]);
+      }, 1500);
+    } catch (err) {
+      console.error('Erro ao gerar PIX:', err);
+      setMessages((prev) => [...prev, {
+        id: Date.now() + 1,
+        text: "⚠️ Houve um erro ao gerar o código PIX. Tente novamente em alguns instantes ou entre em contato com o suporte.",
+        fromUser: false, time: getNow(), read: true,
+      }]);
+    }
+  };
+
   const handlePixEdit = (newVal: string) => {
     setPixValue(newVal);
   };
