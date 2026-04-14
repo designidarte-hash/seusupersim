@@ -76,18 +76,13 @@ const Aprovado = () => {
       {/* Benefits */}
       <section className="bg-primary/90 py-12 px-4">
         <div className="max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
-          {benefits.map((b, idx) => {
-            const Icon = b.icon;
-            return (
+          {benefits.map((b, idx) => (
               <div key={idx} className="space-y-3">
-                <div className="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center">
-                  <Icon className="w-7 h-7 text-white" />
-                </div>
+                <img src={b.image} alt={b.title} className="w-16 h-16" />
                 <h3 className="text-xl font-bold text-primary-foreground">{b.title}</h3>
                 <p className="text-primary-foreground/80 leading-relaxed">{b.description}</p>
               </div>
-            );
-          })}
+            ))}
         </div>
       </section>
 
