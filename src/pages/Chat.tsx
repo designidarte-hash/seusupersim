@@ -1,7 +1,8 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import profileImg from "@/assets/profile-s.png";
-import { ArrowLeft, Send, Check, CheckCheck, BadgeCheck, Play, Pause, CreditCard } from "lucide-react";
+import verifiedBadge from "@/assets/verified-badge.png";
+import { ArrowLeft, Send, Check, CheckCheck, Play, Pause, CreditCard } from "lucide-react";
 
 interface ChatMessage {
   id: number;
