@@ -140,7 +140,7 @@ const Resultado = () => {
                     <p className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-0.5">
                       {labelMap[key] || key}
                     </p>
-                    <p className="text-lg font-bold text-foreground truncate uppercase">
+                    <p className="text-lg font-bold text-foreground truncate capitalize">
                       {String(value)}
                     </p>
                   </div>
