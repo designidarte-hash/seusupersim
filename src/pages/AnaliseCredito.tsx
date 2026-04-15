@@ -127,42 +127,43 @@ const AnaliseCredito = () => {
   // Rejected phase - show form
   if (phase === "rejected") {
     return (
-      <div className="min-h-screen flex flex-col bg-background">
-        <header className="py-4 flex justify-center bg-background border-b border-border/50">
+      <div className="min-h-screen flex flex-col bg-[#f7f7f7]">
+        <header className="py-4 flex justify-center bg-white border-b border-border/30">
           <img src={logo} alt="Logo" className="h-10 md:h-12" />
         </header>
 
-        <div className="w-full">
-          <img src={bannerEmprestimo} alt="Empréstimo rápido e fácil" className="w-full h-auto" />
-        </div>
-
         <main className="flex-1 flex items-center justify-center px-4 py-10">
-          <div className="w-full max-w-lg space-y-6">
-            <div className="bg-card rounded-3xl shadow-xl border border-border/40 p-6 md:p-8 space-y-6">
-              {/* Rejection message */}
-              <div className="text-center space-y-3">
-                <div className="w-20 h-20 rounded-full mx-auto flex items-center justify-center bg-red-100 dark:bg-red-950/30">
-                  <XCircle className="w-10 h-10 text-red-500" />
-                </div>
-                <h1 className="text-2xl md:text-3xl font-extrabold text-foreground">Análise não aprovada</h1>
-                <div className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800/40 rounded-2xl p-4 space-y-2">
-                  <div className="flex items-center gap-2 justify-center">
-                    <AlertTriangle className="w-5 h-5 text-red-500" />
-                    <span className="text-red-700 dark:text-red-400 font-semibold text-sm">Renda incompatível</span>
-                  </div>
-                  <p className="text-muted-foreground text-sm">
-                    Não foi possível aprovar seu crédito pois não identificamos renda compatível no seu CPF. 
-                    Preencha os dados abaixo para uma nova análise.
-                  </p>
+          <div className="w-full max-w-md space-y-5">
+            <div className="bg-white rounded-3xl shadow-lg p-7 md:p-9 space-y-7">
+              {/* Icon */}
+              <div className="flex justify-center">
+                <div className="w-[72px] h-[72px] rounded-full flex items-center justify-center bg-red-100">
+                  <XCircle className="w-9 h-9 text-red-500" />
                 </div>
               </div>
 
-              {/* Income form */}
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="profissao" className="text-sm font-semibold text-foreground">Profissão</Label>
+              {/* Title */}
+              <h1 className="text-center text-2xl md:text-[28px] font-extrabold text-foreground leading-tight">
+                Análise não aprovada
+              </h1>
+
+              {/* Warning box */}
+              <div className="bg-red-50 border border-red-200 rounded-2xl px-5 py-4 space-y-2">
+                <div className="flex items-center gap-2 justify-center">
+                  <AlertTriangle className="w-5 h-5 text-red-500" />
+                  <span className="text-red-600 font-bold text-sm">Renda incompatível</span>
+                </div>
+                <p className="text-gray-500 text-sm text-center leading-relaxed">
+                  Não foi possível aprovar seu crédito pois não identificamos renda compatível no seu CPF. Preencha os dados abaixo para uma nova análise.
+                </p>
+              </div>
+
+              {/* Form */}
+              <div className="space-y-5">
+                <div className="space-y-1.5">
+                  <Label htmlFor="profissao" className="text-sm font-bold text-foreground">Profissão</Label>
                   <Select value={profissao} onValueChange={setProfissao}>
-                    <SelectTrigger className="h-12 rounded-xl border-border/60 text-sm">
+                    <SelectTrigger className="h-13 rounded-xl border-2 border-[hsl(36,90%,70%)] focus:border-[hsl(36,97%,55%)] text-sm bg-white shadow-none">
                       <SelectValue placeholder="Selecione sua profissão" />
                     </SelectTrigger>
                     <SelectContent>
@@ -173,21 +174,21 @@ const AnaliseCredito = () => {
                   </Select>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="renda" className="text-sm font-semibold text-foreground">Renda mensal</Label>
+                <div className="space-y-1.5">
+                  <Label htmlFor="renda" className="text-sm font-bold text-foreground">Renda mensal</Label>
                   <Input
                     id="renda"
                     placeholder="Ex: R$ 2.000"
                     value={renda ? formatRenda(renda) : ""}
                     onChange={handleRendaChange}
-                    className="h-12 rounded-xl border-border/60 text-sm"
+                    className="h-13 rounded-xl border-2 border-border/40 focus:border-[hsl(36,97%,55%)] text-sm bg-white shadow-none"
                   />
                 </div>
 
                 <Button
                   onClick={handleSubmitRenda}
                   disabled={!profissao || !renda}
-                  className="w-full h-12 rounded-xl text-base font-bold bg-gradient-to-r from-[hsl(36,97%,55%)] to-[hsl(30,95%,50%)] hover:opacity-90 text-white shadow-lg"
+                  className="w-full h-13 rounded-xl text-base font-bold bg-gradient-to-r from-[hsl(36,90%,72%)] to-[hsl(30,90%,65%)] hover:from-[hsl(36,97%,55%)] hover:to-[hsl(30,95%,50%)] text-white shadow-md border-0 transition-all duration-200"
                 >
                   Analisar novamente
                 </Button>
