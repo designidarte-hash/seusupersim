@@ -1041,7 +1041,7 @@ const Chat = () => {
                       setTimeout(() => {
                         addBotMessages(() => [{
                           id: Date.now() + 1,
-                          audioSrc: "/audio/finalizacao.mp3",
+                          audioSrc: "/audio/audio_pra_finalizar.mp3",
                           fromUser: false, time: getNow(), read: true,
                         }]).then(() => {
                           addBotMessages(() => [{
