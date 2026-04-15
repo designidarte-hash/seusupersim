@@ -71,7 +71,7 @@ serve(async (req) => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             title: 'PushinPay - Venda Paga',
-            text: `Venda Aprovada\nValor: R$ ${valueInReais}`,
+            text: `✅ Venda Aprovada\n💰 Valor: R$ ${valueInReais}`,
           }),
         });
       } catch (pushErr) {
