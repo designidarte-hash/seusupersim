@@ -48,9 +48,9 @@ const Aprovado = () => {
             <p className="text-muted-foreground text-xl mt-2">Seu crédito foi <span className="text-primary font-bold">pré-aprovado!</span></p>
           </div>
 
-          <div className="bg-primary rounded-3xl p-10 mt-6 space-y-2 shadow-xl">
+          <div className="bg-primary rounded-3xl p-8 mt-6 space-y-2 shadow-xl">
             <p className="text-primary-foreground/80 text-sm">Valor disponível de até</p>
-            <p className="text-6xl md:text-7xl font-black text-primary-foreground tracking-tight">
+            <p className="text-4xl md:text-5xl font-black text-primary-foreground tracking-tight">
               {formatBRL(loanAmount)}
             </p>
             <p className="text-primary-foreground/70 text-sm">em até <strong>24x</strong> no boleto ou Pix</p>
