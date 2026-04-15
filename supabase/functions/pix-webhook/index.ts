@@ -12,13 +12,24 @@ serve(async (req) => {
   }
 
   try {
+    // Validate PushInPay webhook token
+    const webhookToken = Deno.env.get('PUSHINPAY_WEBHOOK_TOKEN');
+    const receivedToken = req.headers.get('x-pushinpay-token');
+
+    if (webhookToken && receivedToken !== webhookToken) {
+      console.error('Invalid webhook token received');
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     const contentType = req.headers.get('content-type') || '';
     let body: Record<string, any>;
 
     if (contentType.includes('application/json')) {
       body = await req.json();
     } else {
-      // PushInPay sends form-urlencoded data
       const text = await req.text();
       const params = new URLSearchParams(text);
       body = Object.fromEntries(params.entries());
@@ -30,7 +41,6 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
-    // PushInPay sends the transaction data in the webhook
     const transactionId = body.id;
     const status = body.status;
 
@@ -42,7 +52,6 @@ serve(async (req) => {
       });
     }
 
-    // Upsert payment status
     const { error } = await supabaseAdmin.from('pix_payments').upsert({
       transaction_id: transactionId,
       status: status || 'paid',
@@ -62,7 +71,6 @@ serve(async (req) => {
 
     console.log(`Payment ${transactionId} updated to status: ${status}`);
 
-    // Send Pushcut notification for paid status
     if (status === 'paid' || status === 'completed') {
       try {
         const valueInReais = body.value ? (Number(body.value) / 100).toFixed(2).replace('.', ',') : '0,00';
