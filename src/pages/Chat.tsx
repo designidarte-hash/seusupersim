@@ -193,7 +193,15 @@ const PixConfirmCard = ({ type, value, onConfirm, onEdit, confirmed }: { type: s
   );
 };
 
-const InsuranceCard = ({ onAccept, onDecline, accepted }: { onAccept: () => void; onDecline: () => void; accepted: boolean | null }) => {
+const InsuranceCard = ({ onAccept, onDecline, accepted, nome, cpf, dataNascimento, valor, parcelas, valorParcela }: { 
+  onAccept: () => void; onDecline: () => void; accepted: boolean | null;
+  nome?: string; cpf?: string; dataNascimento?: string;
+  valor?: number; parcelas?: number; valorParcela?: number;
+}) => {
+  const [open, setOpen] = useState(false);
+  const today = new Date().toLocaleDateString("pt-BR");
+  const codigo = useMemo(() => generateCode(), []);
+
   if (accepted === true) {
     return (
       <div className="space-y-2">
@@ -211,27 +219,180 @@ const InsuranceCard = ({ onAccept, onDecline, accepted }: { onAccept: () => void
     );
   }
 
+  const handleAccept = () => {
+    onAccept();
+    setTimeout(() => setOpen(false), 1200);
+  };
+
+  const coberturas = [
+    { nome: "Morte", valor: formatCurrency(valor || 2500) },
+    { nome: "IPA - Invalidez Permanente Total por Acidente", valor: formatCurrency(valor || 2500) },
+    { nome: "IFPD - Invalidez Funcional Permanente Total por Doença", valor: formatCurrency(valor || 2500) },
+    { nome: "PR - Perda de Renda", valor: formatCurrency(valor || 2500) },
+  ];
+
   return (
     <div className="space-y-3">
-      <div className="flex items-center gap-2 mb-1">
-        <ShieldCheck className="w-5 h-5 text-primary" />
-        <span className="text-sm font-semibold text-foreground">Seguro Prestamista - Allianz</span>
+      {/* Preview card */}
+      <div
+        onClick={() => setOpen(true)}
+        className="bg-gradient-to-br from-[#003366] to-[#005599] rounded-2xl p-5 text-white shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
+      >
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="w-5 h-5 text-white" />
+            <span className="font-bold text-sm">Seguro Prestamista</span>
+          </div>
+          <span className="text-[10px] bg-white/20 px-2 py-0.5 rounded-full">Allianz</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-xs text-white/70">Valor mensal</p>
+            <p className="text-2xl font-black">R$ 34,90</p>
+          </div>
+          <div className="text-right">
+            <p className="text-xs text-white/70">Coberturas</p>
+            <p className="text-sm font-bold">Morte, IPA, IFPD</p>
+          </div>
+        </div>
+        <div className="mt-3 bg-white/20 rounded-xl py-2 text-center">
+          <p className="text-xs font-semibold">Toque para ver detalhes e aderir</p>
+        </div>
       </div>
-      <div className="bg-muted/50 rounded-xl p-3 space-y-2 text-sm">
-        <p className="text-muted-foreground text-xs">Proteja seu empréstimo com o Seguro Prestamista. Em caso de imprevistos, suas parcelas ficam cobertas.</p>
-        <div className="flex justify-between"><span className="text-muted-foreground">Coberturas</span><span className="font-semibold text-xs">Morte, IPA, IFPD</span></div>
-        <div className="flex justify-between"><span className="text-muted-foreground">Valor mensal</span><span className="font-semibold text-primary text-base">R$ 34,90</span></div>
-        <div className="flex justify-between"><span className="text-muted-foreground">Seguradora</span><span className="font-semibold">Allianz Seguros</span></div>
-        <div className="flex justify-between"><span className="text-muted-foreground">SUSEP</span><span className="font-semibold text-xs">15414.901719/2014-89</span></div>
-      </div>
-      <div className="flex gap-2">
-        <button onClick={onAccept} className="btn-3d flex-1 !py-2.5 !text-sm !rounded-xl !px-4 !bg-green-600 !border-b-green-800">
-          Aderir ao seguro
-        </button>
-        <button onClick={onDecline} className="flex-1 py-2.5 rounded-xl border border-border text-muted-foreground font-bold text-sm hover:bg-muted/50 transition-colors">
-          Não, obrigado
-        </button>
-      </div>
+
+      {/* Full-screen modal */}
+      {open && (
+        <div className="fixed inset-0 z-[9999] bg-black/60 flex items-end md:items-center justify-center animate-in fade-in duration-200">
+          <div className="bg-white w-full max-w-lg md:rounded-2xl md:max-h-[90vh] h-full md:h-auto overflow-y-auto animate-in slide-in-from-bottom-4 duration-300">
+            {/* Header */}
+            <div className="sticky top-0 z-10 bg-gradient-to-r from-[#003366] to-[#005599] px-5 py-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <ShieldCheck className="w-7 h-7 text-white" />
+                <div>
+                  <p className="text-white font-bold text-sm">Proposta de Adesão — Prestamista</p>
+                  <p className="text-white/70 text-[10px]">Allianz Seguros — {today}</p>
+                </div>
+              </div>
+              <button onClick={() => setOpen(false)} className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white hover:bg-white/30 transition">
+                ✕
+              </button>
+            </div>
+
+            {/* Dados do Estipulante */}
+            <div className="px-5 py-4">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-1.5 h-5 bg-[#003366] rounded-full" />
+                <p className="text-sm font-bold text-foreground uppercase tracking-wide">Dados do Estipulante</p>
+              </div>
+              <div className="bg-muted/40 rounded-xl p-4 space-y-2.5">
+                {[
+                  ["Estipulante", "SuperSim Serviços Financeiros LTDA"],
+                  ["Nº Apólice", codigo],
+                ].map(([label, val]) => (
+                  <div key={label} className="flex justify-between items-center">
+                    <span className="text-xs text-muted-foreground">{label}</span>
+                    <span className="text-xs font-semibold text-foreground text-right max-w-[60%] truncate">{val}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Dados do Proponente */}
+            <div className="px-5 pb-4">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-1.5 h-5 bg-[#003366] rounded-full" />
+                <p className="text-sm font-bold text-foreground uppercase tracking-wide">Dados do Proponente</p>
+              </div>
+              <div className="bg-muted/40 rounded-xl p-4 space-y-2.5">
+                {[
+                  ["Nome Completo", nome || "N/A"],
+                  ["CPF", cpf || "000.000.000-00"],
+                  ["Data de Nascimento", dataNascimento || "00/00/0000"],
+                  ["Data", today],
+                ].map(([label, val]) => (
+                  <div key={label} className="flex justify-between items-center">
+                    <span className="text-xs text-muted-foreground">{label}</span>
+                    <span className="text-xs font-semibold text-foreground text-right max-w-[60%] truncate">{val}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Plano de Seguro */}
+            <div className="px-5 pb-4">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-1.5 h-5 bg-[#003366] rounded-full" />
+                <p className="text-sm font-bold text-foreground uppercase tracking-wide">Plano de Seguro</p>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  ["Plano", `${parcelas || 12}x de ${formatCurrency(valorParcela || 250)}`],
+                  ["Início de Vigência", today],
+                  ["Prêmio Mensal", "R$ 34,90"],
+                  ["SUSEP", "15414.901719/2014-89"],
+                ].map(([label, val]) => (
+                  <div key={label} className="bg-[#003366]/5 border border-[#003366]/10 rounded-xl p-3 text-center">
+                    <p className="text-[10px] text-muted-foreground">{label}</p>
+                    <p className="text-sm font-bold text-foreground">{val}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Coberturas */}
+            <div className="px-5 pb-4">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-1.5 h-5 bg-[#003366] rounded-full" />
+                <p className="text-sm font-bold text-foreground uppercase tracking-wide">Coberturas</p>
+              </div>
+              <div className="space-y-2">
+                {coberturas.map((c, i) => (
+                  <div key={i} className="flex justify-between items-center bg-muted/30 rounded-xl px-4 py-2.5 border border-border/50">
+                    <span className="text-xs text-muted-foreground flex-1">{c.nome}</span>
+                    <span className="text-xs font-bold text-foreground ml-2">{c.valor}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Termos */}
+            <div className="px-5 pb-4">
+              <div className="bg-muted/40 rounded-xl p-4">
+                <p className="text-[10px] text-muted-foreground leading-relaxed">
+                  Autorizo a referida inclusão, no seguro Allianz Prestamista, conforme as Condições Gerais e Especiais em poder do Estipulante, o quem concedo o direito de agir em meu nome no suprimento de todas as cláusulas contempladas neste seguro. Declaro todas as comunicações serão através da internet, com anuência e meu consentimento.
+                </p>
+              </div>
+            </div>
+
+            {/* Footer legal */}
+            <div className="px-5 py-3 bg-muted/30 border-t border-border">
+              <p className="text-[9px] text-muted-foreground text-center leading-relaxed">
+                Allianz Seguros S.A. — CNPJ 61.573.796/0001-66 — Processo SUSEP nº 15414.901719/2014-89 — Código: {codigo}
+              </p>
+            </div>
+
+            {/* Action buttons — sticky bottom */}
+            <div className="sticky bottom-0 bg-white border-t border-border px-5 py-4 space-y-2">
+              <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
+                Ao clicar em "Aderir ao Seguro", declaro que li, compreendi e concordo com todos os termos e condições acima.
+              </p>
+              <button
+                onClick={handleAccept}
+                className="btn-3d w-full !py-3.5 !rounded-xl !text-sm flex items-center justify-center gap-2 !bg-green-600 !border-b-green-800"
+              >
+                <ShieldCheck className="w-4 h-4" />
+                Aderir ao Seguro Prestamista
+              </button>
+              <button
+                onClick={() => { onDecline(); setOpen(false); }}
+                className="w-full py-2.5 rounded-xl border border-border text-muted-foreground font-bold text-sm hover:bg-muted/50 transition-colors"
+              >
+                Não, obrigado
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
