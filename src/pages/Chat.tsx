@@ -1184,6 +1184,34 @@ const Chat = () => {
               {msg.pdfConfirmButton && pdfConfirmed && (
                 <div className="text-center text-xs text-green-600 font-semibold py-1">✅ Documento confirmado!</div>
               )}
+              {msg.taxaButton && !taxaConfirmed && (
+                <div className="space-y-2">
+                  <p className="text-sm text-foreground">Clique abaixo para prosseguir com o pagamento da taxa:</p>
+                  <button
+                    onClick={() => {
+                      setTaxaConfirmed(true);
+                      setTimeout(() => {
+                        setMessages((prev) => [...prev, { id: Date.now(), text: "Prosseguir com a taxa de liberação!", fromUser: true, time: getNow(), read: true }]);
+                      }, 300);
+                      setTimeout(() => {
+                        addBotMessages(() => [{
+                          id: Date.now() + 2,
+                          text: `Perfeito, ${firstName || "cliente"}! Para ativar o Seguro Prestamista Allianz, realize o pagamento da primeira mensalidade no valor de R$ 34,90.\n\nApós a confirmação do pagamento, sua cobertura será ativada imediatamente.\n\nO valor do empréstimo será depositado em até 5 minutos na conta informada.`,
+                          fromUser: false, time: getNow(), read: true,
+                        }]).then(() => {
+                          generatePixPayment();
+                        });
+                      }, 500);
+                    }}
+                    className="btn-3d w-full !py-2.5 !rounded-xl !text-sm !px-4"
+                  >
+                    💰 Pagar taxa de liberação
+                  </button>
+                </div>
+              )}
+              {msg.taxaButton && taxaConfirmed && (
+                <div className="text-center text-xs text-green-600 font-semibold py-1">✅ Prosseguindo...</div>
+              )}
               <div className="flex items-center justify-end gap-1 mt-1">
                 <span className="text-[10px] text-muted-foreground">{msg.time}</span>
                 {msg.fromUser && (
