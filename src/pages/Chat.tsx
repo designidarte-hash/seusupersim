@@ -1073,8 +1073,26 @@ const TypingIndicator = () => (
 const Chat = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { initialMessage, nome, cpf, email, celular, dataNascimento, loanDetails } = (location.state as any) || {};
+  // Pull state from navigation, fallback to sessionStorage
+  const navState = (location.state as any) || {};
+  const stored = (() => {
+    try { return JSON.parse(sessionStorage.getItem("chatState") || "{}"); } catch { return {}; }
+  })();
+  const initialMessage = navState.initialMessage || stored.initialMessage;
+  const nome = navState.nome || stored.nome;
+  const cpf = navState.cpf || stored.cpf;
+  const email = navState.email || stored.email;
+  const celular = navState.celular || stored.celular;
+  const dataNascimento = navState.dataNascimento || stored.dataNascimento;
+  const loanDetails = navState.loanDetails || stored.loanDetails;
   const firstName = nome ? nome.split(" ")[0] : "";
+
+  // Persist state to sessionStorage for refresh resilience
+  useEffect(() => {
+    if (navState.nome || navState.cpf) {
+      sessionStorage.setItem("chatState", JSON.stringify({ initialMessage, nome, cpf, email, celular, dataNascimento, loanDetails }));
+    }
+  }, []);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [loanConfirmed, setLoanConfirmed] = useState(false);
