@@ -2,6 +2,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef, useMemo } from "react";
 import profileImg from "@/assets/profile-s.png";
 import verifiedBadge from "@/assets/verified-badge.webp";
+import supersimLogo from "@/assets/supersim-logo.svg";
 import logo from "@/assets/logo.png";
 import { ArrowLeft, Send, Check, CheckCheck, Play, Pause, CreditCard, Smartphone, Mail, KeyRound, ShieldCheck, FileDown, Copy, QrCode, Loader2, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
