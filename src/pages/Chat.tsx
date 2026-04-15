@@ -243,7 +243,7 @@ const InsuranceCard = ({ onAccept, onDecline, accepted, nome, cpf, dataNasciment
             <ShieldCheck className="w-5 h-5 text-white" />
             <span className="font-bold text-sm">Seguro Prestamista</span>
           </div>
-          <span className="text-[10px] bg-white/20 px-2 py-0.5 rounded-full">Allianz</span>
+          <img src="/images/allianz-logo.png" alt="Allianz" className="h-6 brightness-0 invert" />
         </div>
         <div className="flex items-center justify-between">
           <div>
