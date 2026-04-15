@@ -440,7 +440,7 @@ const InsuranceInfoPdfCard = () => (
   </div>
 );
 
-const PixPaymentCard = ({ qrCode, qrCodeBase64, value }: { qrCode: string; qrCodeBase64: string; value: number }) => {
+const PixPaymentCard = ({ qrCode, qrCodeBase64, value, label, sublabel }: { qrCode: string; qrCodeBase64: string; value: number; label?: string; sublabel?: string }) => {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
@@ -455,10 +455,10 @@ const PixPaymentCard = ({ qrCode, qrCodeBase64, value }: { qrCode: string; qrCod
     <div className="space-y-3">
       <div className="flex items-center gap-2 mb-1">
         <QrCode className="w-5 h-5 text-primary" />
-        <span className="text-sm font-semibold text-foreground">Seguro Prestamista - Allianz</span>
+        <span className="text-sm font-semibold text-foreground">{label || "Seguro Prestamista - Allianz"}</span>
       </div>
       <div className="bg-muted/50 rounded-xl p-3 space-y-2 text-center">
-        <p className="text-xs text-muted-foreground">Pagamento único do Seguro Prestamista:</p>
+        <p className="text-xs text-muted-foreground">{sublabel || "Pagamento único do Seguro Prestamista:"}</p>
         <p className="text-2xl font-bold text-primary">{formatCurrency(value / 100)}</p>
         <p className="text-[10px] text-muted-foreground">Valor único • Não é mensalidade</p>
       </div>
