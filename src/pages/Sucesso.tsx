@@ -1,15 +1,24 @@
+import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useTransitionNavigate } from "@/components/PageTransition";
 import Footer from "@/components/Footer";
 import logo from "@/assets/logo.png";
 import iconCheckCircle from "@/assets/icon-check-circle.png";
 import { Mail, Clock, CreditCard, Shield } from "lucide-react";
+import { markCPFCompleted } from "@/lib/cpf-block";
 
 const Sucesso = () => {
   const location = useLocation();
   const navigate = useTransitionNavigate();
-  const { nome, valor, parcelas, valorParcela } = (location.state as any) || {};
+  const { nome, valor, parcelas, valorParcela, cpfDigits } = (location.state as any) || {};
   const firstName = nome ? nome.split(" ")[0] : "";
+
+  // Mark CPF as completed when user reaches this page
+  useEffect(() => {
+    if (cpfDigits) {
+      markCPFCompleted(cpfDigits).catch(console.error);
+    }
+  }, [cpfDigits]);
 
   const formatCurrency = (v: number) =>
     v?.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }) || "R$ 0,00";
