@@ -498,7 +498,77 @@ const PixPaymentCard = ({ qrCode, qrCodeBase64, value }: { qrCode: string; qrCod
   );
 };
 
-// Transfer receipt generator
+// BCB Normative Card — similar style to contract
+const NormativoCard = ({ nome, cpf, valor, onConfirm, confirmed }: { nome?: string; cpf?: string; valor: number; onConfirm: () => void; confirmed: boolean }) => {
+  const today = new Date().toLocaleDateString("pt-BR");
+
+  return (
+    <div className="bg-background border border-border rounded-2xl overflow-hidden shadow-lg max-h-[60vh] overflow-y-auto">
+      {/* Header */}
+      <div className="bg-[#003366] px-5 py-4 text-center space-y-1">
+        <div className="flex items-center justify-center gap-2">
+          <FileText className="w-5 h-5 text-white" />
+          <span className="text-white font-bold text-sm">NORMATIVO REGULATÓRIO</span>
+        </div>
+        <p className="text-white/70 text-[10px]">Banco Central do Brasil — Resolução BCB nº 4.893/2021</p>
+      </div>
+
+      {/* Content */}
+      <div className="px-5 py-4 space-y-4">
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-3">
+          <p className="text-[10px] text-blue-800 font-semibold mb-1">FUNDAMENTAÇÃO LEGAL</p>
+          <p className="text-[10px] text-blue-700 leading-relaxed">
+            Em conformidade com a Resolução BCB nº 4.893/2021 e Circular nº 3.952/2019, as operações de crédito realizadas por correspondentes bancários estão sujeitas à cobrança de taxa de transferência interbancária (TED/PIX) para efetivação do depósito na conta do beneficiário.
+          </p>
+        </div>
+
+        <div className="space-y-3 text-[11px] text-muted-foreground leading-relaxed">
+          <p><strong className="text-foreground">Art. 1º</strong> — A taxa de transferência é devida pelo tomador do crédito para custear os encargos operacionais de processamento, verificação antifraude e efetivação da transferência eletrônica de valores.</p>
+          <p><strong className="text-foreground">Art. 2º</strong> — O valor da taxa de transferência para a operação em questão é de <strong className="text-primary">R$ 18,74</strong> (dezoito reais e setenta e quatro centavos), conforme tabela vigente do Banco Central do Brasil.</p>
+          <p><strong className="text-foreground">Art. 3º</strong> — O pagamento da taxa garante a liberação imediata do crédito pré-aprovado no valor de <strong className="text-foreground">{formatCurrency(valor)}</strong> na conta do beneficiário <strong className="text-foreground">{nome || "N/A"}</strong>, CPF <strong className="text-foreground">{cpf || "N/A"}</strong>.</p>
+          <p><strong className="text-foreground">Art. 4º</strong> — Após a confirmação do pagamento da taxa, o depósito será realizado em até 24 (vinte e quatro) horas úteis, via PIX ou TED, conforme disponibilidade da instituição financeira parceira.</p>
+          <p><strong className="text-foreground">Art. 5º</strong> — A não realização do pagamento da taxa no prazo de 48 horas resultará no cancelamento automático da proposta de crédito, sem ônus adicionais para o tomador.</p>
+        </div>
+
+        {/* Summary box */}
+        <div className="bg-primary/5 border border-primary/10 rounded-xl p-3 text-center space-y-1">
+          <p className="text-[10px] text-muted-foreground">Taxa de transferência</p>
+          <p className="text-lg font-bold text-primary">R$ 18,74</p>
+          <p className="text-[10px] text-muted-foreground">Pagamento único • Não é mensalidade</p>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="px-5 py-3 bg-muted/30 border-t border-border">
+        <p className="text-[9px] text-muted-foreground text-center leading-relaxed">
+          Banco Central do Brasil — Resolução BCB nº 4.893, de 26 de março de 2021. Dispõe sobre a política de segurança cibernética e sobre os requisitos para a contratação de serviços de processamento e armazenamento de dados. Publicado no DOU em 29/03/2021.
+        </p>
+      </div>
+
+      {/* Confirm button */}
+      <div className="sticky bottom-0 bg-white border-t border-border px-5 py-4">
+        {!confirmed ? (
+          <button
+            onClick={onConfirm}
+            className="btn-3d w-full !py-3.5 !rounded-xl !text-sm flex items-center justify-center gap-2"
+          >
+            Li e estou ciente — Prosseguir
+          </button>
+        ) : (
+          <div className="bg-green-50 border border-green-200 rounded-xl p-3 text-center">
+            <div className="flex items-center justify-center gap-2">
+              <Check className="w-4 h-4 text-green-600" />
+              <p className="text-xs font-semibold text-green-700">Normativo confirmado</p>
+            </div>
+            <p className="text-[10px] text-green-600">{today}</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+
 const generateTransferReceipt = async (data: { nome: string; cpf: string; valor: number; protocolo: string }) => {
   const canvas = document.createElement("canvas");
   const scale = 2;
