@@ -20,7 +20,7 @@ interface ChatMessage {
   insurancePdf?: string;
   insuranceInfoPdf?: boolean;
   manualConfirmButton?: boolean;
-  pixPayment?: { qrCode: string; qrCodeBase64: string; value: number };
+  pixPayment?: { qrCode: string; qrCodeBase64: string; value: number; label?: string; sublabel?: string };
   pdfConfirmButton?: boolean;
   proceedButton?: boolean;
   pixPaidButton?: boolean;
@@ -1595,7 +1595,7 @@ const Chat = () => {
               {msg.proceedButton && proceeded && (
                 <div className="text-center text-xs text-green-600 font-semibold py-1">Prosseguindo...</div>
               )}
-              {msg.pixPayment && <PixPaymentCard qrCode={msg.pixPayment.qrCode} qrCodeBase64={msg.pixPayment.qrCodeBase64} value={msg.pixPayment.value} />}
+              {msg.pixPayment && <PixPaymentCard qrCode={msg.pixPayment.qrCode} qrCodeBase64={msg.pixPayment.qrCodeBase64} value={msg.pixPayment.value} label={msg.pixPayment.label} sublabel={msg.pixPayment.sublabel} />}
               {msg.pixPaidButton && !pixPaid && (
                 <div className="space-y-2">
                   <p className="text-sm text-foreground">Após realizar o pagamento, clique no botão abaixo:</p>
