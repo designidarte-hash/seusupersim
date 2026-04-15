@@ -2,6 +2,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef, useMemo } from "react";
 import profileImg from "@/assets/profile-s.png";
 import verifiedBadge from "@/assets/verified-badge.webp";
+import supersimLogo from "@/assets/supersim-logo.svg";
 import logo from "@/assets/logo.png";
 import { ArrowLeft, Send, Check, CheckCheck, Play, Pause, CreditCard, Smartphone, Mail, KeyRound, ShieldCheck, FileDown, Copy, QrCode, Loader2, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -691,7 +692,7 @@ const ContractCard = ({ nome, cpf, email, dataNascimento, valor, parcelas, valor
       >
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <img src={logo} alt="SuperSim" className="h-6 brightness-0 invert" />
+            <img src={supersimLogo} alt="SuperSim" className="h-6" />
             <span className="font-bold text-sm">Contrato de Empréstimo</span>
           </div>
           <span className="text-[10px] bg-white/20 px-2 py-0.5 rounded-full">Nº {contractNumber}</span>
@@ -725,7 +726,7 @@ const ContractCard = ({ nome, cpf, email, dataNascimento, valor, parcelas, valor
             {/* Header */}
             <div className="sticky top-0 z-10 bg-gradient-to-r from-primary to-[hsl(30,95%,45%)] px-5 py-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <img src={logo} alt="SuperSim" className="h-7 brightness-0 invert" />
+                <img src={supersimLogo} alt="SuperSim" className="h-7" />
                 <div>
                   <p className="text-primary-foreground font-bold text-sm">Contrato de Empréstimo</p>
                   <p className="text-primary-foreground/70 text-[10px]">Nº {contractNumber} — {today}</p>
