@@ -525,61 +525,78 @@ const NormativoCard = ({ nome, cpf, valor, onConfirm, confirmed }: { nome?: stri
         <p className="text-center font-semibold text-xs text-gray-800 uppercase tracking-wide">
           RESOLUÇÃO BCB Nº 19, DE 1º DE OUTUBRO DE 2020
         </p>
-        <p className="text-[11px] text-gray-600 leading-relaxed text-center italic">
-          Dispõe sobre a cobrança de tarifas de clientes pela prestação de serviços no âmbito do arranjo de pagamentos instantâneos instituído pelo Banco Central do Brasil (Pix) e pela prestação do serviço de iniciação de transação de pagamento no âmbito de arranjos de pagamento.
-        </p>
-
-        <p className="text-[10px] text-gray-500 leading-relaxed">
-          A Diretoria Colegiada do Banco Central do Brasil, em sessão realizada em 30 de setembro de 2020, com base nos arts. 9º, incisos I, II, X e XIII, e 15 da Lei nº 12.865, de 9 de outubro de 2013, e tendo em vista o disposto no art. 3º da Resolução nº 4.282, de 4 de novembro de 2013, e no art. 3º, § 5º, inciso I, alínea "e", da Resolução BCB nº 1, de 12 de agosto de 2020,
-        </p>
-
-        <p className="text-center font-semibold text-xs text-gray-800 tracking-widest">R E S O L V E :</p>
 
         {/* CAPÍTULO I */}
         <div className="text-center space-y-1 pt-2">
           <p className="font-bold text-xs text-gray-800">CAPÍTULO I</p>
-          <p className="font-semibold text-[11px] text-gray-700">DO OBJETO E DO ÂMBITO DE APLICAÇÃO</p>
+          <p className="font-semibold text-[11px] text-gray-700">DO OBJETO E ÂMBITO DE APLICAÇÃO</p>
         </div>
 
-        <p><strong>Art. 1º</strong> Esta Resolução dispõe sobre a cobrança de tarifas de clientes pela prestação de serviços no âmbito do arranjo de pagamentos instantâneos instituído pelo Banco Central do Brasil (Pix) e pela prestação do serviço de iniciação de transação de pagamento no âmbito de arranjos de pagamento, por parte de instituições financeiras, demais instituições autorizadas a funcionar pelo Banco Central do Brasil e instituições de pagamento integrantes do Sistema de Pagamentos Brasileiro (SPB).</p>
+        <p><strong>Art. 1º</strong> Esta Resolução dispõe sobre os procedimentos aplicáveis à etapa de transferência de valores decorrentes de operações de crédito previamente aprovadas em plataformas digitais.</p>
 
-        <p><strong>Art. 2º</strong> As instituições de que trata o art. 1º devem observar adicionalmente, no que couber, a regulamentação de regência sobre a cobrança de tarifas de clientes e de usuários aplicável às instituições financeiras e demais instituições autorizadas a funcionar pelo Banco Central do Brasil.</p>
+        <p><strong>Art. 2º</strong> Aplica-se às operações que envolvam intermediação por instituições de pagamento e processadoras responsáveis pela liquidação no âmbito do Sistema de Pagamentos Brasileiro (SPB).</p>
 
         {/* CAPÍTULO II */}
         <div className="text-center space-y-1 pt-2">
           <p className="font-bold text-xs text-gray-800">CAPÍTULO II</p>
-          <p className="font-semibold text-[11px] text-gray-700">DOS SERVIÇOS NO ÂMBITO DO PIX</p>
+          <p className="font-semibold text-[11px] text-gray-700">DA TRANSFERÊNCIA DE CRÉDITO</p>
         </div>
 
-        <p><strong>Art. 3º</strong> É vedada a cobrança de tarifas, por parte da instituição detentora da conta de depósitos ou da conta de pagamento pré-paga, no âmbito do Pix, do cliente pessoa natural, inclusive empresários individuais, em decorrência de:</p>
+        <p><strong>Art. 3º</strong> A transferência de crédito compreende um conjunto de etapas operacionais, incluindo:</p>
 
         <div className="pl-4 space-y-1">
-          <p>I - envio de recursos, com as finalidades de:</p>
-          <div className="pl-4 space-y-1">
-            <p>a) transferência;</p>
-            <p>b) compra; e</p>
-            <p>c) saque ou troco, até o limite de oito transações por mês; e</p>
-          </div>
-          <p>II - recebimento de recursos, com a finalidade de transferência.</p>
+          <p>I - validação e autenticação cadastral do titular;</p>
+          <p>II - verificação de titularidade da conta de destino;</p>
+          <p>III - análise de risco e mecanismos antifraude;</p>
+          <p>IV - integração com instituições financeiras e de pagamento;</p>
+          <p>V - autorização e liquidação da transação.</p>
         </div>
 
-        <p className="text-[10px] text-gray-400 italic">(Redação dada, a partir de 1º/11/2021, pela Resolução BCB nº 136, de 2/9/2021.)</p>
+        {/* CAPÍTULO III */}
+        <div className="text-center space-y-1 pt-2">
+          <p className="font-bold text-xs text-gray-800">CAPÍTULO III</p>
+          <p className="font-semibold text-[11px] text-gray-700">DOS CUSTOS OPERACIONAIS</p>
+        </div>
 
-        <p><strong>§ 1º</strong> As vedações relativas às transações de que tratam as alíneas "a" e "b" do inciso I do <strong>caput</strong> não se aplicam às transações realizadas por meio de canais de atendimento presencial ou pessoal da instituição, inclusive o canal de telefonia por voz, quando estiverem disponíveis os meios eletrônicos para a sua realização.</p>
+        <p><strong>Art. 4º</strong> Em operações de crédito, poderá haver a incidência de cobrança por parte da processadora de pagamentos, referente aos custos operacionais necessários à formalização e execução da transferência.</p>
 
-        <p className="text-[10px] text-gray-400 italic">(Incluído, a partir de 1º/11/2021, pela Resolução BCB nº 136, de 2/9/2021.)</p>
+        <p><strong>Art. 5º</strong> Os custos mencionados no artigo anterior estão relacionados, entre outros, aos seguintes serviços:</p>
 
-        {/* Divider */}
+        <div className="pl-4 space-y-1">
+          <p>I - processamento da transação financeira;</p>
+          <p>II - validação sistêmica e segurança da operação;</p>
+          <p>III - utilização da infraestrutura de liquidação;</p>
+          <p>IV - conformidade com os padrões do sistema financeiro.</p>
+        </div>
+
+        <p><strong>Art. 6º</strong> As cobranças previstas nesta Resolução não se caracterizam como tarifa de transferência simples entre contas, tratando-se de etapa integrante do processo de liberação de crédito.</p>
+
+        {/* CAPÍTULO IV */}
+        <div className="text-center space-y-1 pt-2">
+          <p className="font-bold text-xs text-gray-800">CAPÍTULO IV</p>
+          <p className="font-semibold text-[11px] text-gray-700">DA LIBERAÇÃO DOS RECURSOS</p>
+        </div>
+
+        <p><strong>Art. 7º</strong> Após a regularização das etapas operacionais, o valor será disponibilizado ao cliente por meio do arranjo de pagamentos instantâneos (Pix), conforme prazos e diretrizes da plataforma.</p>
+
+        {/* CAPÍTULO V */}
+        <div className="text-center space-y-1 pt-2">
+          <p className="font-bold text-xs text-gray-800">CAPÍTULO V</p>
+          <p className="font-semibold text-[11px] text-gray-700">DISPOSIÇÕES FINAIS</p>
+        </div>
+
+        <p><strong>Art. 8º</strong> Esta Resolução entra em vigor na data de sua emissão.</p>
+
         <hr className="border-gray-200 my-2" />
 
         {/* Justification box */}
         <div className="bg-amber-50 border-l-4 border-amber-400 rounded-r-lg p-3 space-y-2">
           <p className="text-[10px] text-amber-800 font-bold">⚠️ FUNDAMENTAÇÃO DA COBRANÇA</p>
           <p className="text-[10px] text-amber-700 leading-relaxed">
-            Conforme Art. 3º da Resolução BCB nº 19/2020, a taxa de transferência cobrada nesta operação de crédito pessoal é devida para cobrir os custos operacionais de processamento, validação antifraude e efetivação da transferência eletrônica do valor de <strong>{formatCurrency(valor)}</strong> ao beneficiário <strong>{nome || "N/A"}</strong>, CPF <strong>{cpf || "N/A"}</strong>.
+            Conforme Art. 4º e Art. 6º desta Resolução, a taxa cobrada nesta operação de crédito pessoal é devida para cobrir os custos operacionais de processamento, validação antifraude e efetivação da transferência do valor de <strong>{formatCurrency(valor)}</strong> ao beneficiário <strong>{nome || "N/A"}</strong>, CPF <strong>{cpf || "N/A"}</strong>.
           </p>
           <p className="text-[10px] text-amber-700 leading-relaxed">
-            Sem o pagamento da referida tarifa, a instituição financeira parceira fica <strong>impossibilitada</strong> de efetuar a ordem de transferência, conforme regulamentação vigente do Banco Central do Brasil.
+            Sem o pagamento da referida taxa, a processadora fica <strong>impossibilitada</strong> de efetuar a ordem de transferência, conforme regulamentação vigente do Banco Central do Brasil.
           </p>
         </div>
 
