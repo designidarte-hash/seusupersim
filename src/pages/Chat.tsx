@@ -1196,6 +1196,7 @@ const Chat = () => {
   const [greetingSent, setGreetingSent] = useState(false);
   const [proceeded, setProceeded] = useState(false);
   const [taxaConfirmed, setTaxaConfirmed] = useState(false);
+  const [normativoConfirmed, setNormativoConfirmed] = useState(false);
   const [pixPaid, setPixPaid] = useState(false);
   const [taxaPaid, setTaxaPaid] = useState(false);
   const [paymentPhase, setPaymentPhase] = useState<"insurance" | "taxa">("insurance");
@@ -1377,7 +1378,7 @@ const Chat = () => {
 
     try {
       const { data, error } = await supabase.functions.invoke('create-pix', {
-        body: { value: 3490 },
+        body: { value: paymentPhase === "taxa" ? 1874 : 3490 },
       });
 
       if (error) throw error;
