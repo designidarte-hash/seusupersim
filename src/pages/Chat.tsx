@@ -671,132 +671,186 @@ const ContractCard = ({ nome, cpf, email, dataNascimento, valor, parcelas, valor
   pixKeyType: string; pixKeyValue: string;
   onSign: () => void; signed: boolean;
 }) => {
-  const contractNumber = `${Math.floor(10000000 + Math.random() * 90000000)}`;
+  const [open, setOpen] = useState(false);
+  const contractNumber = useMemo(() => `${Math.floor(10000000 + Math.random() * 90000000)}`, []);
   const today = new Date().toLocaleDateString("pt-BR");
+  const totalValue = valorParcela * parcelas;
+
+  const handleSign = () => {
+    onSign();
+    setTimeout(() => setOpen(false), 1200);
+  };
 
   return (
     <div className="space-y-3">
-      <div className="bg-white rounded-xl border border-border overflow-hidden">
-        {/* Header */}
-        <div className="bg-[#003366] px-4 py-3 flex items-center justify-between">
+      {/* Preview card in chat */}
+      <div
+        onClick={() => !signed && setOpen(true)}
+        className={`bg-gradient-to-br from-primary to-[hsl(30,95%,45%)] rounded-2xl p-5 text-primary-foreground shadow-lg ${!signed ? "cursor-pointer hover:shadow-xl transition-shadow" : ""}`}
+      >
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <FileText className="w-5 h-5" />
+            <span className="font-bold text-sm">Contrato de Empréstimo</span>
+          </div>
+          <span className="text-[10px] bg-white/20 px-2 py-0.5 rounded-full">Nº {contractNumber}</span>
+        </div>
+        <div className="flex items-center justify-between">
           <div>
-            <p className="text-white/70 text-[10px]">Contrato de Empréstimo</p>
-            <p className="text-white font-bold text-sm">Super Sim</p>
+            <p className="text-xs text-primary-foreground/70">Valor</p>
+            <p className="text-2xl font-black">{formatCurrency(valor)}</p>
           </div>
           <div className="text-right">
-            <p className="text-white/70 text-[10px]">Nº Contrato</p>
-            <p className="text-white font-bold text-xs">{contractNumber}</p>
+            <p className="text-xs text-primary-foreground/70">{parcelas}x de</p>
+            <p className="text-lg font-bold">{formatCurrency(valorParcela)}</p>
           </div>
         </div>
-
-        {/* Dados do Cliente */}
-        <div className="px-4 py-3 space-y-2">
-          <div className="flex items-center gap-1.5 mb-2">
-            <div className="w-1 h-4 bg-[#003366] rounded-full" />
-            <p className="text-xs font-bold text-[#003366] uppercase tracking-wide">Dados do Cliente</p>
+        {!signed ? (
+          <div className="mt-3 bg-white/20 rounded-xl py-2 text-center">
+            <p className="text-xs font-semibold">📄 Toque para ler e assinar o contrato</p>
           </div>
-          <div className="grid grid-cols-1 gap-1.5 text-xs">
-            <div className="flex justify-between border-b border-dashed border-border pb-1">
-              <span className="text-muted-foreground">Nome Completo</span>
-              <span className="font-semibold text-foreground text-right">{nome}</span>
-            </div>
-            <div className="flex justify-between border-b border-dashed border-border pb-1">
-              <span className="text-muted-foreground">CPF</span>
-              <span className="font-semibold text-foreground">{cpf}</span>
-            </div>
-            <div className="flex justify-between border-b border-dashed border-border pb-1">
-              <span className="text-muted-foreground">E-mail</span>
-              <span className="font-semibold text-foreground text-right">{email}</span>
-            </div>
-            <div className="flex justify-between border-b border-dashed border-border pb-1">
-              <span className="text-muted-foreground">Data de Nascimento</span>
-              <span className="font-semibold text-foreground">{dataNascimento}</span>
-            </div>
+        ) : (
+          <div className="mt-3 bg-green-500/30 rounded-xl py-2 text-center flex items-center justify-center gap-2">
+            <Check className="w-4 h-4" />
+            <p className="text-xs font-semibold">Contrato assinado — {today}</p>
           </div>
-        </div>
-
-        {/* Dados da Operação */}
-        <div className="px-4 py-3 bg-muted/30 space-y-2">
-          <div className="flex items-center gap-1.5 mb-2">
-            <div className="w-1 h-4 bg-[#003366] rounded-full" />
-            <p className="text-xs font-bold text-[#003366] uppercase tracking-wide">Dados da Operação</p>
-          </div>
-          <div className="grid grid-cols-2 gap-2 text-xs">
-            <div className="bg-white rounded-lg p-2 text-center border border-border">
-              <p className="text-muted-foreground text-[10px]">Valor Principal</p>
-              <p className="font-bold text-foreground">{formatCurrency(valor)}</p>
-            </div>
-            <div className="bg-white rounded-lg p-2 text-center border border-border">
-              <p className="text-muted-foreground text-[10px]">Parcelas</p>
-              <p className="font-bold text-foreground">{parcelas}x de {formatCurrency(valorParcela)}</p>
-            </div>
-            <div className="bg-white rounded-lg p-2 text-center border border-border">
-              <p className="text-muted-foreground text-[10px]">Taxa Mensal</p>
-              <p className="font-bold text-foreground">{taxa}%</p>
-            </div>
-            <div className="bg-white rounded-lg p-2 text-center border border-border">
-              <p className="text-muted-foreground text-[10px]">Data</p>
-              <p className="font-bold text-foreground">{today}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Cláusulas resumidas */}
-        <div className="px-4 py-3 space-y-2">
-          <div className="flex items-center gap-1.5 mb-1">
-            <div className="w-1 h-4 bg-[#003366] rounded-full" />
-            <p className="text-xs font-bold text-[#003366] uppercase tracking-wide">Termos do Contrato</p>
-          </div>
-          
-          {/* Alerta importante sobre débito automático */}
-          <div className="bg-primary/10 border border-primary/20 rounded-lg p-2.5 mb-2">
-            <p className="text-[10px] text-primary font-semibold mb-0.5">⚠️ DÉBITO AUTOMÁTICO</p>
-            <p className="text-[9px] text-primary/80 leading-tight">
-              As parcelas serão debitadas <strong>AUTOMATICAMENTE</strong> da conta vinculada à chave PIX informada ({pixKeyValue}). 
-              Certifique-se de manter saldo disponível na data de vencimento para evitar cobranças de juros e multas.
-            </p>
-          </div>
-          
-          <div className="text-[10px] text-muted-foreground leading-relaxed space-y-1.5">
-            <p><strong>1. OBJETO:</strong> A Financeira concede ao CLIENTE um empréstimo no valor e condições indicados acima, sujeito à taxa de juros e demais encargos acordados.</p>
-            <p><strong>2. ENCARGOS:</strong> O CLIENTE se obriga pelo valor do Empréstimo, compreendendo Valor Principal, juros e demais encargos, conforme normas do CMN e Banco Central do Brasil.</p>
-            <p><strong>3. PAGAMENTOS:</strong> O CLIENTE autoriza o débito automático das parcelas na conta bancária vinculada à chave PIX {pixKeyType === "cpf" ? "CPF" : pixKeyType === "email" ? "e-mail" : "telefone"} ({pixKeyValue}). O não pagamento sujeitará o CLIENTE a comissão de permanência, juros moratórios de 1% ao mês e multa de 2%.</p>
-            <p><strong>4. VENCIMENTO:</strong> As parcelas vencem mensalmente conforme data informada. O débito ocorrerá automaticamente na data de vencimento ou no próximo dia útil.</p>
-            <p><strong>5. RESCISÃO:</strong> As obrigações serão antecipadamente vencidas em caso de saldo insuficiente para débito, falsidade documental ou negativação em órgãos de crédito.</p>
-          </div>
-        </div>
-
-        {/* Footer legal */}
-        <div className="px-4 py-2 bg-[#f0f0f0] border-t border-border">
-          <p className="text-[8px] text-muted-foreground text-center">
-            SUPERSIM S/A — CNPJ 33.030.944/0001-60 — AV. Nove de Julho, 5143, Jardim Paulista, São Paulo/SP
-          </p>
-        </div>
+        )}
       </div>
 
-      {/* Assinatura */}
-      {!signed ? (
-        <div className="space-y-2">
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-3">
-            <p className="text-[11px] text-blue-700 leading-relaxed">
-              Ao clicar em <strong>"Assinar Contrato"</strong>, você declara que leu, compreendeu e concorda com todos os termos e condições deste contrato de empréstimo.
-            </p>
-          </div>
-          <button
-            onClick={onSign}
-            className="btn-3d w-full !py-3 !rounded-xl !text-sm flex items-center justify-center gap-2"
-          >
-            ✍️ Assinar Contrato Eletronicamente
-          </button>
-        </div>
-      ) : (
-        <div className="space-y-2">
-          <div className="bg-green-50 border border-green-200 rounded-xl p-3 text-center">
-            <div className="flex items-center justify-center gap-2">
-              <Check className="w-4 h-4 text-green-600" />
-              <p className="text-xs font-semibold text-green-700">Contrato assinado eletronicamente</p>
+      {/* Full-screen contract modal */}
+      {open && (
+        <div className="fixed inset-0 z-[9999] bg-black/60 flex items-end md:items-center justify-center animate-in fade-in duration-200">
+          <div className="bg-white w-full max-w-lg md:rounded-2xl md:max-h-[90vh] h-full md:h-auto overflow-y-auto animate-in slide-in-from-bottom-4 duration-300">
+            {/* Header */}
+            <div className="sticky top-0 z-10 bg-gradient-to-r from-primary to-[hsl(30,95%,45%)] px-5 py-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <img src={logo} alt="SuperSim" className="h-7 brightness-0 invert" />
+                <div>
+                  <p className="text-primary-foreground font-bold text-sm">Contrato de Empréstimo</p>
+                  <p className="text-primary-foreground/70 text-[10px]">Nº {contractNumber} — {today}</p>
+                </div>
+              </div>
+              <button onClick={() => setOpen(false)} className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-primary-foreground hover:bg-white/30 transition">
+                ✕
+              </button>
             </div>
-            <p className="text-[10px] text-green-600 mt-1">{today} — {nome}</p>
+
+            {/* Client data */}
+            <div className="px-5 py-4">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-1.5 h-5 bg-primary rounded-full" />
+                <p className="text-sm font-bold text-foreground uppercase tracking-wide">Dados do Cliente</p>
+              </div>
+              <div className="bg-muted/40 rounded-xl p-4 space-y-2.5">
+                {[
+                  ["Nome Completo", nome],
+                  ["CPF", cpf],
+                  ["E-mail", email],
+                  ["Data de Nascimento", dataNascimento],
+                ].map(([label, val]) => (
+                  <div key={label} className="flex justify-between items-center">
+                    <span className="text-xs text-muted-foreground">{label}</span>
+                    <span className="text-xs font-semibold text-foreground text-right max-w-[60%] truncate">{val}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Operation data */}
+            <div className="px-5 pb-4">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-1.5 h-5 bg-primary rounded-full" />
+                <p className="text-sm font-bold text-foreground uppercase tracking-wide">Dados da Operação</p>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  ["Valor Solicitado", formatCurrency(valor)],
+                  ["Parcelas", `${parcelas}x de ${formatCurrency(valorParcela)}`],
+                  ["Taxa Mensal", `${taxa}%`],
+                  ["Valor Total", formatCurrency(totalValue)],
+                  ["CET a.m.", "1,42%"],
+                  ["Data", today],
+                ].map(([label, val]) => (
+                  <div key={label} className="bg-primary/5 border border-primary/10 rounded-xl p-3 text-center">
+                    <p className="text-[10px] text-muted-foreground">{label}</p>
+                    <p className="text-sm font-bold text-foreground">{val}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Chave PIX */}
+            <div className="px-5 pb-4">
+              <div className="bg-primary/10 border border-primary/20 rounded-xl p-3 flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+                  <span className="text-lg">🔑</span>
+                </div>
+                <div>
+                  <p className="text-[10px] text-primary font-semibold uppercase">Chave PIX para depósito</p>
+                  <p className="text-sm font-bold text-foreground">{pixKeyValue}</p>
+                  <p className="text-[10px] text-muted-foreground">Tipo: {pixKeyType === "cpf" ? "CPF" : pixKeyType === "email" ? "E-mail" : "Telefone"}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Cláusulas */}
+            <div className="px-5 pb-4">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-1.5 h-5 bg-primary rounded-full" />
+                <p className="text-sm font-bold text-foreground uppercase tracking-wide">Cláusulas do Contrato</p>
+              </div>
+
+              <div className="bg-primary/5 border border-primary/10 rounded-xl p-3 mb-3">
+                <p className="text-[10px] text-primary font-semibold mb-0.5">⚠️ DÉBITO AUTOMÁTICO</p>
+                <p className="text-[10px] text-primary/80 leading-tight">
+                  As parcelas serão debitadas <strong>AUTOMATICAMENTE</strong> da conta vinculada à chave PIX informada ({pixKeyValue}).
+                  Certifique-se de manter saldo disponível na data de vencimento.
+                </p>
+              </div>
+
+              <div className="space-y-3 text-[11px] text-muted-foreground leading-relaxed">
+                <p><strong className="text-foreground">CLÁUSULA 1ª — DO OBJETO:</strong> A instituição financeira parceira concede ao CLIENTE, {nome}, inscrito no CPF sob o nº {cpf}, um empréstimo pessoal no valor de {formatCurrency(valor)}, conforme condições pactuadas neste instrumento.</p>
+                <p><strong className="text-foreground">CLÁUSULA 2ª — DOS ENCARGOS:</strong> O CLIENTE se obriga ao pagamento do valor do empréstimo, compreendendo o valor principal de {formatCurrency(valor)}, acrescido de juros remuneratórios à taxa de {taxa}% ao mês, totalizando {formatCurrency(totalValue)} em {parcelas} parcelas mensais de {formatCurrency(valorParcela)}, conforme normas do CMN e Banco Central do Brasil.</p>
+                <p><strong className="text-foreground">CLÁUSULA 3ª — DO PAGAMENTO:</strong> O CLIENTE autoriza o débito automático das parcelas na conta bancária vinculada à chave PIX {pixKeyType === "cpf" ? "CPF" : pixKeyType === "email" ? "e-mail" : "telefone"} ({pixKeyValue}). O não pagamento na data de vencimento sujeitará o CLIENTE à comissão de permanência, juros moratórios de 1% ao mês e multa de 2% sobre o valor em atraso.</p>
+                <p><strong className="text-foreground">CLÁUSULA 4ª — DO VENCIMENTO:</strong> As parcelas vencem mensalmente a partir de 30 dias da data de assinatura deste contrato. O débito ocorrerá automaticamente na data de vencimento ou no próximo dia útil subsequente.</p>
+                <p><strong className="text-foreground">CLÁUSULA 5ª — DA RESCISÃO ANTECIPADA:</strong> As obrigações serão antecipadamente vencidas em caso de: (a) saldo insuficiente para débito por 3 meses consecutivos; (b) falsidade de qualquer documento ou informação prestada; (c) inclusão do CLIENTE em cadastros restritivos de crédito durante a vigência do contrato.</p>
+                <p><strong className="text-foreground">CLÁUSULA 6ª — DO SEGURO:</strong> O presente contrato conta com Seguro Prestamista da Allianz Seguros S/A, que garante a quitação do saldo devedor em caso de morte, invalidez permanente total por acidente ou desemprego involuntário do CLIENTE.</p>
+                <p><strong className="text-foreground">CLÁUSULA 7ª — DA LGPD:</strong> O CLIENTE autoriza o tratamento dos seus dados pessoais para finalidade de concessão de crédito, cobrança e marketing, conforme Lei nº 13.709/2018 (LGPD), podendo solicitar exclusão ou portabilidade a qualquer momento.</p>
+                <p><strong className="text-foreground">CLÁUSULA 8ª — DO FORO:</strong> Fica eleito o Foro da Comarca de São Paulo/SP para dirimir eventuais litígios decorrentes deste contrato, com renúncia expressa a qualquer outro, por mais privilegiado que seja.</p>
+              </div>
+            </div>
+
+            {/* Footer legal */}
+            <div className="px-5 py-3 bg-muted/30 border-t border-border">
+              <p className="text-[9px] text-muted-foreground text-center leading-relaxed">
+                SUPERSIM ANALISE DE DADOS E CORRESPONDENTE BANCARIO LTDA. — CNPJ 33.030.944/0001-60 — Av. Nove de Julho, 5143 - Conj 121, Jardim Paulista, São Paulo/SP — CEP 01.407-906. Correspondente bancário nos termos da Resolução nº 3.954/11 do BACEN.
+              </p>
+            </div>
+
+            {/* Sign button — sticky bottom */}
+            <div className="sticky bottom-0 bg-white border-t border-border px-5 py-4 space-y-2">
+              {!signed ? (
+                <>
+                  <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
+                    Ao clicar em "Assinar Contrato", declaro que li, compreendi e concordo com todos os termos e condições acima.
+                  </p>
+                  <button
+                    onClick={handleSign}
+                    className="btn-3d w-full !py-3.5 !rounded-xl !text-sm flex items-center justify-center gap-2"
+                  >
+                    ✍️ Assinar Contrato Eletronicamente
+                  </button>
+                </>
+              ) : (
+                <div className="bg-green-50 border border-green-200 rounded-xl p-3 text-center">
+                  <div className="flex items-center justify-center gap-2">
+                    <Check className="w-4 h-4 text-green-600" />
+                    <p className="text-xs font-semibold text-green-700">Contrato assinado eletronicamente</p>
+                  </div>
+                  <p className="text-[10px] text-green-600 mt-1">{today} — {nome}</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
