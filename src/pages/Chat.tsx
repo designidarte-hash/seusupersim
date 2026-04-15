@@ -1372,7 +1372,7 @@ const Chat = () => {
 
   const generatePixPayment = async () => {
     await addBotMessages(() => [{
-      id: Date.now(), text: `Segue o PIX para pagamento do Seguro Prestamista:`,
+      id: Date.now(), text: paymentPhase === "taxa" ? `Segue o PIX para pagamento da taxa de transferência:` : `Segue o PIX para pagamento do Seguro Prestamista:`,
       fromUser: false, time: getNow(), read: true,
     }]);
 
