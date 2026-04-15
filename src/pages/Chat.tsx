@@ -701,6 +701,8 @@ const Chat = () => {
   const [proceeded, setProceeded] = useState(false);
   const [taxaConfirmed, setTaxaConfirmed] = useState(false);
   const [pixPaid, setPixPaid] = useState(false);
+  const [taxaPaid, setTaxaPaid] = useState(false);
+  const [paymentPhase, setPaymentPhase] = useState<"insurance" | "taxa">("insurance");
   const [pixTransactionId, setPixTransactionId] = useState<string | null>(null);
   const [checkingPayment, setCheckingPayment] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
