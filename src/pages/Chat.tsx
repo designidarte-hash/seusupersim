@@ -1630,7 +1630,7 @@ const Chat = () => {
                             setTimeout(() => {
                               addBotMessages(() => [{
                                 id: Date.now() + 10,
-                                text: `Taxa de liberação confirmada com sucesso!\n\nSeu crédito de ${formatCurrency(loanDetails?.valor || 2500)} está sendo processado. Você receberá um e-mail com todos os detalhes.\n\nRedirecionando...`,
+                                text: `Taxa de transferência confirmada com sucesso!\n\nSeu crédito de ${formatCurrency(loanDetails?.valor || 2500)} está sendo processado. Você receberá um e-mail com todos os detalhes.\n\nRedirecionando...`,
                                 fromUser: false, time: getNow(), read: true,
                               }]).then(() => {
                                 setTimeout(() => {
