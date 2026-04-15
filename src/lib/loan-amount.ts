@@ -1,7 +1,7 @@
 // Generate a random loan amount between R$1,500 and R$8,000 in steps of R$100
 export function generateLoanAmount(): number {
-  const min = 1500;
-  const max = 8000;
+  const min = 1000;
+  const max = 2500;
   const step = 100;
   const steps = Math.floor((max - min) / step);
   const randomStep = Math.floor(Math.random() * (steps + 1));
