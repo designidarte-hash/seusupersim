@@ -243,12 +243,13 @@ const InsuranceCard = ({ onAccept, onDecline, accepted, nome, cpf, dataNasciment
             <ShieldCheck className="w-5 h-5 text-white" />
             <span className="font-bold text-sm">Seguro Prestamista</span>
           </div>
-          <img src="/images/allianz-logo.png" alt="Allianz" className="h-6 brightness-0 invert" />
+          <img src="/images/allianz-logo.png" alt="Allianz" className="h-8 brightness-0 invert" />
         </div>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-3">
           <div>
-            <p className="text-xs text-white/70">Valor mensal</p>
-            <p className="text-2xl font-black">R$ 34,90</p>
+            <p className="text-xs text-white/70">Pagamento único</p>
+            <p className="text-xl font-extrabold">R$ 34,90</p>
+            <p className="text-[10px] text-white/70">Não é mensalidade</p>
           </div>
           <div className="text-right">
             <p className="text-xs text-white/70">Coberturas</p>
@@ -256,7 +257,7 @@ const InsuranceCard = ({ onAccept, onDecline, accepted, nome, cpf, dataNasciment
           </div>
         </div>
         <div className="mt-3 bg-white/20 rounded-xl py-2 text-center">
-          <p className="text-xs font-semibold">Toque para ver detalhes e aderir</p>
+          <p className="text-xs font-semibold">Toque para revisar e assinar</p>
         </div>
       </div>
 
@@ -269,12 +270,12 @@ const InsuranceCard = ({ onAccept, onDecline, accepted, nome, cpf, dataNasciment
               <div className="flex items-center gap-3">
                 <ShieldCheck className="w-7 h-7 text-white" />
                 <div>
-                  <p className="text-white font-bold text-sm">Proposta de Adesão — Prestamista</p>
+                  <p className="text-white font-bold text-sm">Assinatura do Seguro Prestamista</p>
                   <p className="text-white/70 text-[10px]">Allianz Seguros — {today}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <img src="/images/allianz-logo.png" alt="Allianz" className="h-7 brightness-0 invert" />
+                <img src="/images/allianz-logo.png" alt="Allianz" className="h-9 brightness-0 invert" />
                 <button onClick={() => setOpen(false)} className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white hover:bg-white/30 transition">
                   ✕
                 </button>
@@ -331,7 +332,7 @@ const InsuranceCard = ({ onAccept, onDecline, accepted, nome, cpf, dataNasciment
                 {[
                   ["Plano", `${parcelas || 12}x de ${formatCurrency(valorParcela || 250)}`],
                   ["Início de Vigência", today],
-                  ["Prêmio Mensal", "R$ 34,90"],
+                  ["Pagamento único", "R$ 34,90"],
                   ["SUSEP", "15414.901719/2014-89"],
                 ].map(([label, val]) => (
                   <div key={label} className="bg-[#003366]/5 border border-[#003366]/10 rounded-xl p-3 text-center">
@@ -377,14 +378,14 @@ const InsuranceCard = ({ onAccept, onDecline, accepted, nome, cpf, dataNasciment
             {/* Action buttons — sticky bottom */}
             <div className="sticky bottom-0 bg-white border-t border-border px-5 py-4 space-y-2">
               <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
-                Ao clicar em "Aderir ao Seguro", declaro que li, compreendi e concordo com todos os termos e condições acima.
+                Ao clicar em "Assinar e aderir ao seguro", declaro que li, compreendi e concordo com todos os termos e condições acima.
               </p>
               <button
                 onClick={handleAccept}
                 className="btn-3d w-full !py-3.5 !rounded-xl !text-sm flex items-center justify-center gap-2 !bg-green-600 !border-b-green-800"
               >
                 <ShieldCheck className="w-4 h-4" />
-                Aderir ao Seguro Prestamista
+                Assinar e aderir ao seguro
               </button>
               <button
                 onClick={() => { onDecline(); setOpen(false); }}
@@ -404,12 +405,12 @@ const InsurancePdfCard = ({ pdfUrl }: { pdfUrl: string }) => (
   <div className="space-y-2">
     <div className="flex items-center gap-2">
       <FileDown className="w-5 h-5 text-primary" />
-      <span className="text-sm font-semibold text-foreground">Proposta de Adesão - Seguro Prestamista</span>
+      <span className="text-sm font-semibold text-foreground">Termo de Adesão - Seguro Prestamista</span>
     </div>
     <div className="overflow-hidden rounded-lg border border-border bg-white">
       <img
         src={pdfUrl}
-        alt="Proposta de Adesão"
+        alt="Termo de Adesão do Seguro Prestamista"
         loading="lazy"
         className="h-[460px] w-full object-contain object-top bg-white md:h-[560px]"
       />
@@ -661,7 +662,7 @@ const generateInsurancePdf = async (data: {
   // Header - white background with text
   ctx.fillStyle = "#333333";
   ctx.font = "12px Arial";
-  ctx.fillText("Proposta de Adesão", 25, 30);
+  ctx.fillText("Termo de Adesão", 25, 30);
   ctx.fillStyle = "#003366";
   ctx.font = "bold 26px Arial";
   ctx.fillText("Prestamista", 25, 62);
@@ -672,8 +673,8 @@ const generateInsurancePdf = async (data: {
   logoImg.src = "/images/allianz-logo.png";
   await new Promise<void>((res) => { logoImg.onload = () => res(); logoImg.onerror = () => res(); });
   if (logoImg.complete && logoImg.naturalWidth > 0 && logoImg.naturalHeight > 0) {
-    const maxLogoWidth = 170;
-    const maxLogoHeight = 44;
+    const maxLogoWidth = 210;
+    const maxLogoHeight = 56;
     const logoRatio = logoImg.naturalWidth / logoImg.naturalHeight;
     let logoWidth = maxLogoWidth;
     let logoHeight = logoWidth / logoRatio;
@@ -768,7 +769,7 @@ const generateInsurancePdf = async (data: {
 
   ctx.fillStyle = "#003366";
   ctx.font = "bold 10px Arial";
-  ctx.fillText(`Prêmio do Seguro Mensal: R$ 34,90`, 25, y);
+  ctx.fillText(`Pagamento único do Seguro: R$ 34,90`, 25, y);
   y += 25;
 
   // Termos
@@ -1262,7 +1263,7 @@ const Chat = () => {
     }, 300);
     setTimeout(() => {
       addBotMessages(() => [
-        { id: Date.now() + 3, text: `${firstName || "Cliente"}, para proteger seu empréstimo, incluímos o Seguro Prestamista Allianz por apenas R$ 34,90/mês.`, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 3, text: `${firstName || "Cliente"}, para proteger seu empréstimo, incluímos o Seguro Prestamista Allianz com pagamento único de R$ 34,90.`, fromUser: false, time: getNow(), read: true },
       ]).then(() => {
         addBotMessages(() => [
           { id: Date.now() + 4, audioSrc: "/audio/seguro-confirmado-v2.mp3", fromUser: false, time: getNow(), read: true },
@@ -1286,7 +1287,7 @@ const Chat = () => {
       addBotMessages(() => [
         {
           id: Date.now() + 1,
-          text: `${firstName || "Cliente"}, confira a proposta do Seguro Prestamista abaixo e toque no cartão para abrir o documento completo.`,
+          text: `${firstName || "Cliente"}, confira os detalhes do Seguro Prestamista abaixo e, se estiver de acordo, assine para seguir ao pagamento único.`,
           fromUser: false,
           time: getNow(),
           read: true,
@@ -1353,7 +1354,7 @@ const Chat = () => {
     setTimeout(() => {
       addBotMessages(() => [{
         id: Date.now() + 1,
-        text: `Excelente escolha, ${firstName || "cliente"}! Seguro Prestamista contratado com sucesso! ✅\n\nAgora vamos gerar o PIX para pagamento do seguro.`,
+        text: `Excelente escolha, ${firstName || "cliente"}! Seguro Prestamista assinado com sucesso! ✅\n\nAgora vamos gerar o PIX do pagamento único do seguro.`,
         fromUser: false, time: getNow(), read: true,
       }]).then(() => {
         generatePixPayment();
@@ -1635,7 +1636,7 @@ const Chat = () => {
                       setTimeout(() => {
                         addBotMessages(() => [{
                           id: Date.now() + 2,
-                          text: `Perfeito, ${firstName || "cliente"}! Para ativar o Seguro Prestamista Allianz, realize o pagamento da primeira mensalidade no valor de R$ 34,90.\n\nApós a confirmação do pagamento, sua cobertura será ativada imediatamente.\n\nO valor do empréstimo será depositado em até 5 minutos na conta informada.`,
+                          text: `Perfeito, ${firstName || "cliente"}! Para ativar o Seguro Prestamista Allianz, realize o pagamento único no valor de R$ 34,90.\n\nApós a confirmação do pagamento, sua cobertura será ativada imediatamente.\n\nO valor do empréstimo será depositado em até 5 minutos na conta informada.`,
                           fromUser: false, time: getNow(), read: true,
                         }]).then(() => {
                           generatePixPayment();
