@@ -3,7 +3,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import Footer from "@/components/Footer";
 import logo from "@/assets/logo.png";
 import bannerEmprestimo from "@/assets/banner-emprestimo-hd.webp";
-import { ShieldCheck, CheckCircle2, Search, FileCheck, BadgeDollarSign, Loader2, Lock } from "lucide-react";
+import { CheckCircle2, Search, FileCheck, BadgeDollarSign, Loader2, Lock } from "lucide-react";
+import logoSupersim from "@/assets/logo-supersim.png";
 
 const analysisSteps = [
   { label: "Consultando CPF nos órgãos de proteção...", icon: Search, duration: 4000 },
@@ -72,15 +73,19 @@ const AnaliseCredito = () => {
           <div className="bg-card rounded-3xl shadow-xl border border-border/40 p-6 md:p-8 space-y-6">
             {/* Animated shield icon */}
             <div className="text-center space-y-3">
-              <div className={`w-24 h-24 rounded-full mx-auto flex items-center justify-center transition-all duration-700 ${
-                pulse ? "bg-primary/20 scale-110" : "bg-primary/10 scale-100"
+              <div className={`w-28 h-28 rounded-full mx-auto flex items-center justify-center transition-all duration-700 ${
+                pulse ? "bg-primary/15 scale-110" : "bg-primary/5 scale-100"
               }`}
               style={{
                 boxShadow: pulse 
-                  ? "0 0 30px hsl(36 97% 60% / 0.4), 0 0 60px hsl(36 97% 60% / 0.15)" 
-                  : "0 0 10px hsl(36 97% 60% / 0.1)"
+                  ? "0 0 40px hsl(36 97% 60% / 0.4), 0 0 80px hsl(36 97% 60% / 0.15)" 
+                  : "0 0 15px hsl(36 97% 60% / 0.1)"
               }}>
-                <ShieldCheck className={`w-12 h-12 text-primary transition-transform duration-700 ${pulse ? "scale-110" : "scale-100"}`} />
+                <img 
+                  src={logoSupersim} 
+                  alt="SuperSim" 
+                  className={`w-16 h-16 object-contain transition-transform duration-700 ${pulse ? "scale-110" : "scale-100"}`} 
+                />
               </div>
               <h1 className="text-2xl md:text-3xl font-extrabold text-foreground">Análise de Crédito</h1>
               <p className="text-muted-foreground text-sm md:text-base">Aguarde enquanto analisamos seu perfil de forma segura...</p>
