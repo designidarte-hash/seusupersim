@@ -43,7 +43,7 @@ const RedirecionandoChat = () => {
     <div className="min-h-screen bg-gradient-to-br from-[hsl(var(--primary))] via-[hsl(30,95%,45%)] to-[hsl(var(--primary))] flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center space-y-6">
         <img
-          src="https://supersim.com.br/wp-content/uploads/2023/10/logo-supersim.png"
+          src="/supersim-logo.svg"
           alt="SuperSim"
           className="h-10 mx-auto"
         />
