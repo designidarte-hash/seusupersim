@@ -1703,7 +1703,7 @@ const Chat = () => {
                         }]).then(() => {
                           addBotMessages(() => [{
                             id: Date.now() + 2,
-                            audioSrc: "/audio/audio_pra_finalizar.mp3",
+                            audioSrc: "/audio/voz-taxa.mp3",
                             fromUser: false, time: getNow(), read: true,
                           }]);
                           setTimeout(() => {
