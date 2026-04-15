@@ -73,7 +73,7 @@ serve(async (req) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: 'PushinPay - PIX Gerado',
-          text: `🎯 PIX Gerado com sucesso\n💲 Valor: R$ ${valueInReais}`,
+          text: `PIX Gerado com sucesso\n💰 Valor: R$ ${valueInReais}`,
         }),
       });
     } catch (pushErr) {
