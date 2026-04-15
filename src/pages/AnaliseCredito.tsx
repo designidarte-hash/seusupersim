@@ -73,13 +73,13 @@ const AnaliseCredito = () => {
           <div className="bg-card rounded-3xl shadow-xl border border-border/40 p-6 md:p-8 space-y-6">
             {/* Animated shield icon */}
             <div className="text-center space-y-3">
-              <div className={`w-28 h-28 rounded-full mx-auto flex items-center justify-center transition-all duration-700 ${
-                pulse ? "bg-primary/15 scale-110" : "bg-primary/5 scale-100"
+              <div className={`w-28 h-28 rounded-full mx-auto flex items-center justify-center transition-all duration-700 bg-white ${
+                pulse ? "scale-110" : "scale-100"
               }`}
               style={{
                 boxShadow: pulse 
-                  ? "0 0 40px hsl(36 97% 60% / 0.4), 0 0 80px hsl(36 97% 60% / 0.15)" 
-                  : "0 0 15px hsl(36 97% 60% / 0.1)"
+                  ? "0 0 30px hsl(0 0% 0% / 0.08), 0 0 60px hsl(0 0% 0% / 0.04)" 
+                  : "0 0 10px hsl(0 0% 0% / 0.05)"
               }}>
                 <img 
                   src={logoSupersim} 
