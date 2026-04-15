@@ -23,6 +23,7 @@ interface ChatMessage {
   proceedButton?: boolean;
   pixPaidButton?: boolean;
   taxaButton?: boolean;
+  contractCard?: boolean;
   fromUser: boolean;
   time: string;
   read: boolean;
