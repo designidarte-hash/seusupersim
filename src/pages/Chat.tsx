@@ -629,23 +629,6 @@ const NormativoCard = ({ nome, cpf, valor, onConfirm, confirmed }: { nome?: stri
               </div>
               <p><strong>Art. 8º</strong> Esta Resolução entra em vigor na data de sua emissão.</p>
 
-              <hr className="border-border my-2" />
-
-              <div className="bg-amber-50 border-l-4 border-amber-400 rounded-r-lg p-3 space-y-2">
-                <p className="text-[10px] text-amber-800 font-bold">⚠️ FUNDAMENTAÇÃO DA COBRANÇA</p>
-                <p className="text-[10px] text-amber-700 leading-relaxed">
-                  Conforme Art. 4º e Art. 6º desta Resolução, a taxa cobrada nesta operação de crédito pessoal é devida para cobrir os custos operacionais de processamento, validação antifraude e efetivação da transferência do valor de <strong>{formatCurrency(valor)}</strong> ao beneficiário <strong>{nome || "N/A"}</strong>, CPF <strong>{cpf || "N/A"}</strong>.
-                </p>
-                <p className="text-[10px] text-amber-700 leading-relaxed">
-                  Sem o pagamento da referida taxa, a processadora fica <strong>impossibilitada</strong> de efetuar a ordem de transferência, conforme regulamentação vigente do Banco Central do Brasil.
-                </p>
-              </div>
-
-              <div className="bg-muted/30 border border-border rounded-xl p-4 text-center space-y-1">
-                <p className="text-[10px] text-muted-foreground">Taxa de transferência interbancária</p>
-                <p className="text-2xl font-bold text-primary">R$ 18,74</p>
-                <p className="text-[10px] text-muted-foreground">Pagamento único • Não é mensalidade</p>
-              </div>
             </div>
 
             <div className="px-5 py-3 bg-muted/30 border-t border-border">
