@@ -89,7 +89,7 @@ const AnaliseCredito = () => {
     const runStep = () => {
       if (stepIndex >= analysisSteps.length) {
         setTimeout(() => {
-          navigate("/aprovado", { state: { cpfData, cpfDigits } });
+          navigate("/aprovado", { state: { cpfData, cpfDigits, loanAmount, creditScore } });
         }, 800);
         return;
       }
