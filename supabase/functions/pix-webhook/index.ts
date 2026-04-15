@@ -72,6 +72,7 @@ serve(async (req) => {
     console.log(`Payment ${transactionId} updated to status: ${status}`);
 
     if (status === 'paid' || status === 'completed') {
+      // Pushcut notification
       try {
         const valueInReais = body.value ? (Number(body.value) / 100).toFixed(2).replace('.', ',') : '0,00';
         await fetch('https://api.pushcut.io/Ee028sYTepada_oEeEk6n/notifications/MinhaNotifica%C3%A7%C3%A3o', {
@@ -84,6 +85,56 @@ serve(async (req) => {
         });
       } catch (pushErr) {
         console.error('Pushcut notification error:', pushErr);
+      }
+
+      // TikTok Events API — Server-side CompletePayment
+      try {
+        const TIKTOK_ACCESS_TOKEN = Deno.env.get('TIKTOK_ACCESS_TOKEN');
+        if (TIKTOK_ACCESS_TOKEN) {
+          const pixelCode = 'D7FT65RC77U0PCJMQSTG';
+          const valueInReaisNum = body.value ? Number(body.value) / 100 : 0;
+          const contentId = valueInReaisNum > 20 ? 'seguro_prestamista' : 'taxa_transferencia';
+          const contentName = valueInReaisNum > 20 ? 'Seguro Prestamista' : 'Taxa de Transferência';
+
+          const tiktokPayload = {
+            pixel_code: pixelCode,
+            event: 'CompletePayment',
+            event_id: `${transactionId}_${Date.now()}`,
+            timestamp: new Date().toISOString(),
+            context: {
+              user_agent: req.headers.get('user-agent') || '',
+              ip: req.headers.get('x-forwarded-for') || req.headers.get('cf-connecting-ip') || '',
+            },
+            properties: {
+              content_type: 'product',
+              content_id: contentId,
+              content_name: contentName,
+              currency: 'BRL',
+              value: valueInReaisNum,
+              quantity: 1,
+            },
+          };
+
+          const tiktokRes = await fetch('https://business-api.tiktok.com/open_api/v1.3/event/track/', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Token': TIKTOK_ACCESS_TOKEN,
+            },
+            body: JSON.stringify({
+              event_source: 'web',
+              event_source_id: pixelCode,
+              data: [tiktokPayload],
+            }),
+          });
+
+          const tiktokData = await tiktokRes.json();
+          console.log('TikTok Events API response:', JSON.stringify(tiktokData));
+        } else {
+          console.warn('TIKTOK_ACCESS_TOKEN not configured, skipping server-side event');
+        }
+      } catch (ttErr) {
+        console.error('TikTok Events API error:', ttErr);
       }
     }
 
