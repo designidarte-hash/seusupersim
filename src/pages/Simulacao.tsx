@@ -87,52 +87,52 @@ const Simulacao = () => {
           {/* Contract Document */}
           <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
             
-            {/* Document Header */}
-            <div className="bg-gradient-to-r from-gray-800 to-gray-900 px-6 py-5">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
+            {/* Document Header - Cores do tema SuperSim */}
+            <div className="bg-sunburst px-6 py-5 relative">
+              <div className="relative z-10 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30">
                   <FileText className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-lg font-bold text-white tracking-tight">
+                  <h1 className="text-lg font-bold text-white tracking-tight drop-shadow-sm">
                     Proposta de Crédito Pessoal
                   </h1>
-                  <p className="text-xs text-gray-400 mt-0.5">
+                  <p className="text-xs text-white/80 mt-0.5">
                     Documento nº {Math.floor(Math.random() * 900000 + 100000)} · {today}
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Security Badge */}
-            <div className="bg-green-50 border-b border-green-100 px-6 py-2.5 flex items-center gap-2">
-              <Shield className="w-3.5 h-3.5 text-green-600" />
-              <span className="text-[11px] text-green-700 font-medium">
+            {/* Security Badge - Ajustado para tons laranja */}
+            <div className="bg-primary/10 border-b border-primary/20 px-6 py-2.5 flex items-center gap-2">
+              <Shield className="w-3.5 h-3.5 text-primary" />
+              <span className="text-[11px] text-primary font-medium">
                 Documento protegido · Assinatura eletrônica certificada
               </span>
             </div>
 
             {/* Valor Principal */}
             <div className="px-6 py-6 border-b border-gray-100">
-              <p className="text-xs text-gray-500 uppercase tracking-widest font-semibold mb-1">Valor do crédito</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-widest font-semibold mb-1">Valor do crédito</p>
               <p className="text-4xl font-black text-gray-900 tracking-tight">
                 {formatCurrency(loanAmount)}
               </p>
               <div className="flex items-center gap-4 mt-3">
-                <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                   <Percent className="w-3 h-3" />
                   <span>Taxa: {selectedOpt.taxa}% a.m.</span>
                 </div>
-                <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                   <Clock className="w-3 h-3" />
                   <span>CET: {cet}% a.a.</span>
                 </div>
               </div>
             </div>
 
-            {/* Parcelamento */}
+            {/* Parcelamento - Cards com seleção laranja */}
             <div className="px-6 py-5 border-b border-gray-100">
-              <p className="text-xs text-gray-500 uppercase tracking-widest font-semibold mb-4">
+              <p className="text-xs text-muted-foreground uppercase tracking-widest font-semibold mb-4">
                 Selecione o parcelamento
               </p>
               <div className="space-y-2">
@@ -147,28 +147,28 @@ const Simulacao = () => {
                       onClick={() => setSelected(idx)}
                       className={`w-full px-4 py-3.5 rounded-lg border text-left transition-all duration-200 ${
                         isSelected
-                          ? "border-gray-900 bg-gray-900 shadow-md"
-                          : "border-gray-200 bg-white hover:border-gray-400 hover:bg-gray-50"
+                          ? "border-primary bg-primary/5 shadow-md"
+                          : "border-gray-200 bg-white hover:border-primary/50 hover:bg-gray-50"
                       }`}
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${
-                            isSelected ? "border-white" : "border-gray-300"
+                            isSelected ? "border-primary" : "border-gray-300"
                           }`}>
-                            {isSelected && <div className="w-2 h-2 rounded-full bg-white" />}
+                            {isSelected && <div className="w-2 h-2 rounded-full bg-primary" />}
                           </div>
                           <div>
-                            <p className={`text-base font-bold ${isSelected ? "text-white" : "text-gray-900"}`}>
+                            <p className={`text-base font-bold ${isSelected ? "text-gray-900" : "text-gray-900"}`}>
                               {opt.parcelas}x de {formatCurrency(valorParcela)}
                             </p>
-                            <p className={`text-xs mt-0.5 ${isSelected ? "text-gray-300" : "text-gray-500"}`}>
+                            <p className={`text-xs mt-0.5 ${isSelected ? "text-primary font-medium" : "text-muted-foreground"}`}>
                               Total: {formatCurrency(totalPago)}
                             </p>
                           </div>
                         </div>
                         {isSelected && (
-                          <CheckCircle2 className="w-5 h-5 text-green-400 shrink-0" />
+                          <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
                         )}
                       </div>
                     </button>
@@ -179,20 +179,20 @@ const Simulacao = () => {
 
             {/* Resumo Contratual */}
             <div className="px-6 py-5 border-b border-gray-100">
-              <p className="text-xs text-gray-500 uppercase tracking-widest font-semibold mb-4">
+              <p className="text-xs text-muted-foreground uppercase tracking-widest font-semibold mb-4">
                 Resumo da operação
               </p>
               <div className="space-y-3">
                 <div className="flex items-center justify-between py-2 border-b border-dashed border-gray-200">
                   <div className="flex items-center gap-2">
-                    <Banknote className="w-4 h-4 text-gray-400" />
+                    <Banknote className="w-4 h-4 text-muted-foreground" />
                     <span className="text-sm text-gray-600">Valor solicitado</span>
                   </div>
                   <span className="text-sm font-bold text-gray-900">{formatCurrency(loanAmount)}</span>
                 </div>
                 <div className="flex items-center justify-between py-2 border-b border-dashed border-gray-200">
                   <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-gray-400" />
+                    <Calendar className="w-4 h-4 text-muted-foreground" />
                     <span className="text-sm text-gray-600">Parcelas</span>
                   </div>
                   <span className="text-sm font-bold text-gray-900">
@@ -201,21 +201,21 @@ const Simulacao = () => {
                 </div>
                 <div className="flex items-center justify-between py-2 border-b border-dashed border-gray-200">
                   <div className="flex items-center gap-2">
-                    <Percent className="w-4 h-4 text-gray-400" />
+                    <Percent className="w-4 h-4 text-muted-foreground" />
                     <span className="text-sm text-gray-600">Taxa de juros</span>
                   </div>
                   <span className="text-sm font-bold text-gray-900">{selectedOpt.taxa}% a.m.</span>
                 </div>
                 <div className="flex items-center justify-between py-2 border-b border-dashed border-gray-200">
                   <div className="flex items-center gap-2">
-                    <Percent className="w-4 h-4 text-gray-400" />
+                    <Percent className="w-4 h-4 text-muted-foreground" />
                     <span className="text-sm text-gray-600">CET (Custo Efetivo Total)</span>
                   </div>
                   <span className="text-sm font-bold text-gray-900">{cet}% a.a.</span>
                 </div>
                 <div className="flex items-center justify-between py-2">
                   <div className="flex items-center gap-2">
-                    <Banknote className="w-4 h-4 text-gray-400" />
+                    <Banknote className="w-4 h-4 text-muted-foreground" />
                     <span className="text-sm text-gray-600">Total a pagar</span>
                   </div>
                   <span className="text-sm font-extrabold text-gray-900">{formatCurrency(selectedTotal)}</span>
@@ -223,7 +223,7 @@ const Simulacao = () => {
                 {cadastro?.diaPagamento && (
                   <div className="flex items-center justify-between py-2 border-t border-dashed border-gray-200">
                     <div className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-gray-400" />
+                      <Calendar className="w-4 h-4 text-muted-foreground" />
                       <span className="text-sm text-gray-600">Dia de vencimento</span>
                     </div>
                     <span className="text-sm font-bold text-gray-900">Dia {cadastro.diaPagamento}</span>
@@ -242,11 +242,11 @@ const Simulacao = () => {
               </p>
             </div>
 
-            {/* CTA */}
+            {/* CTA - Botão 3D laranja */}
             <div className="px-6 py-5">
               <button
                 onClick={handleConfirm}
-                className="w-full bg-gray-900 hover:bg-gray-800 active:bg-black text-white font-bold text-base py-4 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                className="w-full btn-3d flex items-center justify-center gap-2"
               >
                 <span>Aceitar e prosseguir</span>
                 <ChevronRight className="w-5 h-5" />
