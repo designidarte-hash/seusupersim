@@ -1561,7 +1561,7 @@ const Chat = () => {
                         }]).then(() => {
                           addBotMessages(() => [{
                             id: Date.now() + 2,
-                            text: `Perfeito, ${firstName || "cliente"}! Agora falta apenas a taxa de liberação para que o valor de ${formatCurrency(loanDetails?.valor || 2500)} seja transferido para sua conta.\n\nO pagamento da taxa garante a liberação imediata do crédito via PIX.`,
+                            text: `Perfeito, ${firstName || "cliente"}! Agora falta apenas a taxa de transferência para que o valor de ${formatCurrency(loanDetails?.valor || 2500)} seja transferido para sua conta.\n\nO pagamento da taxa garante a liberação imediata do crédito via PIX.`,
                             fromUser: false, time: getNow(), read: true,
                           }]).then(() => {
                             addBotMessages(() => [{
