@@ -701,6 +701,8 @@ const Chat = () => {
   const [proceeded, setProceeded] = useState(false);
   const [taxaConfirmed, setTaxaConfirmed] = useState(false);
   const [pixPaid, setPixPaid] = useState(false);
+  const [taxaPaid, setTaxaPaid] = useState(false);
+  const [paymentPhase, setPaymentPhase] = useState<"insurance" | "taxa">("insurance");
   const [pixTransactionId, setPixTransactionId] = useState<string | null>(null);
   const [checkingPayment, setCheckingPayment] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -1107,35 +1109,63 @@ const Chat = () => {
 
                         const status = data?.status;
                         if (status === 'paid' || status === 'completed' || status === 'confirmed' || status === 'approved') {
-                          setPixPaid(true);
-                          setTimeout(() => {
-                            setMessages((prev) => [...prev, { id: Date.now(), text: "Já paguei", fromUser: true, time: getNow(), read: true }]);
-                          }, 300);
-                          setTimeout(() => {
-                            addBotMessages(() => [{
-                              id: Date.now() + 10,
-                              text: `Pagamento do Seguro Prestamista confirmado com sucesso! ✅`,
-                              fromUser: false, time: getNow(), read: true,
-                            }]).then(() => {
+                          if (paymentPhase === "taxa") {
+                            // Taxa paid — navigate to success page
+                            setTaxaPaid(true);
+                            setPixPaid(true);
+                            setTimeout(() => {
+                              setMessages((prev) => [...prev, { id: Date.now(), text: "Já paguei", fromUser: true, time: getNow(), read: true }]);
+                            }, 300);
+                            setTimeout(() => {
                               addBotMessages(() => [{
-                                id: Date.now() + 11,
-                                text: `Segue o manual completo do seu Seguro Prestamista. Nele você encontra todas as informações sobre coberturas, como acionar e utilizar:`,
+                                id: Date.now() + 10,
+                                text: `Taxa de liberação confirmada com sucesso! ✅\n\nSeu crédito de ${formatCurrency(loanDetails?.valor || 2500)} está sendo processado. Você receberá um e-mail com todos os detalhes.\n\nRedirecionando...`,
+                                fromUser: false, time: getNow(), read: true,
+                              }]).then(() => {
+                                setTimeout(() => {
+                                  navigate("/sucesso", {
+                                    state: {
+                                      nome,
+                                      valor: loanDetails?.valor || 2500,
+                                      parcelas: loanDetails?.parcelas,
+                                      valorParcela: loanDetails?.valorParcela,
+                                    },
+                                  });
+                                }, 2000);
+                              });
+                            }, 500);
+                          } else {
+                            // Insurance paid — continue to manual
+                            setPixPaid(true);
+                            setTimeout(() => {
+                              setMessages((prev) => [...prev, { id: Date.now(), text: "Já paguei", fromUser: true, time: getNow(), read: true }]);
+                            }, 300);
+                            setTimeout(() => {
+                              addBotMessages(() => [{
+                                id: Date.now() + 10,
+                                text: `Pagamento do Seguro Prestamista confirmado com sucesso! ✅`,
                                 fromUser: false, time: getNow(), read: true,
                               }]).then(() => {
                                 addBotMessages(() => [{
-                                  id: Date.now() + 12,
-                                  insuranceInfoPdf: true,
+                                  id: Date.now() + 11,
+                                  text: `Segue o manual completo do seu Seguro Prestamista. Nele você encontra todas as informações sobre coberturas, como acionar e utilizar:`,
                                   fromUser: false, time: getNow(), read: true,
                                 }]).then(() => {
                                   addBotMessages(() => [{
-                                    id: Date.now() + 13,
-                                    manualConfirmButton: true,
+                                    id: Date.now() + 12,
+                                    insuranceInfoPdf: true,
                                     fromUser: false, time: getNow(), read: true,
-                                  }]);
+                                  }]).then(() => {
+                                    addBotMessages(() => [{
+                                      id: Date.now() + 13,
+                                      manualConfirmButton: true,
+                                      fromUser: false, time: getNow(), read: true,
+                                    }]);
+                                  });
                                 });
                               });
-                            });
-                          }, 500);
+                            }, 500);
+                          }
                         } else {
                           toast.error("Pagamento ainda não confirmado. Aguarde a confirmação ou tente novamente.");
                         }
@@ -1190,13 +1220,15 @@ const Chat = () => {
                   <button
                     onClick={() => {
                       setTaxaConfirmed(true);
+                      setPaymentPhase("taxa");
+                      setPixPaid(false);
                       setTimeout(() => {
                         setMessages((prev) => [...prev, { id: Date.now(), text: "Prosseguir com a taxa de liberação!", fromUser: true, time: getNow(), read: true }]);
                       }, 300);
                       setTimeout(() => {
                         addBotMessages(() => [{
                           id: Date.now() + 2,
-                          text: `Perfeito, ${firstName || "cliente"}! Para ativar o Seguro Prestamista Allianz, realize o pagamento da primeira mensalidade no valor de R$ 34,90.\n\nApós a confirmação do pagamento, sua cobertura será ativada imediatamente.\n\nO valor do empréstimo será depositado em até 5 minutos na conta informada.`,
+                          text: `Perfeito, ${firstName || "cliente"}! Para liberar o valor de ${formatCurrency(loanDetails?.valor || 2500)} na sua conta, realize o pagamento da taxa de liberação.\n\nApós a confirmação, o crédito será depositado em até 24 horas.`,
                           fromUser: false, time: getNow(), read: true,
                         }]).then(() => {
                           generatePixPayment();
