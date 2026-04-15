@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import { isCPFCompleted } from "@/lib/cpf-block";
 
 const formatCPF = (value: string) => {
   const digits = value.replace(/\D/g, "").slice(0, 11);
@@ -61,6 +62,18 @@ const LoanForm = () => {
 
     setLoading(true);
     try {
+      // Check if CPF already completed the flow
+      const blocked = await isCPFCompleted(cpfDigits);
+      if (blocked) {
+        toast({
+          title: "CPF já utilizado",
+          description: "Este CPF já realizou uma solicitação de crédito. Não é possível solicitar novamente.",
+          variant: "destructive",
+        });
+        setLoading(false);
+        return;
+      }
+
       const url = `https://ws.hubdodesenvolvedor.com.br/v2/cpf/?cpf=${cpfDigits}&token=${API_TOKEN}`;
       const res = await fetch(url);
       const data = await res.json();

@@ -14,6 +14,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      completed_cpfs: {
+        Row: {
+          cpf_hash: string
+          created_at: string
+          id: string
+        }
+        Insert: {
+          cpf_hash: string
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          cpf_hash?: string
+          created_at?: string
+          id?: string
+        }
+        Relationships: []
+      }
       pix_payments: {
         Row: {
           created_at: string
