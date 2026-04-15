@@ -7,7 +7,7 @@ import iconPix from "@/assets/icon-pix.png";
 import iconInclusao from "@/assets/icon-inclusao.png";
 import iconJuros from "@/assets/icon-juros.png";
 import iconParcelas from "@/assets/icon-parcelas.png";
-import iconBurocracia from "@/assets/icon-burocracia.png";
+import iconBurocracia from "@/assets/icon-burocracia.webp";
 import seloFeex from "@/assets/selo-feex.png";
 import seloRa from "@/assets/selo-ra.png";
 import seloFebraban from "@/assets/selo-febraban.png";

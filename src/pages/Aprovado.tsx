@@ -5,8 +5,8 @@ import ChamaNoPixSection from "@/components/ChamaNoPixSection";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.png";
 import iconCheckCircle from "@/assets/icon-check-circle.png";
-import iconThumbsUp from "@/assets/icon-thumbsup.png";
-import iconPhone from "@/assets/icon-phone.png";
+import iconThumbsUp from "@/assets/icon-thumbsup.webp";
+import iconPhone from "@/assets/icon-phone.webp";
 
 const benefits = [
   {
