@@ -699,6 +699,7 @@ const Chat = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [greetingSent, setGreetingSent] = useState(false);
   const [proceeded, setProceeded] = useState(false);
+  const [taxaConfirmed, setTaxaConfirmed] = useState(false);
   const [pixPaid, setPixPaid] = useState(false);
   const [pixTransactionId, setPixTransactionId] = useState<string | null>(null);
   const [checkingPayment, setCheckingPayment] = useState(false);
