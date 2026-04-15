@@ -1073,8 +1073,26 @@ const TypingIndicator = () => (
 const Chat = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { initialMessage, nome, cpf, email, celular, dataNascimento, loanDetails } = (location.state as any) || {};
+  // Pull state from navigation, fallback to sessionStorage
+  const navState = (location.state as any) || {};
+  const stored = (() => {
+    try { return JSON.parse(sessionStorage.getItem("chatState") || "{}"); } catch { return {}; }
+  })();
+  const initialMessage = navState.initialMessage || stored.initialMessage;
+  const nome = navState.nome || stored.nome;
+  const cpf = navState.cpf || stored.cpf;
+  const email = navState.email || stored.email;
+  const celular = navState.celular || stored.celular;
+  const dataNascimento = navState.dataNascimento || stored.dataNascimento;
+  const loanDetails = navState.loanDetails || stored.loanDetails;
   const firstName = nome ? nome.split(" ")[0] : "";
+
+  // Persist state to sessionStorage for refresh resilience
+  useEffect(() => {
+    if (navState.nome || navState.cpf) {
+      sessionStorage.setItem("chatState", JSON.stringify({ initialMessage, nome, cpf, email, celular, dataNascimento, loanDetails }));
+    }
+  }, []);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [loanConfirmed, setLoanConfirmed] = useState(false);
@@ -1322,29 +1340,12 @@ const Chat = () => {
     setTimeout(() => {
       addBotMessages(() => [{
         id: Date.now() + 1,
-        text: `Excelente escolha, ${firstName || "cliente"}! Estamos gerando sua proposta de adesão ao Seguro Prestamista...`,
+        text: `Excelente escolha, ${firstName || "cliente"}! Seguro Prestamista contratado com sucesso! ✅\n\nAgora vamos gerar o PIX para pagamento do seguro.`,
         fromUser: false, time: getNow(), read: true,
-      }]);
+      }]).then(() => {
+        generatePixPayment();
+      });
     }, 500);
-
-    // Generate PDF
-    const codigo = generateCode();
-    const pdfUrl = await generateInsurancePdf({
-      nome: nome || "N/A",
-      cpf: cpf || "000.000.000-00",
-      dataNascimento: dataNascimento || "00/00/0000",
-      codigo,
-      valor: loanDetails?.valor || 2500,
-      parcelas: loanDetails?.parcelas || 12,
-      valorParcela: loanDetails?.valorParcela || 250,
-    });
-
-    setTimeout(() => {
-      addBotMessages(() => [
-        { id: Date.now() + 2, text: `Pronto! Sua proposta de adesão foi gerada com sucesso. Código: ${codigo}`, fromUser: false, time: getNow(), read: true },
-        { id: Date.now() + 3, insurancePdf: pdfUrl, fromUser: false, time: getNow(), read: true },
-      ]);
-    }, 4000);
   };
 
   const handleInsuranceDecline = () => {
