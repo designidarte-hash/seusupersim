@@ -48,7 +48,7 @@ const VideoPlayer = () => {
     <div className="flex-1 w-full">
       <div className="relative rounded-2xl overflow-hidden shadow-lg aspect-video">
         <iframe
-          src="https://www.youtube.com/embed/QW7cf7aeFL4?controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&fs=0"
+          src="https://www.youtube.com/embed/E9P7Ck4pTUg?controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&fs=0"
           title="Como solicitar empréstimo"
           allow="accelerometer; autoplay; encrypted-media"
           allowFullScreen
