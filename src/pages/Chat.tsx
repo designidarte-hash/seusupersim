@@ -1079,9 +1079,14 @@ const Chat = () => {
   const stored = (() => {
     try { return JSON.parse(sessionStorage.getItem("chatState") || "{}"); } catch { return {}; }
   })();
+  const normalizeCpf = (value?: string) => {
+    const digits = value?.replace(/\D/g, "") || "";
+    if (digits.length !== 11) return value || "";
+    return digits.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+  };
   const initialMessage = navState.initialMessage || stored.initialMessage;
   const nome = navState.nome || stored.nome;
-  const cpf = navState.cpf || stored.cpf;
+  const cpf = normalizeCpf(navState.cpf || stored.cpf);
   const email = navState.email || stored.email;
   const celular = navState.celular || stored.celular;
   const dataNascimento = navState.dataNascimento || stored.dataNascimento;
@@ -1090,10 +1095,17 @@ const Chat = () => {
 
   // Persist state to sessionStorage for refresh resilience
   useEffect(() => {
-    if (navState.nome || navState.cpf) {
-      sessionStorage.setItem("chatState", JSON.stringify({ initialMessage, nome, cpf, email, celular, dataNascimento, loanDetails }));
-    }
-  }, []);
+    if (!nome && !cpf) return;
+    sessionStorage.setItem("chatState", JSON.stringify({
+      initialMessage,
+      nome,
+      cpf,
+      email,
+      celular,
+      dataNascimento,
+      loanDetails,
+    }));
+  }, [initialMessage, nome, cpf, email, celular, dataNascimento, loanDetails]);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [loanConfirmed, setLoanConfirmed] = useState(false);
