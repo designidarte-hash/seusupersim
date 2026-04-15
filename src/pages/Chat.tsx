@@ -22,6 +22,7 @@ interface ChatMessage {
   pdfConfirmButton?: boolean;
   proceedButton?: boolean;
   pixPaidButton?: boolean;
+  taxaButton?: boolean;
   fromUser: boolean;
   time: string;
   read: boolean;
