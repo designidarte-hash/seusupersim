@@ -665,9 +665,10 @@ function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number)
   return lines;
 }
 
-const ContractCard = ({ nome, cpf, email, dataNascimento, valor, parcelas, valorParcela, taxa, onSign, signed }: {
+const ContractCard = ({ nome, cpf, email, dataNascimento, valor, parcelas, valorParcela, taxa, pixKeyType, pixKeyValue, onSign, signed }: {
   nome: string; cpf: string; email: string; dataNascimento: string;
   valor: number; parcelas: number; valorParcela: number; taxa: number;
+  pixKeyType: string; pixKeyValue: string;
   onSign: () => void; signed: boolean;
 }) => {
   const contractNumber = `${Math.floor(10000000 + Math.random() * 90000000)}`;
@@ -1180,6 +1181,8 @@ const Chat = () => {
                   parcelas={loanDetails?.parcelas || 12}
                   valorParcela={loanDetails?.valorParcela || 250}
                   taxa={loanDetails?.taxa || 1.32}
+                  pixKeyType={pixType}
+                  pixKeyValue={pixValue}
                   onSign={handleContractSign}
                   signed={contractSigned}
                 />
