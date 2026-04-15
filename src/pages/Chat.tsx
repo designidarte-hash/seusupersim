@@ -25,6 +25,8 @@ interface ChatMessage {
   proceedButton?: boolean;
   pixPaidButton?: boolean;
   taxaButton?: boolean;
+  normativoCard?: boolean;
+  normativoConfirmButton?: boolean;
   contractCard?: boolean;
   fromUser: boolean;
   time: string;
