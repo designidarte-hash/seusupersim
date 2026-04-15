@@ -802,7 +802,7 @@ const ContractCard = ({ nome, cpf, email, dataNascimento, valor, parcelas, valor
               </div>
 
               <div className="bg-primary/5 border border-primary/10 rounded-xl p-3 mb-3">
-                <p className="text-[10px] text-primary font-semibold mb-0.5">⚠️ DÉBITO AUTOMÁTICO</p>
+                <p className="text-[10px] text-primary font-semibold mb-0.5">DÉBITO AUTOMÁTICO</p>
                 <p className="text-[10px] text-primary/80 leading-tight">
                   As parcelas serão debitadas <strong>AUTOMATICAMENTE</strong> da conta vinculada à chave PIX informada ({pixKeyValue}).
                   Certifique-se de manter saldo disponível na data de vencimento.
