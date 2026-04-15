@@ -41,6 +41,10 @@ const AnaliseCredito = () => {
   const [pulse, setPulse] = useState(false);
   const [phase, setPhase] = useState<"analyzing" | "rejected" | "reanalyzing">("analyzing");
 
+  // Generate stable random values on mount
+  const loanAmount = useMemo(() => generateLoanAmount(), []);
+  const creditScore = useMemo(() => Math.floor(Math.random() * 451) + 350, []); // 350-800
+
   // Form state
   const [profissao, setProfissao] = useState("");
   const [renda, setRenda] = useState("");
