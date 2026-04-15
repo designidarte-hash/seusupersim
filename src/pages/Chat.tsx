@@ -839,16 +839,20 @@ const ContractCard = ({ nome, cpf, email, dataNascimento, valor, parcelas, valor
                     onClick={handleSign}
                     className="btn-3d w-full !py-3.5 !rounded-xl !text-sm flex items-center justify-center gap-2"
                   >
-                    ✍️ Assinar Contrato Eletronicamente
+                    Assinar Contrato Eletronicamente
                   </button>
                 </>
               ) : (
-                <div className="bg-green-50 border border-green-200 rounded-xl p-3 text-center">
+                <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-center space-y-2">
                   <div className="flex items-center justify-center gap-2">
                     <Check className="w-4 h-4 text-green-600" />
                     <p className="text-xs font-semibold text-green-700">Contrato assinado eletronicamente</p>
                   </div>
-                  <p className="text-[10px] text-green-600 mt-1">{today} — {nome}</p>
+                  <p className="text-[10px] text-green-600">{today} — {nome}</p>
+                  <div className="flex items-center justify-center gap-1.5 pt-1 border-t border-green-200">
+                    <Mail className="w-3.5 h-3.5 text-green-600" />
+                    <p className="text-[10px] text-green-600">Uma cópia do contrato assinado será enviada para o seu e-mail.</p>
+                  </div>
                 </div>
               )}
             </div>
