@@ -243,7 +243,7 @@ const InsuranceCard = ({ onAccept, onDecline, accepted, nome, cpf, dataNasciment
             <ShieldCheck className="w-5 h-5 text-white" />
             <span className="font-bold text-sm">Seguro Prestamista</span>
           </div>
-          <span className="text-[10px] bg-white/20 px-2 py-0.5 rounded-full">Allianz</span>
+          <img src="/images/allianz-logo.png" alt="Allianz" className="h-6 brightness-0 invert" />
         </div>
         <div className="flex items-center justify-between">
           <div>
@@ -273,9 +273,12 @@ const InsuranceCard = ({ onAccept, onDecline, accepted, nome, cpf, dataNasciment
                   <p className="text-white/70 text-[10px]">Allianz Seguros — {today}</p>
                 </div>
               </div>
-              <button onClick={() => setOpen(false)} className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white hover:bg-white/30 transition">
-                ✕
-              </button>
+              <div className="flex items-center gap-2">
+                <img src="/images/allianz-logo.png" alt="Allianz" className="h-7 brightness-0 invert" />
+                <button onClick={() => setOpen(false)} className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white hover:bg-white/30 transition">
+                  ✕
+                </button>
+              </div>
             </div>
 
             {/* Dados do Estipulante */}
