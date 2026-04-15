@@ -11,6 +11,7 @@ import Aprovado from "./pages/Aprovado.tsx";
 import Cadastro from "./pages/Cadastro.tsx";
 import Simulacao from "./pages/Simulacao.tsx";
 import Chat from "./pages/Chat.tsx";
+import RedirecionandoChat from "./pages/RedirecionandoChat.tsx";
 import Sucesso from "./pages/Sucesso.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/aprovado" element={<Aprovado />} />
           <Route path="/cadastro" element={<Cadastro />} />
           <Route path="/simulacao" element={<Simulacao />} />
+          <Route path="/redirecionando" element={<RedirecionandoChat />} />
           <Route path="/chat" element={<Chat />} />
           <Route path="/sucesso" element={<Sucesso />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

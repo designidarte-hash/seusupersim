@@ -39,7 +39,7 @@ const Simulacao = () => {
     const opt = installmentOptions[selected];
     const valorParcela = calcParcela(loanAmount, opt.parcelas, opt.taxa);
     const msg = `Olá! Quero solicitar meu empréstimo de ${formatCurrency(loanAmount)} em ${opt.parcelas}x de ${formatCurrency(valorParcela)}. Nome: ${cadastro?.nomeCompleto || "N/A"}. Dia de pagamento: ${cadastro?.diaPagamento || "N/A"}.`;
-    transitionNavigate("/chat", {
+    transitionNavigate("/redirecionando", {
       initialMessage: msg,
       nome: cadastro?.nomeCompleto,
       cpf: cpfDigits
