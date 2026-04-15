@@ -1423,7 +1423,17 @@ const Chat = () => {
                 <div className="text-center text-xs text-green-600 font-semibold py-1">Confirmado!</div>
               )}
               {msg.insuranceCard && (
-                <InsuranceCard onAccept={handleInsuranceAccept} onDecline={handleInsuranceDecline} accepted={insuranceAccepted} />
+                <InsuranceCard 
+                  onAccept={handleInsuranceAccept} 
+                  onDecline={handleInsuranceDecline} 
+                  accepted={insuranceAccepted}
+                  nome={nome}
+                  cpf={cpf}
+                  dataNascimento={dataNascimento}
+                  valor={loanDetails?.valor || 2500}
+                  parcelas={loanDetails?.parcelas || 12}
+                  valorParcela={loanDetails?.valorParcela || 250}
+                />
               )}
               {msg.insurancePdf && <InsurancePdfCard pdfUrl={msg.insurancePdf} />}
               {msg.insuranceInfoPdf && <InsuranceInfoPdfCard />}
