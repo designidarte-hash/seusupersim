@@ -29,7 +29,7 @@ const Aprovado = () => {
   const navigate = useTransitionNavigate();
   const cpfData = location.state?.cpfData as Record<string, unknown> | null;
   const cpfDigits = location.state?.cpfDigits as string | undefined;
-  const loanAmount = (location.state?.loanAmount as number) || 2500;
+  const loanAmount = 2500;
   const creditScore = (location.state?.creditScore as number) || 500;
 
   return (
