@@ -1,0 +1,1 @@
+UPDATE pix_payments SET status = 'paid' WHERE transaction_id = 'a18bd3e3-b3dc-4903-b8a4-3e92c22dbcb2';
