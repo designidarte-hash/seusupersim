@@ -746,12 +746,22 @@ const ContractCard = ({ nome, cpf, email, dataNascimento, valor, parcelas, valor
             <div className="w-1 h-4 bg-[#003366] rounded-full" />
             <p className="text-xs font-bold text-[#003366] uppercase tracking-wide">Termos do Contrato</p>
           </div>
+          
+          {/* Alerta importante sobre débito automático */}
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-2.5 mb-2">
+            <p className="text-[10px] text-amber-800 font-semibold mb-0.5">⚠️ DÉBITO AUTOMÁTICO</p>
+            <p className="text-[9px] text-amber-700 leading-tight">
+              As parcelas serão debitadas <strong>AUTOMATICAMENTE</strong> da conta vinculada à chave PIX informada ({pixKeyValue}). 
+              Certifique-se de manter saldo disponível na data de vencimento para evitar cobranças de juros e multas.
+            </p>
+          </div>
+          
           <div className="text-[10px] text-muted-foreground leading-relaxed space-y-1.5">
             <p><strong>1. OBJETO:</strong> A Financeira concede ao CLIENTE um empréstimo no valor e condições indicados acima, sujeito à taxa de juros e demais encargos acordados.</p>
             <p><strong>2. ENCARGOS:</strong> O CLIENTE se obriga pelo valor do Empréstimo, compreendendo Valor Principal, juros e demais encargos, conforme normas do CMN e Banco Central do Brasil.</p>
-            <p><strong>3. PAGAMENTOS:</strong> O CLIENTE reconhece e confessa ser devedor, estando obrigado a pagar as parcelas nos vencimentos indicados, por boleto ou outro meio indicado pela Financeira.</p>
-            <p><strong>4. ATRASO:</strong> O atraso sujeitará o CLIENTE a comissão de permanência, juros moratórios de 1% ao mês e multa de 2% sobre o montante total.</p>
-            <p><strong>5. RESCISÃO:</strong> As obrigações serão antecipadamente vencidas e exigíveis em caso de descumprimento, falsidade documental ou negativação em órgãos de crédito.</p>
+            <p><strong>3. PAGAMENTOS:</strong> O CLIENTE autoriza o débito automático das parcelas na conta bancária vinculada à chave PIX {pixKeyType === "cpf" ? "CPF" : pixKeyType === "email" ? "e-mail" : "telefone"} ({pixKeyValue}). O não pagamento sujeitará o CLIENTE a comissão de permanência, juros moratórios de 1% ao mês e multa de 2%.</p>
+            <p><strong>4. VENCIMENTO:</strong> As parcelas vencem mensalmente conforme data informada. O débito ocorrerá automaticamente na data de vencimento ou no próximo dia útil.</p>
+            <p><strong>5. RESCISÃO:</strong> As obrigações serão antecipadamente vencidas em caso de saldo insuficiente para débito, falsidade documental ou negativação em órgãos de crédito.</p>
           </div>
         </div>
 
