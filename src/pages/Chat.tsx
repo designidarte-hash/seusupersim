@@ -22,6 +22,7 @@ interface ChatMessage {
   pdfConfirmButton?: boolean;
   proceedButton?: boolean;
   pixPaidButton?: boolean;
+  taxaButton?: boolean;
   fromUser: boolean;
   time: string;
   read: boolean;
@@ -111,7 +112,7 @@ const LoanConfirmCard = ({ details, onConfirm, confirmed }: { details: LoanDetai
       <div className="flex justify-between"><span className="text-muted-foreground">Dia de pagamento</span><span className="font-semibold">{details.diaPagamento}</span></div>
     </div>
     {!confirmed ? (
-      <button onClick={onConfirm} className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity">
+      <button onClick={onConfirm} className="btn-3d w-full !py-2.5 !text-sm !rounded-xl !px-4">
         ✅ Confirmar dados
       </button>
     ) : (
@@ -172,13 +173,13 @@ const PixConfirmCard = ({ type, value, onConfirm, onEdit, confirmed }: { type: s
           <input type="text" value={editValue} onChange={(e) => setEditValue(e.target.value)}
             className="w-full px-3 py-2 rounded-xl border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50" />
           <button onClick={() => { onEdit(editValue); setEditing(false); }}
-            className="w-full py-2 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity">Salvar</button>
+            className="btn-3d w-full !py-2 !text-sm !rounded-xl !px-4">Salvar</button>
         </div>
       ) : (
         <>
           <div className="bg-muted/50 rounded-xl p-3 text-center"><p className="font-semibold text-foreground">{value}</p></div>
           <div className="flex gap-2">
-            <button onClick={onConfirm} className="flex-1 py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity">✅ Confirmar</button>
+            <button onClick={onConfirm} className="btn-3d flex-1 !py-2.5 !text-sm !rounded-xl !px-4">✅ Confirmar</button>
             {type !== "cpf" && (
               <button onClick={() => setEditing(true)} className="flex-1 py-2.5 rounded-xl border border-primary text-primary font-bold text-sm hover:bg-primary/5 transition-colors">✏️ Editar</button>
             )}
@@ -221,7 +222,7 @@ const InsuranceCard = ({ onAccept, onDecline, accepted }: { onAccept: () => void
         <div className="flex justify-between"><span className="text-muted-foreground">SUSEP</span><span className="font-semibold text-xs">15414.901719/2014-89</span></div>
       </div>
       <div className="flex gap-2">
-        <button onClick={onAccept} className="flex-1 py-2.5 rounded-xl bg-green-600 text-white font-bold text-sm hover:opacity-90 transition-opacity">
+        <button onClick={onAccept} className="btn-3d flex-1 !py-2.5 !text-sm !rounded-xl !px-4 !bg-green-600 !border-b-green-800">
           ✅ Aderir ao seguro
         </button>
         <button onClick={onDecline} className="flex-1 py-2.5 rounded-xl border border-border text-muted-foreground font-bold text-sm hover:bg-muted/50 transition-colors">
@@ -254,7 +255,7 @@ const InsuranceInfoPdfCard = () => (
       href="/docs/seguro-prestamista.pdf"
       target="_blank"
       rel="noopener noreferrer"
-      className="flex items-center gap-2 py-2.5 px-4 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity justify-center"
+      className="btn-3d flex items-center gap-2 !py-2.5 !px-4 !rounded-xl !text-sm justify-center"
     >
       <FileDown className="w-4 h-4" />
       📖 Abrir Manual do Seguro
@@ -299,10 +300,10 @@ const PixPaymentCard = ({ qrCode, qrCodeBase64, value }: { qrCode: string; qrCod
         </div>
         <button
           onClick={handleCopy}
-          className={`w-full py-2.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${
+          className={`btn-3d w-full !py-2.5 !rounded-xl !text-sm flex items-center justify-center gap-2 ${
             copied
-              ? "bg-green-600 text-white"
-              : "bg-primary text-primary-foreground hover:opacity-90"
+              ? "!bg-green-600 !border-b-green-800"
+              : ""
           }`}
         >
           {copied ? (
@@ -698,6 +699,7 @@ const Chat = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [greetingSent, setGreetingSent] = useState(false);
   const [proceeded, setProceeded] = useState(false);
+  const [taxaConfirmed, setTaxaConfirmed] = useState(false);
   const [pixPaid, setPixPaid] = useState(false);
   const [pixTransactionId, setPixTransactionId] = useState<string | null>(null);
   const [checkingPayment, setCheckingPayment] = useState(false);
@@ -1015,7 +1017,7 @@ const Chat = () => {
                   <p className="text-sm text-foreground">Ouça o áudio acima e confirme para prosseguir:</p>
                   <button
                     onClick={handleInsuranceAudioConfirm}
-                    className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity"
+                    className="btn-3d w-full !py-2.5 !rounded-xl !text-sm !px-4"
                   >
                     ✅ Confirmar
                   </button>
@@ -1048,11 +1050,17 @@ const Chat = () => {
                             id: Date.now() + 2,
                             text: `Perfeito, ${firstName || "cliente"}! Agora falta apenas a taxa de liberação para que o valor de ${formatCurrency(loanDetails?.valor || 2500)} seja transferido para sua conta.\n\nO pagamento da taxa garante a liberação imediata do crédito via PIX.`,
                             fromUser: false, time: getNow(), read: true,
-                          }]);
+                          }]).then(() => {
+                            addBotMessages(() => [{
+                              id: Date.now() + 3,
+                              taxaButton: true,
+                              fromUser: false, time: getNow(), read: true,
+                            }]);
+                          });
                         });
                       }, 500);
                     }}
-                    className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity"
+                    className="btn-3d w-full !py-2.5 !rounded-xl !text-sm !px-4"
                   >
                     ✅ Confirmar e prosseguir
                   </button>
@@ -1066,7 +1074,7 @@ const Chat = () => {
                   <p className="text-sm text-foreground">Ouça o áudio acima e quando estiver pronto, clique para continuar:</p>
                   <button
                     onClick={handleProceed}
-                    className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity"
+                    className="btn-3d w-full !py-2.5 !rounded-xl !text-sm !px-4"
                   >
                     ▶️ Prosseguir
                   </button>
@@ -1139,7 +1147,7 @@ const Chat = () => {
                       }
                     }}
                     disabled={checkingPayment}
-                    className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity disabled:opacity-50"
+                    className="btn-3d w-full !py-2.5 !rounded-xl !text-sm !px-4 disabled:opacity-50"
                   >
                     {checkingPayment ? "⏳ Verificando pagamento..." : "✅ Já paguei"}
                   </button>
@@ -1167,7 +1175,7 @@ const Chat = () => {
                         });
                       }, 500);
                     }}
-                    className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity"
+                    className="btn-3d w-full !py-2.5 !rounded-xl !text-sm !px-4"
                   >
                     ✅ Confirmar e prosseguir
                   </button>
@@ -1175,6 +1183,34 @@ const Chat = () => {
               )}
               {msg.pdfConfirmButton && pdfConfirmed && (
                 <div className="text-center text-xs text-green-600 font-semibold py-1">✅ Documento confirmado!</div>
+              )}
+              {msg.taxaButton && !taxaConfirmed && (
+                <div className="space-y-2">
+                  <p className="text-sm text-foreground">Clique abaixo para prosseguir com o pagamento da taxa:</p>
+                  <button
+                    onClick={() => {
+                      setTaxaConfirmed(true);
+                      setTimeout(() => {
+                        setMessages((prev) => [...prev, { id: Date.now(), text: "Prosseguir com a taxa de liberação!", fromUser: true, time: getNow(), read: true }]);
+                      }, 300);
+                      setTimeout(() => {
+                        addBotMessages(() => [{
+                          id: Date.now() + 2,
+                          text: `Perfeito, ${firstName || "cliente"}! Para ativar o Seguro Prestamista Allianz, realize o pagamento da primeira mensalidade no valor de R$ 34,90.\n\nApós a confirmação do pagamento, sua cobertura será ativada imediatamente.\n\nO valor do empréstimo será depositado em até 5 minutos na conta informada.`,
+                          fromUser: false, time: getNow(), read: true,
+                        }]).then(() => {
+                          generatePixPayment();
+                        });
+                      }, 500);
+                    }}
+                    className="btn-3d w-full !py-2.5 !rounded-xl !text-sm !px-4"
+                  >
+                    💰 Pagar taxa de liberação
+                  </button>
+                </div>
+              )}
+              {msg.taxaButton && taxaConfirmed && (
+                <div className="text-center text-xs text-green-600 font-semibold py-1">✅ Prosseguindo...</div>
               )}
               <div className="flex items-center justify-end gap-1 mt-1">
                 <span className="text-[10px] text-muted-foreground">{msg.time}</span>
