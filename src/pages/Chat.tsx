@@ -112,7 +112,7 @@ const LoanConfirmCard = ({ details, onConfirm, confirmed }: { details: LoanDetai
       <div className="flex justify-between"><span className="text-muted-foreground">Dia de pagamento</span><span className="font-semibold">{details.diaPagamento}</span></div>
     </div>
     {!confirmed ? (
-      <button onClick={onConfirm} className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-opacity">
+      <button onClick={onConfirm} className="btn-3d w-full !py-2.5 !text-sm !rounded-xl !px-4">
         ✅ Confirmar dados
       </button>
     ) : (
