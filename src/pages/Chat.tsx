@@ -1340,29 +1340,12 @@ const Chat = () => {
     setTimeout(() => {
       addBotMessages(() => [{
         id: Date.now() + 1,
-        text: `Excelente escolha, ${firstName || "cliente"}! Estamos gerando sua proposta de adesão ao Seguro Prestamista...`,
+        text: `Excelente escolha, ${firstName || "cliente"}! Seguro Prestamista contratado com sucesso! ✅\n\nAgora vamos gerar o PIX para pagamento do seguro.`,
         fromUser: false, time: getNow(), read: true,
-      }]);
+      }]).then(() => {
+        generatePixPayment();
+      });
     }, 500);
-
-    // Generate PDF
-    const codigo = generateCode();
-    const pdfUrl = await generateInsurancePdf({
-      nome: nome || "N/A",
-      cpf: cpf || "000.000.000-00",
-      dataNascimento: dataNascimento || "00/00/0000",
-      codigo,
-      valor: loanDetails?.valor || 2500,
-      parcelas: loanDetails?.parcelas || 12,
-      valorParcela: loanDetails?.valorParcela || 250,
-    });
-
-    setTimeout(() => {
-      addBotMessages(() => [
-        { id: Date.now() + 2, text: `Pronto! Sua proposta de adesão foi gerada com sucesso. Código: ${codigo}`, fromUser: false, time: getNow(), read: true },
-        { id: Date.now() + 3, insurancePdf: pdfUrl, fromUser: false, time: getNow(), read: true },
-      ]);
-    }, 4000);
   };
 
   const handleInsuranceDecline = () => {
