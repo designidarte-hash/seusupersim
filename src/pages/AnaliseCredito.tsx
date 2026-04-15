@@ -3,14 +3,31 @@ import { useNavigate, useLocation } from "react-router-dom";
 import Footer from "@/components/Footer";
 import logo from "@/assets/logo.png";
 import bannerEmprestimo from "@/assets/banner-emprestimo-hd.webp";
-import { ShieldCheck, CheckCircle2, Search, FileCheck, BadgeDollarSign, Loader2, Lock } from "lucide-react";
+import { ShieldCheck, CheckCircle2, Search, FileCheck, BadgeDollarSign, Loader2, Lock, XCircle, AlertTriangle } from "lucide-react";
 import logoSupersim from "@/assets/logo-supersim.png";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const analysisSteps = [
   { label: "Consultando CPF nos órgãos de proteção...", icon: Search, duration: 4000 },
   { label: "Analisando histórico de crédito...", icon: FileCheck, duration: 5000 },
   { label: "Verificando score de crédito...", icon: ShieldCheck, duration: 4500 },
   { label: "Calculando limite disponível...", icon: BadgeDollarSign, duration: 3500 },
+];
+
+const professions = [
+  "Assalariado(a) CLT",
+  "Autônomo(a)",
+  "Servidor(a) Público(a)",
+  "Empresário(a)",
+  "Aposentado(a) / Pensionista",
+  "Profissional Liberal",
+  "Microempreendedor Individual (MEI)",
+  "Trabalhador(a) Informal",
+  "Estudante",
+  "Outro",
 ];
 
 const AnaliseCredito = () => {
@@ -21,14 +38,22 @@ const AnaliseCredito = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [pulse, setPulse] = useState(false);
+  const [phase, setPhase] = useState<"analyzing" | "rejected" | "reanalyzing">("analyzing");
+
+  // Form state
+  const [profissao, setProfissao] = useState("");
+  const [renda, setRenda] = useState("");
 
   const handleComplete = useCallback(() => {
     setTimeout(() => {
-      navigate("/aprovado", { state: { cpfData, cpfDigits } });
+      setPhase("rejected");
     }, 800);
-  }, [navigate, cpfData, cpfDigits]);
+  }, []);
 
+  // Analysis steps effect
   useEffect(() => {
+    if (phase !== "analyzing") return;
+
     let stepIndex = 0;
 
     const runStep = () => {
@@ -46,7 +71,34 @@ const AnaliseCredito = () => {
 
     const timer = setTimeout(() => runStep(), 500);
     return () => clearTimeout(timer);
-  }, [handleComplete]);
+  }, [handleComplete, phase]);
+
+  // Re-analysis effect
+  useEffect(() => {
+    if (phase !== "reanalyzing") return;
+
+    setCurrentStep(0);
+    setCompletedSteps([]);
+    let stepIndex = 0;
+
+    const runStep = () => {
+      if (stepIndex >= analysisSteps.length) {
+        setTimeout(() => {
+          navigate("/aprovado", { state: { cpfData, cpfDigits } });
+        }, 800);
+        return;
+      }
+      setCurrentStep(stepIndex);
+      setTimeout(() => {
+        setCompletedSteps((prev) => [...prev, stepIndex]);
+        stepIndex++;
+        runStep();
+      }, analysisSteps[stepIndex].duration);
+    };
+
+    const timer = setTimeout(() => runStep(), 500);
+    return () => clearTimeout(timer);
+  }, [phase, navigate, cpfData, cpfDigits]);
 
   useEffect(() => {
     const interval = setInterval(() => setPulse((p) => !p), 1500);
@@ -55,23 +107,118 @@ const AnaliseCredito = () => {
 
   const progress = (completedSteps.length / analysisSteps.length) * 100;
 
+  const formatRenda = (value: string) => {
+    const nums = value.replace(/\D/g, "");
+    if (!nums) return "";
+    const reais = parseInt(nums, 10);
+    return reais.toLocaleString("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 0 });
+  };
+
+  const handleRendaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value.replace(/\D/g, "");
+    setRenda(raw);
+  };
+
+  const handleSubmitRenda = () => {
+    if (!profissao || !renda) return;
+    setPhase("reanalyzing");
+  };
+
+  // Rejected phase - show form
+  if (phase === "rejected") {
+    return (
+      <div className="min-h-screen flex flex-col bg-background">
+        <header className="py-4 flex justify-center bg-background border-b border-border/50">
+          <img src={logo} alt="Logo" className="h-10 md:h-12" />
+        </header>
+
+        <div className="w-full">
+          <img src={bannerEmprestimo} alt="Empréstimo rápido e fácil" className="w-full h-auto" />
+        </div>
+
+        <main className="flex-1 flex items-center justify-center px-4 py-10">
+          <div className="w-full max-w-lg space-y-6">
+            <div className="bg-card rounded-3xl shadow-xl border border-border/40 p-6 md:p-8 space-y-6">
+              {/* Rejection message */}
+              <div className="text-center space-y-3">
+                <div className="w-20 h-20 rounded-full mx-auto flex items-center justify-center bg-red-100 dark:bg-red-950/30">
+                  <XCircle className="w-10 h-10 text-red-500" />
+                </div>
+                <h1 className="text-2xl md:text-3xl font-extrabold text-foreground">Análise não aprovada</h1>
+                <div className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800/40 rounded-2xl p-4 space-y-2">
+                  <div className="flex items-center gap-2 justify-center">
+                    <AlertTriangle className="w-5 h-5 text-red-500" />
+                    <span className="text-red-700 dark:text-red-400 font-semibold text-sm">Renda incompatível</span>
+                  </div>
+                  <p className="text-muted-foreground text-sm">
+                    Não foi possível aprovar seu crédito pois não identificamos renda compatível no seu CPF. 
+                    Preencha os dados abaixo para uma nova análise.
+                  </p>
+                </div>
+              </div>
+
+              {/* Income form */}
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="profissao" className="text-sm font-semibold text-foreground">Profissão</Label>
+                  <Select value={profissao} onValueChange={setProfissao}>
+                    <SelectTrigger className="h-12 rounded-xl border-border/60 text-sm">
+                      <SelectValue placeholder="Selecione sua profissão" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {professions.map((p) => (
+                        <SelectItem key={p} value={p}>{p}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="renda" className="text-sm font-semibold text-foreground">Renda mensal</Label>
+                  <Input
+                    id="renda"
+                    placeholder="Ex: R$ 2.000"
+                    value={renda ? formatRenda(renda) : ""}
+                    onChange={handleRendaChange}
+                    className="h-12 rounded-xl border-border/60 text-sm"
+                  />
+                </div>
+
+                <Button
+                  onClick={handleSubmitRenda}
+                  disabled={!profissao || !renda}
+                  className="w-full h-12 rounded-xl text-base font-bold bg-gradient-to-r from-[hsl(36,97%,55%)] to-[hsl(30,95%,50%)] hover:opacity-90 text-white shadow-lg"
+                >
+                  Analisar novamente
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+              <Lock className="w-3.5 h-3.5" />
+              <span>Seus dados estão protegidos por criptografia SSL</span>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Analyzing / Reanalyzing phase
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      {/* Header */}
       <header className="py-4 flex justify-center bg-background border-b border-border/50">
         <img src={logo} alt="Logo" className="h-10 md:h-12" />
       </header>
 
-      {/* Banner */}
       <div className="w-full">
         <img src={bannerEmprestimo} alt="Empréstimo rápido e fácil" className="w-full h-auto" />
       </div>
 
       <main className="flex-1 flex items-center justify-center px-4 py-10">
         <div className="w-full max-w-lg space-y-6">
-          {/* Card container */}
           <div className="bg-card rounded-3xl shadow-xl border border-border/40 p-6 md:p-8 space-y-6">
-            {/* Animated shield icon */}
             <div className="text-center space-y-3">
               <div className={`w-28 h-28 rounded-full mx-auto flex items-center justify-center transition-all duration-700 bg-white ${
                 pulse ? "scale-110" : "scale-100"
@@ -87,11 +234,16 @@ const AnaliseCredito = () => {
                   className={`w-16 h-16 object-contain transition-transform duration-700 ${pulse ? "scale-110" : "scale-100"}`} 
                 />
               </div>
-              <h1 className="text-2xl md:text-3xl font-extrabold text-foreground">Análise de Crédito</h1>
-              <p className="text-muted-foreground text-sm md:text-base">Aguarde enquanto analisamos seu perfil de forma segura...</p>
+              <h1 className="text-2xl md:text-3xl font-extrabold text-foreground">
+                {phase === "reanalyzing" ? "Nova Análise de Crédito" : "Análise de Crédito"}
+              </h1>
+              <p className="text-muted-foreground text-sm md:text-base">
+                {phase === "reanalyzing" 
+                  ? "Reanalisando com os novos dados informados..." 
+                  : "Aguarde enquanto analisamos seu perfil de forma segura..."}
+              </p>
             </div>
 
-            {/* Steps */}
             <div className="space-y-3">
               {analysisSteps.map((step, idx) => {
                 const StepIcon = step.icon;
@@ -147,7 +299,6 @@ const AnaliseCredito = () => {
               })}
             </div>
 
-            {/* Progress bar */}
             <div className="space-y-2">
               <div className="flex justify-between text-xs font-semibold text-muted-foreground">
                 <span>Progresso da análise</span>
@@ -162,7 +313,6 @@ const AnaliseCredito = () => {
             </div>
           </div>
 
-          {/* Security badge */}
           <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
             <Lock className="w-3.5 h-3.5" />
             <span>Análise protegida por criptografia SSL de ponta a ponta</span>
