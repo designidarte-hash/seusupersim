@@ -1336,7 +1336,7 @@ const Chat = () => {
   };
 
   useEffect(() => {
-    if (!isTaxaPreview || previewInitialized) return;
+    if (!isTaxaPreview) return;
 
     typingQueue.current = [];
     processingQueue.current = false;
@@ -1348,8 +1348,8 @@ const Chat = () => {
     setPixPaid(false);
     setTaxaConfirmed(false);
     setNormativoConfirmed(false);
-    setPreviewInitialized(true);
-  }, [isTaxaPreview, previewInitialized]);
+    if (!previewInitialized) setPreviewInitialized(true);
+  }, [isTaxaPreview, location.search, previewInitialized]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
