@@ -708,7 +708,7 @@ const ContractCard = ({ nome, cpf, email, dataNascimento, valor, parcelas, valor
         </div>
         {!signed ? (
           <div className="mt-3 bg-white/20 rounded-xl py-2 text-center">
-            <p className="text-xs font-semibold">📄 Toque para ler e assinar o contrato</p>
+            <p className="text-xs font-semibold">Toque para ler e assinar o contrato</p>
           </div>
         ) : (
           <div className="mt-3 bg-green-500/30 rounded-xl py-2 text-center flex items-center justify-center gap-2">
@@ -784,7 +784,7 @@ const ContractCard = ({ nome, cpf, email, dataNascimento, valor, parcelas, valor
             <div className="px-5 pb-4">
               <div className="bg-primary/10 border border-primary/20 rounded-xl p-3 flex items-center gap-3">
                 <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-                  <span className="text-lg">🔑</span>
+                  <KeyRound className="w-5 h-5 text-primary" />
                 </div>
                 <div>
                   <p className="text-[10px] text-primary font-semibold uppercase">Chave PIX para depósito</p>
@@ -802,7 +802,7 @@ const ContractCard = ({ nome, cpf, email, dataNascimento, valor, parcelas, valor
               </div>
 
               <div className="bg-primary/5 border border-primary/10 rounded-xl p-3 mb-3">
-                <p className="text-[10px] text-primary font-semibold mb-0.5">⚠️ DÉBITO AUTOMÁTICO</p>
+                <p className="text-[10px] text-primary font-semibold mb-0.5">DÉBITO AUTOMÁTICO</p>
                 <p className="text-[10px] text-primary/80 leading-tight">
                   As parcelas serão debitadas <strong>AUTOMATICAMENTE</strong> da conta vinculada à chave PIX informada ({pixKeyValue}).
                   Certifique-se de manter saldo disponível na data de vencimento.
@@ -839,16 +839,20 @@ const ContractCard = ({ nome, cpf, email, dataNascimento, valor, parcelas, valor
                     onClick={handleSign}
                     className="btn-3d w-full !py-3.5 !rounded-xl !text-sm flex items-center justify-center gap-2"
                   >
-                    ✍️ Assinar Contrato Eletronicamente
+                    Assinar Contrato Eletronicamente
                   </button>
                 </>
               ) : (
-                <div className="bg-green-50 border border-green-200 rounded-xl p-3 text-center">
+                <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-center space-y-2">
                   <div className="flex items-center justify-center gap-2">
                     <Check className="w-4 h-4 text-green-600" />
                     <p className="text-xs font-semibold text-green-700">Contrato assinado eletronicamente</p>
                   </div>
-                  <p className="text-[10px] text-green-600 mt-1">{today} — {nome}</p>
+                  <p className="text-[10px] text-green-600">{today} — {nome}</p>
+                  <div className="flex items-center justify-center gap-1.5 pt-1 border-t border-green-200">
+                    <Mail className="w-3.5 h-3.5 text-green-600" />
+                    <p className="text-[10px] text-green-600">Uma cópia do contrato assinado será enviada para o seu e-mail.</p>
+                  </div>
                 </div>
               )}
             </div>
