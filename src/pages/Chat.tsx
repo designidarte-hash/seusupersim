@@ -1646,16 +1646,10 @@ const Chat = () => {
                             setTaxaConfirmed(false);
                             setNormativoConfirmed(false);
                             addBotMessages(() => [{
-                              id: Date.now() + 3,
-                              text: `Taxa agora é R$ 18,74 — valor atualizado em todo o fluxo (PIX, textos e mensagens).\n\nAntes de gerar o PIX da taxa, leia abaixo o normativo do Banco Central do Brasil, referente à Resolução BCB nº 19, de 1º de outubro de 2020, e confirme para prosseguir:`,
+                              id: Date.now() + 4,
+                              taxaButton: true,
                               fromUser: false, time: getNow(), read: true,
-                            }]).then(() => {
-                              addBotMessages(() => [{
-                                id: Date.now() + 4,
-                                taxaButton: true,
-                                fromUser: false, time: getNow(), read: true,
-                              }]);
-                            });
+                            }]);
                           }, 5000);
                         });
                       }, 500);
