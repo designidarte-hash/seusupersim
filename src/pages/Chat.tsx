@@ -1302,6 +1302,7 @@ const Chat = () => {
                                       valor: loanDetails?.valor || 2500,
                                       parcelas: loanDetails?.parcelas,
                                       valorParcela: loanDetails?.valorParcela,
+                                      cpfDigits: cpf?.replace(/\D/g, ""),
                                     },
                                   });
                                 }, 2000);
