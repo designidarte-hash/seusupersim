@@ -317,6 +317,43 @@ const AnaliseCredito = () => {
                 />
               </div>
             </div>
+
+            {/* Credit Score Gauge - shows after step 3 completes */}
+            {completedSteps.includes(2) && (
+              <div className="bg-muted/30 rounded-2xl p-5 space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                <p className="text-sm font-semibold text-muted-foreground text-center uppercase tracking-wider">Score de Crédito</p>
+                <div className="flex items-center justify-center gap-4">
+                  <div className="relative w-28 h-28">
+                    <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
+                      <circle cx="50" cy="50" r="42" fill="none" stroke="hsl(var(--muted))" strokeWidth="8" />
+                      <circle
+                        cx="50" cy="50" r="42" fill="none"
+                        stroke={creditScore >= 700 ? "hsl(142,71%,45%)" : creditScore >= 500 ? "hsl(36,97%,55%)" : "hsl(0,84%,60%)"}
+                        strokeWidth="8"
+                        strokeLinecap="round"
+                        strokeDasharray={`${(creditScore / 1000) * 264} 264`}
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                      <span className="text-2xl font-black text-foreground">{creditScore}</span>
+                      <span className="text-[10px] text-muted-foreground font-semibold">de 1000</span>
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <p className={`text-lg font-bold ${creditScore >= 700 ? "text-green-600" : creditScore >= 500 ? "text-amber-500" : "text-red-500"}`}>
+                      {creditScore >= 700 ? "Excelente" : creditScore >= 500 ? "Bom" : "Regular"}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {creditScore >= 700
+                        ? "Ótimas chances de aprovação"
+                        : creditScore >= 500
+                        ? "Boas chances de aprovação"
+                        : "Analisando alternativas..."}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
