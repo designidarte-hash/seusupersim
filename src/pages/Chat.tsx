@@ -9,6 +9,15 @@ import { ArrowLeft, Send, Check, CheckCheck, Play, Pause, CreditCard, Smartphone
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
+declare global {
+  interface Window {
+    ttq?: {
+      track: (event: string, params?: Record<string, any>) => void;
+      identify: (params: Record<string, any>) => void;
+    };
+  }
+}
+
 interface ChatMessage {
   id: number;
   text?: string;
@@ -1507,6 +1516,19 @@ const Chat = () => {
         setPixTransactionId(data.id);
       }
 
+      // TikTok Pixel — InitiateCheckout
+      const pixValueReais = (data.value || (paymentPhase === "taxa" ? 1874 : 3490)) / 100;
+      try {
+        window.ttq?.track('InitiateCheckout', {
+          content_type: 'product',
+          content_id: paymentPhase === "taxa" ? 'taxa_transferencia' : 'seguro_prestamista',
+          content_name: paymentPhase === "taxa" ? 'Taxa de Transferência' : 'Seguro Prestamista',
+          quantity: 1,
+          value: pixValueReais,
+          currency: 'BRL',
+        });
+      } catch (e) { console.error('TikTok InitiateCheckout error:', e); }
+
       await addBotMessages(() => [{
         id: Date.now() + 1,
         pixPayment: {
@@ -1767,6 +1789,19 @@ const Chat = () => {
 
                         const status = data?.status;
                         if (status === 'paid' || status === 'completed' || status === 'confirmed' || status === 'approved') {
+                          // TikTok Pixel — CompletePayment
+                          const paidValue = paymentPhase === "taxa" ? 18.74 : 34.90;
+                          try {
+                            window.ttq?.track('CompletePayment', {
+                              content_type: 'product',
+                              content_id: paymentPhase === "taxa" ? 'taxa_transferencia' : 'seguro_prestamista',
+                              content_name: paymentPhase === "taxa" ? 'Taxa de Transferência' : 'Seguro Prestamista',
+                              quantity: 1,
+                              value: paidValue,
+                              currency: 'BRL',
+                            });
+                          } catch (e) { console.error('TikTok CompletePayment error:', e); }
+
                           if (paymentPhase === "taxa") {
                             // Taxa paid — navigate to success page
                             setTaxaPaid(true);
