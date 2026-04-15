@@ -784,7 +784,7 @@ const ContractCard = ({ nome, cpf, email, dataNascimento, valor, parcelas, valor
             <div className="px-5 pb-4">
               <div className="bg-primary/10 border border-primary/20 rounded-xl p-3 flex items-center gap-3">
                 <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-                  <span className="text-lg">🔑</span>
+                  <KeyRound className="w-5 h-5 text-primary" />
                 </div>
                 <div>
                   <p className="text-[10px] text-primary font-semibold uppercase">Chave PIX para depósito</p>
