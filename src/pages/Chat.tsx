@@ -665,6 +665,134 @@ function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number)
   return lines;
 }
 
+const ContractCard = ({ nome, cpf, email, dataNascimento, valor, parcelas, valorParcela, taxa, onSign, signed }: {
+  nome: string; cpf: string; email: string; dataNascimento: string;
+  valor: number; parcelas: number; valorParcela: number; taxa: number;
+  onSign: () => void; signed: boolean;
+}) => {
+  const contractNumber = `${Math.floor(10000000 + Math.random() * 90000000)}`;
+  const today = new Date().toLocaleDateString("pt-BR");
+
+  return (
+    <div className="space-y-3">
+      <div className="bg-white rounded-xl border border-border overflow-hidden">
+        {/* Header */}
+        <div className="bg-[#003366] px-4 py-3 flex items-center justify-between">
+          <div>
+            <p className="text-white/70 text-[10px]">Contrato de Empréstimo</p>
+            <p className="text-white font-bold text-sm">Super Sim</p>
+          </div>
+          <div className="text-right">
+            <p className="text-white/70 text-[10px]">Nº Contrato</p>
+            <p className="text-white font-bold text-xs">{contractNumber}</p>
+          </div>
+        </div>
+
+        {/* Dados do Cliente */}
+        <div className="px-4 py-3 space-y-2">
+          <div className="flex items-center gap-1.5 mb-2">
+            <div className="w-1 h-4 bg-[#003366] rounded-full" />
+            <p className="text-xs font-bold text-[#003366] uppercase tracking-wide">Dados do Cliente</p>
+          </div>
+          <div className="grid grid-cols-1 gap-1.5 text-xs">
+            <div className="flex justify-between border-b border-dashed border-border pb-1">
+              <span className="text-muted-foreground">Nome Completo</span>
+              <span className="font-semibold text-foreground text-right">{nome}</span>
+            </div>
+            <div className="flex justify-between border-b border-dashed border-border pb-1">
+              <span className="text-muted-foreground">CPF</span>
+              <span className="font-semibold text-foreground">{cpf}</span>
+            </div>
+            <div className="flex justify-between border-b border-dashed border-border pb-1">
+              <span className="text-muted-foreground">E-mail</span>
+              <span className="font-semibold text-foreground text-right">{email}</span>
+            </div>
+            <div className="flex justify-between border-b border-dashed border-border pb-1">
+              <span className="text-muted-foreground">Data de Nascimento</span>
+              <span className="font-semibold text-foreground">{dataNascimento}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Dados da Operação */}
+        <div className="px-4 py-3 bg-muted/30 space-y-2">
+          <div className="flex items-center gap-1.5 mb-2">
+            <div className="w-1 h-4 bg-[#003366] rounded-full" />
+            <p className="text-xs font-bold text-[#003366] uppercase tracking-wide">Dados da Operação</p>
+          </div>
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <div className="bg-white rounded-lg p-2 text-center border border-border">
+              <p className="text-muted-foreground text-[10px]">Valor Principal</p>
+              <p className="font-bold text-foreground">{formatCurrency(valor)}</p>
+            </div>
+            <div className="bg-white rounded-lg p-2 text-center border border-border">
+              <p className="text-muted-foreground text-[10px]">Parcelas</p>
+              <p className="font-bold text-foreground">{parcelas}x de {formatCurrency(valorParcela)}</p>
+            </div>
+            <div className="bg-white rounded-lg p-2 text-center border border-border">
+              <p className="text-muted-foreground text-[10px]">Taxa Mensal</p>
+              <p className="font-bold text-foreground">{taxa}%</p>
+            </div>
+            <div className="bg-white rounded-lg p-2 text-center border border-border">
+              <p className="text-muted-foreground text-[10px]">Data</p>
+              <p className="font-bold text-foreground">{today}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Cláusulas resumidas */}
+        <div className="px-4 py-3 space-y-2">
+          <div className="flex items-center gap-1.5 mb-1">
+            <div className="w-1 h-4 bg-[#003366] rounded-full" />
+            <p className="text-xs font-bold text-[#003366] uppercase tracking-wide">Termos do Contrato</p>
+          </div>
+          <div className="text-[10px] text-muted-foreground leading-relaxed space-y-1.5">
+            <p><strong>1. OBJETO:</strong> A Financeira concede ao CLIENTE um empréstimo no valor e condições indicados acima, sujeito à taxa de juros e demais encargos acordados.</p>
+            <p><strong>2. ENCARGOS:</strong> O CLIENTE se obriga pelo valor do Empréstimo, compreendendo Valor Principal, juros e demais encargos, conforme normas do CMN e Banco Central do Brasil.</p>
+            <p><strong>3. PAGAMENTOS:</strong> O CLIENTE reconhece e confessa ser devedor, estando obrigado a pagar as parcelas nos vencimentos indicados, por boleto ou outro meio indicado pela Financeira.</p>
+            <p><strong>4. ATRASO:</strong> O atraso sujeitará o CLIENTE a comissão de permanência, juros moratórios de 1% ao mês e multa de 2% sobre o montante total.</p>
+            <p><strong>5. RESCISÃO:</strong> As obrigações serão antecipadamente vencidas e exigíveis em caso de descumprimento, falsidade documental ou negativação em órgãos de crédito.</p>
+          </div>
+        </div>
+
+        {/* Footer legal */}
+        <div className="px-4 py-2 bg-[#f0f0f0] border-t border-border">
+          <p className="text-[8px] text-muted-foreground text-center">
+            SUPERSIM S/A — CNPJ 33.030.944/0001-60 — AV. Nove de Julho, 5143, Jardim Paulista, São Paulo/SP
+          </p>
+        </div>
+      </div>
+
+      {/* Assinatura */}
+      {!signed ? (
+        <div className="space-y-2">
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-3">
+            <p className="text-[11px] text-blue-700 leading-relaxed">
+              Ao clicar em <strong>"Assinar Contrato"</strong>, você declara que leu, compreendeu e concorda com todos os termos e condições deste contrato de empréstimo.
+            </p>
+          </div>
+          <button
+            onClick={onSign}
+            className="btn-3d w-full !py-3 !rounded-xl !text-sm flex items-center justify-center gap-2"
+          >
+            ✍️ Assinar Contrato Eletronicamente
+          </button>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          <div className="bg-green-50 border border-green-200 rounded-xl p-3 text-center">
+            <div className="flex items-center justify-center gap-2">
+              <Check className="w-4 h-4 text-green-600" />
+              <p className="text-xs font-semibold text-green-700">Contrato assinado eletronicamente</p>
+            </div>
+            <p className="text-[10px] text-green-600 mt-1">{today} — {nome}</p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const TypingIndicator = () => (
   <div className="flex justify-start">
     <div className="max-w-[85%] rounded-2xl px-4 py-3 shadow-sm bg-white rounded-tl-sm">
