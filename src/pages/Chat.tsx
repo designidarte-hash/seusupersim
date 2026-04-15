@@ -662,7 +662,7 @@ const generateInsurancePdf = async (data: {
   // Header - white background with text
   ctx.fillStyle = "#333333";
   ctx.font = "12px Arial";
-  ctx.fillText("Proposta de Adesão", 25, 30);
+  ctx.fillText("Termo de Adesão", 25, 30);
   ctx.fillStyle = "#003366";
   ctx.font = "bold 26px Arial";
   ctx.fillText("Prestamista", 25, 62);
@@ -673,8 +673,8 @@ const generateInsurancePdf = async (data: {
   logoImg.src = "/images/allianz-logo.png";
   await new Promise<void>((res) => { logoImg.onload = () => res(); logoImg.onerror = () => res(); });
   if (logoImg.complete && logoImg.naturalWidth > 0 && logoImg.naturalHeight > 0) {
-    const maxLogoWidth = 170;
-    const maxLogoHeight = 44;
+    const maxLogoWidth = 210;
+    const maxLogoHeight = 56;
     const logoRatio = logoImg.naturalWidth / logoImg.naturalHeight;
     let logoWidth = maxLogoWidth;
     let logoHeight = logoWidth / logoRatio;
@@ -769,7 +769,7 @@ const generateInsurancePdf = async (data: {
 
   ctx.fillStyle = "#003366";
   ctx.font = "bold 10px Arial";
-  ctx.fillText(`Prêmio do Seguro Mensal: R$ 34,90`, 25, y);
+  ctx.fillText(`Pagamento único do Seguro: R$ 34,90`, 25, y);
   y += 25;
 
   // Termos
