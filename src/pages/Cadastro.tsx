@@ -23,7 +23,7 @@ const getAutoFilledName = (source: unknown): string => {
     (value): value is string => typeof value === "string" && value.trim().length > 0
   );
 
-  if (match) return match.trim().toUpperCase();
+  if (match) return match.trim().toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
 
   return getAutoFilledName(data.cpfData) || getAutoFilledName(data.cadastro) || getAutoFilledName(data.result);
 };
@@ -113,10 +113,10 @@ const Cadastro = () => {
                 value={form.nomeCompleto}
                 onChange={(e) => {
                   setNameTouched(true);
-                  update("nomeCompleto", e.target.value.toUpperCase());
+                  update("nomeCompleto", e.target.value);
                 }}
                 placeholder="Seu nome completo"
-                className="w-full h-12 px-4 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition uppercase"
+                className="w-full h-12 px-4 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition"
                 maxLength={100}
               />
             </div>

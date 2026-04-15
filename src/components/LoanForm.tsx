@@ -39,7 +39,7 @@ const getCpfName = (source: unknown): string => {
     (value): value is string => typeof value === "string" && value.trim().length > 0
   );
 
-  return match?.trim().toUpperCase() ?? "";
+  return match?.trim().toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase()) ?? "";
 };
 
 const LoanForm = () => {
