@@ -455,8 +455,9 @@ const PixPaymentCard = ({ qrCode, qrCodeBase64, value }: { qrCode: string; qrCod
         <span className="text-sm font-semibold text-foreground">Seguro Prestamista - Allianz</span>
       </div>
       <div className="bg-muted/50 rounded-xl p-3 space-y-2 text-center">
-        <p className="text-xs text-muted-foreground">Valor do Seguro Prestamista:</p>
+        <p className="text-xs text-muted-foreground">Pagamento único do Seguro Prestamista:</p>
         <p className="text-2xl font-bold text-primary">{formatCurrency(value / 100)}</p>
+        <p className="text-[10px] text-muted-foreground">Valor único • Não é mensalidade</p>
       </div>
       {qrCodeBase64 && (
         <div className="flex justify-center">
