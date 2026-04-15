@@ -406,7 +406,14 @@ const InsurancePdfCard = ({ pdfUrl }: { pdfUrl: string }) => (
       <FileDown className="w-5 h-5 text-primary" />
       <span className="text-sm font-semibold text-foreground">Proposta de Adesão - Seguro Prestamista</span>
     </div>
-    <img src={pdfUrl} alt="Proposta de Adesão" className="w-full rounded-lg border border-border" />
+    <div className="overflow-hidden rounded-lg border border-border bg-white">
+      <img
+        src={pdfUrl}
+        alt="Proposta de Adesão"
+        loading="lazy"
+        className="h-[460px] w-full object-contain object-top bg-white md:h-[560px]"
+      />
+    </div>
   </div>
 );
 
@@ -795,21 +802,41 @@ const generateInsurancePdf = async (data: {
 
   y += 35;
 
+  const footerY = Math.max(y + 24, 560);
+
   // Footer
   ctx.fillStyle = "#003366";
-  ctx.fillRect(0, 810, 595, 32);
+  ctx.fillRect(0, footerY, pw, 32);
   ctx.fillStyle = "#ffffff";
   ctx.font = "7px Arial";
-  ctx.fillText("Allianz Seguros S.A. - CNPJ 61.573.796/0001-66 - Pág. 1 Processo SUSEP nº 15414.901719/2014-89", 100, 825);
-  ctx.fillText(`Código: ${data.codigo}`, 25, 825);
+  ctx.fillText("Allianz Seguros S.A. - CNPJ 61.573.796/0001-66 - Pág. 1 Processo SUSEP nº 15414.901719/2014-89", 100, footerY + 16);
+  ctx.fillText(`Código: ${data.codigo}`, 25, footerY + 16);
 
-  // Convert to blob
-  return new Promise<string>((resolve) => {
-    canvas.toBlob((blob) => {
+  const finalHeight = footerY + 32;
+  const outputCanvas = document.createElement("canvas");
+  outputCanvas.width = pw * scale;
+  outputCanvas.height = finalHeight * scale;
+  const outputCtx = outputCanvas.getContext("2d")!;
+  outputCtx.drawImage(
+    canvas,
+    0,
+    0,
+    pw * scale,
+    finalHeight * scale,
+    0,
+    0,
+    pw * scale,
+    finalHeight * scale
+  );
+
+  return new Promise<string>((resolve, reject) => {
+    outputCanvas.toBlob((blob) => {
       if (blob) {
-        const url = URL.createObjectURL(blob);
-        resolve(url);
+        resolve(URL.createObjectURL(blob));
+        return;
       }
+
+      reject(new Error("Falha ao gerar proposta do seguro."));
     }, "image/png");
   });
 };
@@ -1224,29 +1251,17 @@ const Chat = () => {
     }, 300);
     setTimeout(() => {
       setInsuranceShown(true);
-      setInsuranceAccepted(true);
+      setInsuranceAccepted(null);
       addBotMessages(() => [
-        { id: Date.now() + 1, insuranceCard: true, fromUser: false, time: getNow(), read: true },
-      ]).then(async () => {
-        const codigo = generateCode();
-        const pdfUrl = await generateInsurancePdf({
-          nome: nome || "N/A",
-          cpf: cpf || "000.000.000-00",
-          dataNascimento: dataNascimento || "00/00/0000",
-          codigo,
-          valor: loanDetails?.valor || 2500,
-          parcelas: loanDetails?.parcelas || 12,
-          valorParcela: loanDetails?.valorParcela || 250,
-        });
-        addBotMessages(() => [
-          { id: Date.now() + 2, text: `Sua proposta de adesão ao seguro foi gerada automaticamente. Código: ${codigo}`, fromUser: false, time: getNow(), read: true },
-          { id: Date.now() + 3, insurancePdf: pdfUrl, fromUser: false, time: getNow(), read: true },
-        ]).then(() => {
-          addBotMessages(() => [{
-            id: Date.now() + 4, pdfConfirmButton: true, fromUser: false, time: getNow(), read: true,
-          }]);
-        });
-      });
+        {
+          id: Date.now() + 1,
+          text: `${firstName || "Cliente"}, confira a proposta do Seguro Prestamista abaixo e toque no cartão para abrir o documento completo.`,
+          fromUser: false,
+          time: getNow(),
+          read: true,
+        },
+        { id: Date.now() + 2, insuranceCard: true, fromUser: false, time: getNow(), read: true },
+      ]);
     }, 500);
   };
 
