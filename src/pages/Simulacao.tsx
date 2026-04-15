@@ -3,9 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useTransitionNavigate } from "@/components/PageTransition";
 import logo from "@/assets/logo.png";
 import Footer from "@/components/Footer";
-
-import iconCadastro from "@/assets/icon-cadastro.png";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, FileText, Shield, CheckCircle2, Calendar, Percent, Banknote, Clock, ChevronRight } from "lucide-react";
 
 const loanAmount = 2500;
 
@@ -28,12 +26,14 @@ const calcParcela = (valor: number, parcelas: number, taxaMensal: number) => {
 const formatCurrency = (v: number) =>
   v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
+const today = new Date().toLocaleDateString("pt-BR");
+
 const Simulacao = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const transitionNavigate = useTransitionNavigate();
   const { cpfData, cpfDigits, cadastro } = (location.state as any) || {};
-  const [selected, setSelected] = useState(1); // index
+  const [selected, setSelected] = useState(1);
 
   const handleConfirm = () => {
     const opt = installmentOptions[selected];
@@ -62,134 +62,204 @@ const Simulacao = () => {
     transitionNavigate("/redirecionando", nextState);
   };
 
+  const selectedOpt = installmentOptions[selected];
+  const selectedParcela = calcParcela(loanAmount, selectedOpt.parcelas, selectedOpt.taxa);
+  const selectedTotal = selectedParcela * selectedOpt.parcelas;
+  const cet = (selectedOpt.taxa * 12 + 2.5).toFixed(2);
+
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <header className="py-4 flex justify-center bg-background border-b border-border/50">
-        <img src={logo} alt="Logo" className="h-10 md:h-12" />
+    <div className="min-h-screen flex flex-col bg-[#f5f5f7]">
+      {/* Header */}
+      <header className="py-3 flex justify-center bg-white border-b border-gray-200 shadow-sm">
+        <img src={logo} alt="Logo" className="h-9 md:h-10" />
       </header>
 
-      <div className="bg-primary py-6 px-4">
-        <div className="max-w-lg mx-auto flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-background/90 flex items-center justify-center shadow-md shrink-0">
-            <img src={iconCadastro} alt="" className="w-7 h-7" />
-          </div>
-          <div>
-            <h1 className="text-2xl md:text-3xl font-extrabold text-primary-foreground">
-              Simulação do empréstimo
-            </h1>
-            <p className="text-base text-primary-foreground/70 mt-0.5">
-              Escolha a melhor opção de parcelamento para você.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <main className="flex-1 flex flex-col items-center px-4 py-8">
+      <main className="flex-1 flex flex-col items-center px-4 py-6">
         <div className="w-full max-w-lg">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors group mb-6"
+            className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 transition-colors group mb-4"
           >
-            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
             Voltar
           </button>
 
-          {/* Valor */}
-          <div className="bg-primary/10 rounded-2xl p-6 text-center mb-8">
-            <p className="text-sm text-muted-foreground">Valor do empréstimo</p>
-            <p className="text-4xl md:text-5xl font-black text-primary tracking-tight mt-1">
-              {formatCurrency(loanAmount)}
-            </p>
-          </div>
+          {/* Contract Document */}
+          <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+            
+            {/* Document Header */}
+            <div className="bg-gradient-to-r from-gray-800 to-gray-900 px-6 py-5">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
+                  <FileText className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-lg font-bold text-white tracking-tight">
+                    Proposta de Crédito Pessoal
+                  </h1>
+                  <p className="text-xs text-gray-400 mt-0.5">
+                    Documento nº {Math.floor(Math.random() * 900000 + 100000)} · {today}
+                  </p>
+                </div>
+              </div>
+            </div>
 
-          {/* Opções de parcelamento */}
-          <div className="space-y-3 mb-8">
-            <p className="text-base font-semibold text-foreground">Escolha o parcelamento:</p>
-            {installmentOptions.map((opt, idx) => {
-              const valorParcela = calcParcela(loanAmount, opt.parcelas, opt.taxa);
-              const totalPago = valorParcela * opt.parcelas;
-              const isSelected = selected === idx;
-              return (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => setSelected(idx)}
-                  className={`w-full p-4 rounded-2xl border text-left transition ${
-                    isSelected
-                      ? "border-primary bg-primary/5 shadow-md ring-2 ring-primary/30"
-                      : "border-border bg-background hover:border-primary/40"
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-xl font-bold text-foreground">
-                        {opt.parcelas}x de {formatCurrency(valorParcela)}
-                      </p>
-                      <p className="text-sm text-muted-foreground mt-0.5">
-                        Taxa de {opt.taxa}% a.m. · Total: {formatCurrency(totalPago)}
-                      </p>
-                    </div>
-                    <div
-                      className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 ${
-                        isSelected ? "border-primary bg-primary" : "border-border"
+            {/* Security Badge */}
+            <div className="bg-green-50 border-b border-green-100 px-6 py-2.5 flex items-center gap-2">
+              <Shield className="w-3.5 h-3.5 text-green-600" />
+              <span className="text-[11px] text-green-700 font-medium">
+                Documento protegido · Assinatura eletrônica certificada
+              </span>
+            </div>
+
+            {/* Valor Principal */}
+            <div className="px-6 py-6 border-b border-gray-100">
+              <p className="text-xs text-gray-500 uppercase tracking-widest font-semibold mb-1">Valor do crédito</p>
+              <p className="text-4xl font-black text-gray-900 tracking-tight">
+                {formatCurrency(loanAmount)}
+              </p>
+              <div className="flex items-center gap-4 mt-3">
+                <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                  <Percent className="w-3 h-3" />
+                  <span>Taxa: {selectedOpt.taxa}% a.m.</span>
+                </div>
+                <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                  <Clock className="w-3 h-3" />
+                  <span>CET: {cet}% a.a.</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Parcelamento */}
+            <div className="px-6 py-5 border-b border-gray-100">
+              <p className="text-xs text-gray-500 uppercase tracking-widest font-semibold mb-4">
+                Selecione o parcelamento
+              </p>
+              <div className="space-y-2">
+                {installmentOptions.map((opt, idx) => {
+                  const valorParcela = calcParcela(loanAmount, opt.parcelas, opt.taxa);
+                  const totalPago = valorParcela * opt.parcelas;
+                  const isSelected = selected === idx;
+                  return (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setSelected(idx)}
+                      className={`w-full px-4 py-3.5 rounded-lg border text-left transition-all duration-200 ${
+                        isSelected
+                          ? "border-gray-900 bg-gray-900 shadow-md"
+                          : "border-gray-200 bg-white hover:border-gray-400 hover:bg-gray-50"
                       }`}
                     >
-                      {isSelected && (
-                        <div className="w-2.5 h-2.5 rounded-full bg-primary-foreground" />
-                      )}
-                    </div>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Resumo */}
-          <div className="bg-muted rounded-2xl p-5 space-y-3 mb-8">
-            <p className="text-base font-semibold text-foreground">Resumo:</p>
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Valor solicitado</span>
-              <span className="font-bold text-foreground">{formatCurrency(loanAmount)}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Parcelas</span>
-              <span className="font-bold text-foreground">
-                {installmentOptions[selected].parcelas}x de{" "}
-                {formatCurrency(
-                  calcParcela(loanAmount, installmentOptions[selected].parcelas, installmentOptions[selected].taxa)
-                )}
-              </span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Taxa mensal</span>
-              <span className="font-bold text-foreground">{installmentOptions[selected].taxa}% a.m.</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Total a pagar</span>
-              <span className="font-bold text-foreground">
-                {formatCurrency(
-                  calcParcela(loanAmount, installmentOptions[selected].parcelas, installmentOptions[selected].taxa) *
-                    installmentOptions[selected].parcelas
-                )}
-              </span>
-            </div>
-            {cadastro?.diaPagamento && (
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Dia de pagamento</span>
-                <span className="font-bold text-foreground">Dia {cadastro.diaPagamento}</span>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${
+                            isSelected ? "border-white" : "border-gray-300"
+                          }`}>
+                            {isSelected && <div className="w-2 h-2 rounded-full bg-white" />}
+                          </div>
+                          <div>
+                            <p className={`text-base font-bold ${isSelected ? "text-white" : "text-gray-900"}`}>
+                              {opt.parcelas}x de {formatCurrency(valorParcela)}
+                            </p>
+                            <p className={`text-xs mt-0.5 ${isSelected ? "text-gray-300" : "text-gray-500"}`}>
+                              Total: {formatCurrency(totalPago)}
+                            </p>
+                          </div>
+                        </div>
+                        {isSelected && (
+                          <CheckCircle2 className="w-5 h-5 text-green-400 shrink-0" />
+                        )}
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
-            )}
-          </div>
+            </div>
 
-          <button
-            onClick={handleConfirm}
-            className="btn-3d w-full"
-          >
-            Confirmar e solicitar
-          </button>
+            {/* Resumo Contratual */}
+            <div className="px-6 py-5 border-b border-gray-100">
+              <p className="text-xs text-gray-500 uppercase tracking-widest font-semibold mb-4">
+                Resumo da operação
+              </p>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between py-2 border-b border-dashed border-gray-200">
+                  <div className="flex items-center gap-2">
+                    <Banknote className="w-4 h-4 text-gray-400" />
+                    <span className="text-sm text-gray-600">Valor solicitado</span>
+                  </div>
+                  <span className="text-sm font-bold text-gray-900">{formatCurrency(loanAmount)}</span>
+                </div>
+                <div className="flex items-center justify-between py-2 border-b border-dashed border-gray-200">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-gray-400" />
+                    <span className="text-sm text-gray-600">Parcelas</span>
+                  </div>
+                  <span className="text-sm font-bold text-gray-900">
+                    {selectedOpt.parcelas}x de {formatCurrency(selectedParcela)}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between py-2 border-b border-dashed border-gray-200">
+                  <div className="flex items-center gap-2">
+                    <Percent className="w-4 h-4 text-gray-400" />
+                    <span className="text-sm text-gray-600">Taxa de juros</span>
+                  </div>
+                  <span className="text-sm font-bold text-gray-900">{selectedOpt.taxa}% a.m.</span>
+                </div>
+                <div className="flex items-center justify-between py-2 border-b border-dashed border-gray-200">
+                  <div className="flex items-center gap-2">
+                    <Percent className="w-4 h-4 text-gray-400" />
+                    <span className="text-sm text-gray-600">CET (Custo Efetivo Total)</span>
+                  </div>
+                  <span className="text-sm font-bold text-gray-900">{cet}% a.a.</span>
+                </div>
+                <div className="flex items-center justify-between py-2">
+                  <div className="flex items-center gap-2">
+                    <Banknote className="w-4 h-4 text-gray-400" />
+                    <span className="text-sm text-gray-600">Total a pagar</span>
+                  </div>
+                  <span className="text-sm font-extrabold text-gray-900">{formatCurrency(selectedTotal)}</span>
+                </div>
+                {cadastro?.diaPagamento && (
+                  <div className="flex items-center justify-between py-2 border-t border-dashed border-gray-200">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-gray-400" />
+                      <span className="text-sm text-gray-600">Dia de vencimento</span>
+                    </div>
+                    <span className="text-sm font-bold text-gray-900">Dia {cadastro.diaPagamento}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Legal disclaimer */}
+            <div className="px-6 py-4 bg-gray-50 border-b border-gray-100">
+              <p className="text-[10px] leading-relaxed text-gray-400">
+                Ao prosseguir, você declara estar ciente e de acordo com os termos e condições 
+                da proposta de crédito pessoal, incluindo taxas, encargos e prazos descritos acima. 
+                A contratação está sujeita à análise e aprovação de crédito. Operação regulamentada 
+                pelo Banco Central do Brasil conforme Resolução nº 4.949/2021.
+              </p>
+            </div>
+
+            {/* CTA */}
+            <div className="px-6 py-5">
+              <button
+                onClick={handleConfirm}
+                className="w-full bg-gray-900 hover:bg-gray-800 active:bg-black text-white font-bold text-base py-4 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+              >
+                <span>Aceitar e prosseguir</span>
+                <ChevronRight className="w-5 h-5" />
+              </button>
+              <p className="text-center text-[10px] text-gray-400 mt-3 flex items-center justify-center gap-1">
+                <Shield className="w-3 h-3" />
+                Seus dados estão protegidos com criptografia de ponta a ponta
+              </p>
+            </div>
+          </div>
         </div>
       </main>
-      
+
       <Footer />
     </div>
   );
