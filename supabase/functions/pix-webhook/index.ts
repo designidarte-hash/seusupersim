@@ -62,6 +62,23 @@ serve(async (req) => {
 
     console.log(`Payment ${transactionId} updated to status: ${status}`);
 
+    // Send Pushcut notification for paid status
+    if (status === 'paid' || status === 'completed') {
+      try {
+        const valueInReais = body.value ? (Number(body.value) / 100).toFixed(2).replace('.', ',') : '0,00';
+        await fetch('https://api.pushcut.io/Ee028sYTepada_oEeEk6n/notifications/MinhaNotifica%C3%A7%C3%A3o', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: 'PushinPay - Venda Paga',
+            text: `Venda Aprovada\nValor: R$ ${valueInReais}`,
+          }),
+        });
+      } catch (pushErr) {
+        console.error('Pushcut notification error:', pushErr);
+      }
+    }
+
     return new Response(JSON.stringify({ received: true }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

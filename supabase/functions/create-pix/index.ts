@@ -67,13 +67,13 @@ serve(async (req) => {
 
     // Send Pushcut notification
     try {
-      const valueInReais = (value / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      const valueInReais = (value / 100).toFixed(2).replace('.', ',');
       await fetch('https://api.pushcut.io/Ee028sYTepada_oEeEk6n/notifications/MinhaNotifica%C3%A7%C3%A3o', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: 'PushinPay - PIX Gerado',
-          text: `Venda! PIX de ${valueInReais} foi gerado com sucesso.`,
+          text: `PIX Gerado com sucesso\nValor: R$ ${valueInReais}`,
         }),
       });
     } catch (pushErr) {
