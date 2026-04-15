@@ -4,7 +4,7 @@ import profileImg from "@/assets/profile-s.png";
 import verifiedBadge from "@/assets/verified-badge.webp";
 import supersimLogo from "@/assets/supersim-logo.svg";
 import logo from "@/assets/logo.png";
-import bcbLogo from "@/assets/bcb-logo-official.png";
+import bcbLogo from "@/assets/bcb-logo.png";
 import { ArrowLeft, Send, Check, CheckCheck, Play, Pause, CreditCard, Smartphone, Mail, KeyRound, ShieldCheck, FileDown, Copy, QrCode, Loader2, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
