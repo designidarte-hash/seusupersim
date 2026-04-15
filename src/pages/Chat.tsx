@@ -691,7 +691,7 @@ const ContractCard = ({ nome, cpf, email, dataNascimento, valor, parcelas, valor
       >
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <FileText className="w-5 h-5" />
+            <img src={logo} alt="SuperSim" className="h-6 brightness-0 invert" />
             <span className="font-bold text-sm">Contrato de Empréstimo</span>
           </div>
           <span className="text-[10px] bg-white/20 px-2 py-0.5 rounded-full">Nº {contractNumber}</span>
