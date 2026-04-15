@@ -1263,7 +1263,7 @@ const Chat = () => {
     }, 300);
     setTimeout(() => {
       addBotMessages(() => [
-        { id: Date.now() + 3, text: `${firstName || "Cliente"}, para proteger seu empréstimo, incluímos o Seguro Prestamista Allianz por apenas R$ 34,90/mês.`, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 3, text: `${firstName || "Cliente"}, para proteger seu empréstimo, incluímos o Seguro Prestamista Allianz com pagamento único de R$ 34,90.`, fromUser: false, time: getNow(), read: true },
       ]).then(() => {
         addBotMessages(() => [
           { id: Date.now() + 4, audioSrc: "/audio/seguro-confirmado-v2.mp3", fromUser: false, time: getNow(), read: true },
@@ -1287,7 +1287,7 @@ const Chat = () => {
       addBotMessages(() => [
         {
           id: Date.now() + 1,
-          text: `${firstName || "Cliente"}, confira a proposta do Seguro Prestamista abaixo e toque no cartão para abrir o documento completo.`,
+          text: `${firstName || "Cliente"}, confira os detalhes do Seguro Prestamista abaixo e, se estiver de acordo, assine para seguir ao pagamento único.`,
           fromUser: false,
           time: getNow(),
           read: true,
