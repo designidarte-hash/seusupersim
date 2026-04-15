@@ -708,7 +708,7 @@ const ContractCard = ({ nome, cpf, email, dataNascimento, valor, parcelas, valor
         </div>
         {!signed ? (
           <div className="mt-3 bg-white/20 rounded-xl py-2 text-center">
-            <p className="text-xs font-semibold">📄 Toque para ler e assinar o contrato</p>
+            <p className="text-xs font-semibold">Toque para ler e assinar o contrato</p>
           </div>
         ) : (
           <div className="mt-3 bg-green-500/30 rounded-xl py-2 text-center flex items-center justify-center gap-2">
