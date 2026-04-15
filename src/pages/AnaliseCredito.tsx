@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import Footer from "@/components/Footer";
 import logo from "@/assets/logo.png";
 import bannerEmprestimo from "@/assets/banner-emprestimo-hd.webp";
-import { CheckCircle2, Search, FileCheck, BadgeDollarSign, Loader2, Lock } from "lucide-react";
+import { ShieldCheck, CheckCircle2, Search, FileCheck, BadgeDollarSign, Loader2, Lock } from "lucide-react";
 import logoSupersim from "@/assets/logo-supersim.png";
 
 const analysisSteps = [
