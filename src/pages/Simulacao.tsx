@@ -38,13 +38,14 @@ const Simulacao = () => {
   const handleConfirm = () => {
     const opt = installmentOptions[selected];
     const valorParcela = calcParcela(loanAmount, opt.parcelas, opt.taxa);
-    const msg = `Olá! Quero solicitar meu empréstimo de ${formatCurrency(loanAmount)} em ${opt.parcelas}x de ${formatCurrency(valorParcela)}. Nome: ${cadastro?.nomeCompleto || "N/A"}. Dia de pagamento: ${cadastro?.diaPagamento || "N/A"}.`;
-    transitionNavigate("/redirecionando", {
-      initialMessage: msg,
+    const formattedCpf = cpfDigits
+      ? cpfDigits.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4")
+      : cpfData?.cpf || cpfData?.cpf_numero || "";
+
+    const nextState = {
+      initialMessage: `Olá! Quero solicitar meu empréstimo de ${formatCurrency(loanAmount)} em ${opt.parcelas}x de ${formatCurrency(valorParcela)}. Nome: ${cadastro?.nomeCompleto || "N/A"}. Dia de pagamento: ${cadastro?.diaPagamento || "N/A"}.`,
       nome: cadastro?.nomeCompleto,
-      cpf: cpfDigits
-        ? cpfDigits.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4")
-        : cpfData?.cpf || cpfData?.cpf_numero || "",
+      cpf: formattedCpf,
       email: cadastro?.email || "",
       celular: cadastro?.celular || "",
       dataNascimento: cpfData?.data_nascimento || cpfData?.dataNascimento || "",
@@ -55,7 +56,10 @@ const Simulacao = () => {
         taxa: opt.taxa,
         diaPagamento: cadastro?.diaPagamento || "N/A",
       },
-    });
+    };
+
+    sessionStorage.setItem("chatState", JSON.stringify(nextState));
+    transitionNavigate("/redirecionando", nextState);
   };
 
   return (
