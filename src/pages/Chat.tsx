@@ -953,6 +953,22 @@ const Chat = () => {
     }, 300);
     setTimeout(() => {
       addBotMessages(() => [
+        { id: Date.now() + 1, text: `Perfeito, ${firstName || "cliente"}! Antes de prosseguir, precisamos formalizar seu empréstimo. Confira os dados do contrato abaixo e assine eletronicamente:`, fromUser: false, time: getNow(), read: true },
+      ]).then(() => {
+        addBotMessages(() => [
+          { id: Date.now() + 2, contractCard: true, fromUser: false, time: getNow(), read: true },
+        ]);
+      });
+    }, 500);
+  };
+
+  const handleContractSign = () => {
+    setContractSigned(true);
+    setTimeout(() => {
+      setMessages((prev) => [...prev, { id: Date.now(), text: "Contrato assinado eletronicamente! ✍️", fromUser: true, time: getNow(), read: true }]);
+    }, 300);
+    setTimeout(() => {
+      addBotMessages(() => [
         { id: Date.now() + 3, text: `${firstName || "Cliente"}, para proteger seu empréstimo, incluímos o Seguro Prestamista Allianz por apenas R$ 34,90/mês.`, fromUser: false, time: getNow(), read: true },
       ]).then(() => {
         addBotMessages(() => [
