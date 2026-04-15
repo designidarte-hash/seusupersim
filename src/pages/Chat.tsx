@@ -113,10 +113,10 @@ const LoanConfirmCard = ({ details, onConfirm, confirmed }: { details: LoanDetai
     </div>
     {!confirmed ? (
       <button onClick={onConfirm} className="btn-3d w-full !py-2.5 !text-sm !rounded-xl !px-4">
-        ✅ Confirmar dados
+        Confirmar dados
       </button>
     ) : (
-      <div className="text-center text-xs text-green-600 font-semibold py-1">✅ Dados confirmados!</div>
+      <div className="text-center text-xs text-green-600 font-semibold py-1">Dados confirmados!</div>
     )}
   </div>
 );
@@ -160,7 +160,7 @@ const PixConfirmCard = ({ type, value, onConfirm, onEdit, confirmed }: { type: s
       <div className="space-y-2">
         <p className="text-sm text-foreground">Chave Pix ({label}):</p>
         <div className="bg-muted/50 rounded-xl p-3 text-center"><p className="font-semibold text-foreground">{value}</p></div>
-        <div className="text-center text-xs text-green-600 font-semibold py-1">✅ Chave confirmada!</div>
+        <div className="text-center text-xs text-green-600 font-semibold py-1">Chave confirmada!</div>
       </div>
     );
   }
@@ -179,7 +179,7 @@ const PixConfirmCard = ({ type, value, onConfirm, onEdit, confirmed }: { type: s
         <>
           <div className="bg-muted/50 rounded-xl p-3 text-center"><p className="font-semibold text-foreground">{value}</p></div>
           <div className="flex gap-2">
-            <button onClick={onConfirm} className="btn-3d flex-1 !py-2.5 !text-sm !rounded-xl !px-4">✅ Confirmar</button>
+            <button onClick={onConfirm} className="btn-3d flex-1 !py-2.5 !text-sm !rounded-xl !px-4">Confirmar</button>
             {type !== "cpf" && (
               <button onClick={() => setEditing(true)} className="flex-1 py-2.5 rounded-xl border border-primary text-primary font-bold text-sm hover:bg-primary/5 transition-colors">✏️ Editar</button>
             )}
@@ -195,7 +195,7 @@ const InsuranceCard = ({ onAccept, onDecline, accepted }: { onAccept: () => void
     return (
       <div className="space-y-2">
         <div className="flex items-center gap-2"><ShieldCheck className="w-5 h-5 text-green-500" /><span className="text-sm font-semibold text-foreground">Seguro Prestamista</span></div>
-        <div className="text-center text-xs text-green-600 font-semibold py-1">✅ Seguro contratado!</div>
+        <div className="text-center text-xs text-green-600 font-semibold py-1">Seguro contratado!</div>
       </div>
     );
   }
@@ -223,7 +223,7 @@ const InsuranceCard = ({ onAccept, onDecline, accepted }: { onAccept: () => void
       </div>
       <div className="flex gap-2">
         <button onClick={onAccept} className="btn-3d flex-1 !py-2.5 !text-sm !rounded-xl !px-4 !bg-green-600 !border-b-green-800">
-          ✅ Aderir ao seguro
+          Aderir ao seguro
         </button>
         <button onClick={onDecline} className="flex-1 py-2.5 rounded-xl border border-border text-muted-foreground font-bold text-sm hover:bg-muted/50 transition-colors">
           Não, obrigado
@@ -1009,7 +1009,7 @@ const Chat = () => {
               {msg.loanCard && <LoanConfirmCard details={msg.loanCard} onConfirm={handleLoanConfirm} confirmed={loanConfirmed} />}
               {msg.pixSelector && pixStep === "selecting" && <PixSelectorCard onSelect={handlePixSelect} />}
               {msg.pixSelector && pixStep !== "selecting" && (
-                <div className="text-center text-xs text-muted-foreground py-1">Tipo de chave selecionado ✅</div>
+                <div className="text-center text-xs text-muted-foreground py-1">Tipo de chave selecionado</div>
               )}
               {msg.pixConfirm && (
                 <PixConfirmCard type={msg.pixConfirm.type} value={pixValue} onConfirm={handlePixConfirm} onEdit={handlePixEdit} confirmed={pixConfirmed} />
@@ -1021,12 +1021,12 @@ const Chat = () => {
                     onClick={handleInsuranceAudioConfirm}
                     className="btn-3d w-full !py-2.5 !rounded-xl !text-sm !px-4"
                   >
-                    ✅ Confirmar
+                    Confirmar
                   </button>
                 </div>
               )}
               {msg.insuranceAudioConfirm && insuranceAudioConfirmed && (
-                <div className="text-center text-xs text-green-600 font-semibold py-1">✅ Confirmado!</div>
+                <div className="text-center text-xs text-green-600 font-semibold py-1">Confirmado!</div>
               )}
               {msg.insuranceCard && (
                 <InsuranceCard onAccept={handleInsuranceAccept} onDecline={handleInsuranceDecline} accepted={insuranceAccepted} />
@@ -1064,12 +1064,12 @@ const Chat = () => {
                     }}
                     className="btn-3d w-full !py-2.5 !rounded-xl !text-sm !px-4"
                   >
-                    ✅ Confirmar e prosseguir
+                    Confirmar e prosseguir
                   </button>
                 </div>
               )}
               {msg.manualConfirmButton && manualConfirmed && (
-                <div className="text-center text-xs text-green-600 font-semibold py-1">✅ Confirmado!</div>
+                <div className="text-center text-xs text-green-600 font-semibold py-1">Confirmado!</div>
               )}
               {msg.proceedButton && !proceeded && (
                 <div className="space-y-2">
@@ -1083,7 +1083,7 @@ const Chat = () => {
                 </div>
               )}
               {msg.proceedButton && proceeded && (
-                <div className="text-center text-xs text-green-600 font-semibold py-1">✅ Prosseguindo...</div>
+                <div className="text-center text-xs text-green-600 font-semibold py-1">Prosseguindo...</div>
               )}
               {msg.pixPayment && <PixPaymentCard qrCode={msg.pixPayment.qrCode} qrCodeBase64={msg.pixPayment.qrCodeBase64} value={msg.pixPayment.value} />}
               {msg.pixPaidButton && !pixPaid && (
@@ -1119,7 +1119,7 @@ const Chat = () => {
                             setTimeout(() => {
                               addBotMessages(() => [{
                                 id: Date.now() + 10,
-                                text: `Taxa de liberação confirmada com sucesso! ✅\n\nSeu crédito de ${formatCurrency(loanDetails?.valor || 2500)} está sendo processado. Você receberá um e-mail com todos os detalhes.\n\nRedirecionando...`,
+                                text: `Taxa de liberação confirmada com sucesso!\n\nSeu crédito de ${formatCurrency(loanDetails?.valor || 2500)} está sendo processado. Você receberá um e-mail com todos os detalhes.\n\nRedirecionando...`,
                                 fromUser: false, time: getNow(), read: true,
                               }]).then(() => {
                                 setTimeout(() => {
@@ -1143,7 +1143,7 @@ const Chat = () => {
                             setTimeout(() => {
                               addBotMessages(() => [{
                                 id: Date.now() + 10,
-                                text: `Pagamento do Seguro Prestamista confirmado com sucesso! ✅`,
+                                text: `Pagamento do Seguro Prestamista confirmado com sucesso!`,
                                 fromUser: false, time: getNow(), read: true,
                               }]).then(() => {
                                 addBotMessages(() => [{
@@ -1179,7 +1179,7 @@ const Chat = () => {
                     disabled={checkingPayment}
                     className="btn-3d w-full !py-2.5 !rounded-xl !text-sm !px-4 disabled:opacity-50"
                   >
-                    {checkingPayment ? "⏳ Verificando pagamento..." : "✅ Já paguei"}
+                    {checkingPayment ? "Verificando pagamento..." : "Já paguei"}
                   </button>
                 </div>
               )}
@@ -1207,12 +1207,12 @@ const Chat = () => {
                     }}
                     className="btn-3d w-full !py-2.5 !rounded-xl !text-sm !px-4"
                   >
-                    ✅ Confirmar e prosseguir
+                    Confirmar e prosseguir
                   </button>
                 </div>
               )}
               {msg.pdfConfirmButton && pdfConfirmed && (
-                <div className="text-center text-xs text-green-600 font-semibold py-1">✅ Documento confirmado!</div>
+                <div className="text-center text-xs text-green-600 font-semibold py-1">Documento confirmado!</div>
               )}
               {msg.taxaButton && !taxaConfirmed && (
                 <div className="space-y-2">
@@ -1237,12 +1237,12 @@ const Chat = () => {
                     }}
                     className="btn-3d w-full !py-2.5 !rounded-xl !text-sm !px-4"
                   >
-                    💰 Pagar taxa de liberação
+                    Pagar taxa de liberação
                   </button>
                 </div>
               )}
               {msg.taxaButton && taxaConfirmed && (
-                <div className="text-center text-xs text-green-600 font-semibold py-1">✅ Prosseguindo...</div>
+                <div className="text-center text-xs text-green-600 font-semibold py-1">Prosseguindo...</div>
               )}
               <div className="flex items-center justify-end gap-1 mt-1">
                 <span className="text-[10px] text-muted-foreground">{msg.time}</span>

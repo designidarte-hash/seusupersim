@@ -32,7 +32,7 @@ const Sucesso = () => {
 
           <div>
             <h1 className="text-3xl md:text-4xl font-extrabold text-foreground">
-              Tudo certo{firstName ? `, ${firstName}` : ""}! 🎉
+              Tudo certo{firstName ? `, ${firstName}` : ""}!
             </h1>
             <p className="text-muted-foreground text-lg mt-2">
               Seu crédito está sendo processado
