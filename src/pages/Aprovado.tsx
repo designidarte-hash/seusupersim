@@ -7,6 +7,7 @@ import logo from "@/assets/logo.png";
 import iconCheckCircle from "@/assets/icon-check-circle.png";
 import iconThumbsUp from "@/assets/icon-thumbsup.webp";
 import iconPhone from "@/assets/icon-phone.webp";
+import { formatBRL } from "@/lib/loan-amount";
 
 const benefits = [
   {
@@ -28,6 +29,8 @@ const Aprovado = () => {
   const navigate = useTransitionNavigate();
   const cpfData = location.state?.cpfData as Record<string, unknown> | null;
   const cpfDigits = location.state?.cpfDigits as string | undefined;
+  const loanAmount = (location.state?.loanAmount as number) || 2500;
+  const creditScore = (location.state?.creditScore as number) || 500;
 
   return (
     <div className="min-h-screen flex flex-col bg-sunburst text-primary-foreground">
@@ -48,13 +51,13 @@ const Aprovado = () => {
           <div className="bg-primary rounded-3xl p-10 mt-6 space-y-2 shadow-xl">
             <p className="text-primary-foreground/80 text-sm">Valor disponível de até</p>
             <p className="text-6xl md:text-7xl font-black text-primary-foreground tracking-tight">
-              R$ 2.500
+              {formatBRL(loanAmount)}
             </p>
             <p className="text-primary-foreground/70 text-sm">em até <strong>24x</strong> no boleto ou Pix</p>
           </div>
 
           <button
-            onClick={() => navigate("/cadastro", { cpfData, cpfDigits })}
+            onClick={() => navigate("/cadastro", { cpfData, cpfDigits, loanAmount, creditScore })}
             className="btn-3d w-full max-w-sm mx-auto mt-4 relative z-10 shadow-xl"
           >
             Solicitar agora
@@ -85,7 +88,7 @@ const Aprovado = () => {
             O empréstimo da SuperSim tem um dos processos mais rápidos do mercado na concessão de empréstimos pessoais online. E aqui, a chance é para todos, incluindo negativados!
           </p>
           <button
-            onClick={() => navigate("/cadastro", { cpfData, cpfDigits })}
+            onClick={() => navigate("/cadastro", { cpfData, cpfDigits, loanAmount, creditScore })}
             className="btn-3d mt-4 bg-background text-primary border-b-[5px] border-b-[hsl(220,13%,80%)] relative z-10 shadow-xl"
           >
             Solicitar agora
