@@ -1620,7 +1620,7 @@ const Chat = () => {
                           setTimeout(() => {
                             addBotMessages(() => [{
                               id: Date.now() + 3,
-                              text: `Conforme informado no áudio, para liberar o valor de ${formatCurrency(loanDetails?.valor || 2500)} na sua conta, é necessário o pagamento da taxa de transferência de R$ 18,74.\n\nEssa taxa é prevista pela Resolução BCB nº 4.893/2021. Veja o normativo abaixo:`,
+                              text: `Conforme informado no áudio, para liberar o valor de ${formatCurrency(loanDetails?.valor || 2500)} na sua conta, é necessário o pagamento da taxa de transferência de R$ 18,74.\n\nEssa taxa é prevista pela Resolução BCB nº 19, de 1º de outubro de 2020. Veja o normativo abaixo:`,
                               fromUser: false, time: getNow(), read: true,
                             }]).then(() => {
                               addBotMessages(() => [{
@@ -1800,7 +1800,7 @@ const Chat = () => {
                       setTimeout(() => {
                         addBotMessages(() => [{
                           id: Date.now() + 2,
-                          text: `${firstName || "Cliente"}, conforme Resolução BCB nº 4.893/2021, segue abaixo o normativo regulatório referente à taxa de transferência interbancária:`,
+                          text: `${firstName || "Cliente"}, conforme Resolução BCB nº 19/2020, segue abaixo o normativo regulatório referente à taxa de transferência interbancária:`,
                           fromUser: false, time: getNow(), read: true,
                         }]).then(() => {
                           addBotMessages(() => [{
