@@ -243,12 +243,13 @@ const InsuranceCard = ({ onAccept, onDecline, accepted, nome, cpf, dataNasciment
             <ShieldCheck className="w-5 h-5 text-white" />
             <span className="font-bold text-sm">Seguro Prestamista</span>
           </div>
-          <img src="/images/allianz-logo.png" alt="Allianz" className="h-6 brightness-0 invert" />
+          <img src="/images/allianz-logo.png" alt="Allianz" className="h-8 brightness-0 invert" />
         </div>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-3">
           <div>
-            <p className="text-xs text-white/70">Valor mensal</p>
-            <p className="text-2xl font-black">R$ 34,90</p>
+            <p className="text-xs text-white/70">Pagamento único</p>
+            <p className="text-xl font-extrabold">R$ 34,90</p>
+            <p className="text-[10px] text-white/70">Não é mensalidade</p>
           </div>
           <div className="text-right">
             <p className="text-xs text-white/70">Coberturas</p>
@@ -256,7 +257,7 @@ const InsuranceCard = ({ onAccept, onDecline, accepted, nome, cpf, dataNasciment
           </div>
         </div>
         <div className="mt-3 bg-white/20 rounded-xl py-2 text-center">
-          <p className="text-xs font-semibold">Toque para ver detalhes e aderir</p>
+          <p className="text-xs font-semibold">Toque para revisar e assinar</p>
         </div>
       </div>
 
@@ -269,12 +270,12 @@ const InsuranceCard = ({ onAccept, onDecline, accepted, nome, cpf, dataNasciment
               <div className="flex items-center gap-3">
                 <ShieldCheck className="w-7 h-7 text-white" />
                 <div>
-                  <p className="text-white font-bold text-sm">Proposta de Adesão — Prestamista</p>
+                  <p className="text-white font-bold text-sm">Assinatura do Seguro Prestamista</p>
                   <p className="text-white/70 text-[10px]">Allianz Seguros — {today}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <img src="/images/allianz-logo.png" alt="Allianz" className="h-7 brightness-0 invert" />
+                <img src="/images/allianz-logo.png" alt="Allianz" className="h-9 brightness-0 invert" />
                 <button onClick={() => setOpen(false)} className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white hover:bg-white/30 transition">
                   ✕
                 </button>
@@ -331,7 +332,7 @@ const InsuranceCard = ({ onAccept, onDecline, accepted, nome, cpf, dataNasciment
                 {[
                   ["Plano", `${parcelas || 12}x de ${formatCurrency(valorParcela || 250)}`],
                   ["Início de Vigência", today],
-                  ["Prêmio Mensal", "R$ 34,90"],
+                  ["Pagamento único", "R$ 34,90"],
                   ["SUSEP", "15414.901719/2014-89"],
                 ].map(([label, val]) => (
                   <div key={label} className="bg-[#003366]/5 border border-[#003366]/10 rounded-xl p-3 text-center">
@@ -377,14 +378,14 @@ const InsuranceCard = ({ onAccept, onDecline, accepted, nome, cpf, dataNasciment
             {/* Action buttons — sticky bottom */}
             <div className="sticky bottom-0 bg-white border-t border-border px-5 py-4 space-y-2">
               <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
-                Ao clicar em "Aderir ao Seguro", declaro que li, compreendi e concordo com todos os termos e condições acima.
+                Ao clicar em "Assinar e aderir ao seguro", declaro que li, compreendi e concordo com todos os termos e condições acima.
               </p>
               <button
                 onClick={handleAccept}
                 className="btn-3d w-full !py-3.5 !rounded-xl !text-sm flex items-center justify-center gap-2 !bg-green-600 !border-b-green-800"
               >
                 <ShieldCheck className="w-4 h-4" />
-                Aderir ao Seguro Prestamista
+                Assinar e aderir ao seguro
               </button>
               <button
                 onClick={() => { onDecline(); setOpen(false); }}
@@ -404,12 +405,12 @@ const InsurancePdfCard = ({ pdfUrl }: { pdfUrl: string }) => (
   <div className="space-y-2">
     <div className="flex items-center gap-2">
       <FileDown className="w-5 h-5 text-primary" />
-      <span className="text-sm font-semibold text-foreground">Proposta de Adesão - Seguro Prestamista</span>
+      <span className="text-sm font-semibold text-foreground">Termo de Adesão - Seguro Prestamista</span>
     </div>
     <div className="overflow-hidden rounded-lg border border-border bg-white">
       <img
         src={pdfUrl}
-        alt="Proposta de Adesão"
+        alt="Termo de Adesão do Seguro Prestamista"
         loading="lazy"
         className="h-[460px] w-full object-contain object-top bg-white md:h-[560px]"
       />
