@@ -12,7 +12,17 @@ serve(async (req) => {
   }
 
   try {
-    const body = await req.json();
+    const contentType = req.headers.get('content-type') || '';
+    let body: Record<string, any>;
+
+    if (contentType.includes('application/json')) {
+      body = await req.json();
+    } else {
+      // PushInPay sends form-urlencoded data
+      const text = await req.text();
+      const params = new URLSearchParams(text);
+      body = Object.fromEntries(params.entries());
+    }
     console.log('Webhook received:', JSON.stringify(body));
 
     const supabaseAdmin = createClient(
