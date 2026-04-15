@@ -273,9 +273,12 @@ const InsuranceCard = ({ onAccept, onDecline, accepted, nome, cpf, dataNasciment
                   <p className="text-white/70 text-[10px]">Allianz Seguros — {today}</p>
                 </div>
               </div>
-              <button onClick={() => setOpen(false)} className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white hover:bg-white/30 transition">
-                ✕
-              </button>
+              <div className="flex items-center gap-2">
+                <img src="/images/allianz-logo.png" alt="Allianz" className="h-7 brightness-0 invert" />
+                <button onClick={() => setOpen(false)} className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white hover:bg-white/30 transition">
+                  ✕
+                </button>
+              </div>
             </div>
 
             {/* Dados do Estipulante */}
