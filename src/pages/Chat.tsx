@@ -1200,6 +1200,9 @@ const TypingIndicator = () => (
 const Chat = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const previewStage = new URLSearchParams(location.search).get("etapa");
+  const isTaxaPreview = previewStage === "taxa";
+
   // Pull state from navigation, fallback to sessionStorage
   const navState = (location.state as any) || {};
   const stored = (() => {
@@ -1232,7 +1235,12 @@ const Chat = () => {
       loanDetails,
     }));
   }, [initialMessage, nome, cpf, email, celular, dataNascimento, loanDetails]);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+
+  const [messages, setMessages] = useState<ChatMessage[]>(() =>
+    isTaxaPreview
+      ? [{ id: Date.now(), taxaButton: true, fromUser: false, time: getNow(), read: true }]
+      : []
+  );
   const [input, setInput] = useState("");
   const [loanConfirmed, setLoanConfirmed] = useState(false);
   const [pixStep, setPixStep] = useState<"none" | "selecting" | "confirming" | "done">("none");
@@ -1246,15 +1254,16 @@ const Chat = () => {
   const [pdfConfirmed, setPdfConfirmed] = useState(false);
   const [manualConfirmed, setManualConfirmed] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
-  const [greetingSent, setGreetingSent] = useState(false);
+  const [greetingSent, setGreetingSent] = useState(isTaxaPreview);
   const [proceeded, setProceeded] = useState(false);
   const [taxaConfirmed, setTaxaConfirmed] = useState(false);
   const [normativoConfirmed, setNormativoConfirmed] = useState(false);
   const [pixPaid, setPixPaid] = useState(false);
   const [taxaPaid, setTaxaPaid] = useState(false);
-  const [paymentPhase, setPaymentPhase] = useState<"insurance" | "taxa">("insurance");
+  const [paymentPhase, setPaymentPhase] = useState<"insurance" | "taxa">(isTaxaPreview ? "taxa" : "insurance");
   const [pixTransactionId, setPixTransactionId] = useState<string | null>(null);
   const [checkingPayment, setCheckingPayment] = useState(false);
+  const [previewInitialized, setPreviewInitialized] = useState(isTaxaPreview);
   const bottomRef = useRef<HTMLDivElement>(null);
   const typingQueue = useRef<(() => void)[]>([]);
   const processingQueue = useRef(false);
@@ -1325,6 +1334,22 @@ const Chat = () => {
       }, 500);
     }
   };
+
+  useEffect(() => {
+    if (!isTaxaPreview) return;
+
+    typingQueue.current = [];
+    processingQueue.current = false;
+    setIsTyping(false);
+    setInput("");
+    setMessages([{ id: Date.now(), taxaButton: true, fromUser: false, time: getNow(), read: true }]);
+    setGreetingSent(true);
+    setPaymentPhase("taxa");
+    setPixPaid(false);
+    setTaxaConfirmed(false);
+    setNormativoConfirmed(false);
+    if (!previewInitialized) setPreviewInitialized(true);
+  }, [isTaxaPreview, location.search, previewInitialized]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
