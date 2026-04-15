@@ -1160,6 +1160,20 @@ const Chat = () => {
               {msg.pixConfirm && (
                 <PixConfirmCard type={msg.pixConfirm.type} value={pixValue} onConfirm={handlePixConfirm} onEdit={handlePixEdit} confirmed={pixConfirmed} />
               )}
+              {msg.contractCard && (
+                <ContractCard
+                  nome={nome || "N/A"}
+                  cpf={cpf || "000.000.000-00"}
+                  email={email || "N/A"}
+                  dataNascimento={dataNascimento || "00/00/0000"}
+                  valor={loanDetails?.valor || 2500}
+                  parcelas={loanDetails?.parcelas || 12}
+                  valorParcela={loanDetails?.valorParcela || 250}
+                  taxa={loanDetails?.taxa || 1.32}
+                  onSign={handleContractSign}
+                  signed={contractSigned}
+                />
+              )}
               {msg.insuranceAudioConfirm && !insuranceAudioConfirmed && (
                 <div className="space-y-2">
                   <p className="text-sm text-foreground">Ouça o áudio acima e confirme para prosseguir:</p>
