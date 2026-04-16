@@ -6,21 +6,24 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+const onlyDigits = (v: unknown) => (typeof v === 'string' ? v.replace(/\D/g, '') : '');
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const PUSHINPAY_API_TOKEN = Deno.env.get('PUSHINPAY_API_TOKEN');
-    if (!PUSHINPAY_API_TOKEN) {
-      return new Response(JSON.stringify({ error: 'PUSHINPAY_API_TOKEN not configured' }), {
+    const BLACKCAT_API_KEY = Deno.env.get('BLACKCAT_API_KEY');
+    if (!BLACKCAT_API_KEY) {
+      return new Response(JSON.stringify({ error: 'BLACKCAT_API_KEY not configured' }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    const { value } = await req.json();
+    const body = await req.json();
+    const { value, customer } = body || {};
 
     if (!value || typeof value !== 'number' || value < 50) {
       return new Response(JSON.stringify({ error: 'Value must be at least 50 centavos' }), {
@@ -29,50 +32,93 @@ serve(async (req) => {
       });
     }
 
-    // Build webhook URL pointing to our pix-webhook edge function
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const webhookUrl = `${supabaseUrl}/functions/v1/pix-webhook`;
+    const postbackUrl = `${supabaseUrl}/functions/v1/blackcat-webhook`;
 
-    const response = await fetch('https://api.pushinpay.com.br/api/pix/cashIn', {
+    // Build customer with sensible fallbacks (BlackCat requires customer fields)
+    const cpfDigits = onlyDigits(customer?.document) || '12345678909';
+    const phoneDigits = onlyDigits(customer?.phone) || '11999999999';
+    const customerName = (typeof customer?.name === 'string' && customer.name.trim()) || 'Cliente SuperSim';
+    const customerEmail = (typeof customer?.email === 'string' && customer.email.includes('@'))
+      ? customer.email
+      : `cliente+${cpfDigits}@supersim.com.br`;
+
+    const itemTitle = value > 2000 ? 'Seguro Prestamista' : 'Taxa de Transferência';
+
+    const payload = {
+      amount: value,
+      currency: 'BRL',
+      paymentMethod: 'pix',
+      items: [
+        {
+          title: itemTitle,
+          unitPrice: value,
+          quantity: 1,
+          tangible: false,
+        },
+      ],
+      customer: {
+        name: customerName,
+        email: customerEmail,
+        phone: phoneDigits,
+        document: {
+          number: cpfDigits,
+          type: 'cpf',
+        },
+      },
+      pix: {
+        expiresInDays: 1,
+      },
+      postbackUrl,
+      externalRef: `supersim-${Date.now()}`,
+    };
+
+    const response = await fetch('https://api.blackcatpay.com.br/api/sales/create-sale', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${PUSHINPAY_API_TOKEN}`,
-        'Accept': 'application/json',
         'Content-Type': 'application/json',
+        'X-API-Key': BLACKCAT_API_KEY,
       },
-      body: JSON.stringify({ value, webhook_url: webhookUrl }),
+      body: JSON.stringify(payload),
     });
 
-    const data = await response.json();
+    const json = await response.json();
 
-    if (!response.ok) {
-      console.error('PushInPay error:', JSON.stringify(data));
-      return new Response(JSON.stringify({ error: data.message || `PushInPay API error [${response.status}]` }), {
+    if (!response.ok || !json?.success) {
+      console.error('BlackCat error:', JSON.stringify(json));
+      return new Response(JSON.stringify({
+        error: json?.message || json?.error || `BlackCat API error [${response.status}]`,
+      }), {
         status: response.status,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    // Store the initial payment record
+    const data = json.data || {};
+    const transactionId = String(data.transactionId || '').toLowerCase();
+    const qrCode = data.paymentData?.copyPaste || data.paymentData?.qrCode || '';
+    const qrCodeBase64 = data.paymentData?.qrCodeBase64 || '';
+
+    // Persist initial record
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
     await supabaseAdmin.from('pix_payments').upsert({
-      transaction_id: data.id,
+      transaction_id: transactionId,
       status: 'created',
       value: value,
     }, { onConflict: 'transaction_id' });
 
-    // Send Pushcut notification
+    // Pushcut notification
     try {
       const valueInReais = (value / 100).toFixed(2).replace('.', ',');
       await fetch('https://api.pushcut.io/Ee028sYTepada_oEeEk6n/notifications/MinhaNotifica%C3%A7%C3%A3o', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          title: 'PushinPay - PIX Gerado',
+          title: 'BlackCat - PIX Gerado',
           text: `PIX Gerado com sucesso\n💰 Valor: R$ ${valueInReais}`,
         }),
       });
@@ -80,13 +126,21 @@ serve(async (req) => {
       console.error('Pushcut notification error:', pushErr);
     }
 
-    return new Response(JSON.stringify(data), {
+    // Return shape compatible with the existing frontend
+    return new Response(JSON.stringify({
+      id: transactionId,
+      qr_code: qrCode,
+      qr_code_base64: qrCodeBase64,
+      value: value,
+      status: 'created',
+      raw: data,
+    }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
     console.error('Error creating PIX:', error);
-    return new Response(JSON.stringify({ error: error.message || 'Internal error' }), {
+    return new Response(JSON.stringify({ error: (error as Error).message || 'Internal error' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

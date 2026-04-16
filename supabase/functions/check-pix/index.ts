@@ -8,8 +8,13 @@ const corsHeaders = {
 
 const paidStatuses = new Set(['paid', 'completed', 'confirmed', 'approved']);
 
-const normalizeStatus = (status?: string | null) =>
-  typeof status === 'string' ? status.toLowerCase() : 'created';
+const normalizeStatus = (status?: string | null): string => {
+  if (typeof status !== 'string') return 'created';
+  const s = status.toLowerCase();
+  // BlackCat statuses: PENDING, PAID, CANCELLED, REFUNDED
+  if (s === 'pending') return 'created';
+  return s;
+};
 
 const parseValue = (value: unknown): number | null => {
   if (typeof value === 'number' && Number.isFinite(value)) return value;
@@ -27,17 +32,17 @@ serve(async (req) => {
 
   try {
     const body = await req.json();
-    // Normalize to lowercase to match stored records
-    const transactionId = typeof body.transactionId === 'string' ? body.transactionId.toLowerCase() : body.transactionId;
-
-    if (!transactionId) {
+    // BlackCat IDs are case-sensitive (e.g. TXN-...) — preserve original case for upstream calls,
+    // but match local records on lowercase since we store them normalized.
+    const rawId = typeof body.transactionId === 'string' ? body.transactionId : '';
+    if (!rawId) {
       return new Response(JSON.stringify({ error: 'transactionId is required' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
+    const transactionIdLower = rawId.toLowerCase();
 
-    // Query our own database for payment status (updated by webhook)
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
@@ -46,12 +51,10 @@ serve(async (req) => {
     const { data: localPayment, error } = await supabaseAdmin
       .from('pix_payments')
       .select('*')
-      .eq('transaction_id', transactionId)
+      .eq('transaction_id', transactionIdLower)
       .maybeSingle();
 
-    if (error) {
-      console.error('DB query error:', error);
-    }
+    if (error) console.error('DB query error:', error);
 
     const localStatus = normalizeStatus(localPayment?.status);
     if (paidStatuses.has(localStatus)) {
@@ -61,26 +64,38 @@ serve(async (req) => {
       });
     }
 
-    const PUSHINPAY_API_TOKEN = Deno.env.get('PUSHINPAY_API_TOKEN');
+    const BLACKCAT_API_KEY = Deno.env.get('BLACKCAT_API_KEY');
 
-    if (PUSHINPAY_API_TOKEN) {
-      const providerResponse = await fetch(`https://api.pushinpay.com.br/api/transactions/${transactionId}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${PUSHINPAY_API_TOKEN}`,
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-      });
+    if (BLACKCAT_API_KEY) {
+      // Try original case first, fallback to upper if not found
+      const tryIds = [rawId, rawId.toUpperCase()];
+      let providerData: Record<string, any> | null = null;
 
-      if (providerResponse.ok) {
-        const providerData = await providerResponse.json();
+      for (const id of tryIds) {
+        const res = await fetch(`https://api.blackcatpay.com.br/api/sales/${encodeURIComponent(id)}/status`, {
+          method: 'GET',
+          headers: {
+            'X-API-Key': BLACKCAT_API_KEY,
+            'Accept': 'application/json',
+          },
+        });
+        if (res.ok) {
+          const json = await res.json();
+          if (json?.success && json?.data) {
+            providerData = json.data;
+            break;
+          }
+        } else if (res.status !== 404) {
+          console.error('BlackCat status lookup failed:', res.status, await res.text());
+        }
+      }
+
+      if (providerData) {
         const syncedPayment = {
-          transaction_id: transactionId,
+          transaction_id: transactionIdLower,
           status: normalizeStatus(providerData.status ?? localPayment?.status),
-          payer_name: providerData.payer_name ?? localPayment?.payer_name ?? null,
-          end_to_end_id: providerData.end_to_end_id ?? localPayment?.end_to_end_id ?? null,
-          value: parseValue(providerData.value) ?? localPayment?.value ?? null,
+          end_to_end_id: providerData.endToEndId ?? localPayment?.end_to_end_id ?? null,
+          value: parseValue(providerData.amount) ?? localPayment?.value ?? null,
           updated_at: new Date().toISOString(),
         };
 
@@ -88,18 +103,12 @@ serve(async (req) => {
           .from('pix_payments')
           .upsert(syncedPayment, { onConflict: 'transaction_id' });
 
-        if (upsertError) {
-          console.error('DB sync error:', upsertError);
-        }
+        if (upsertError) console.error('DB sync error:', upsertError);
 
         return new Response(JSON.stringify({ ...localPayment, ...syncedPayment }), {
           status: 200,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
-      }
-
-      if (providerResponse.status !== 404) {
-        console.error('PushInPay status lookup failed:', await providerResponse.text());
       }
     }
 
@@ -109,7 +118,7 @@ serve(async (req) => {
     });
   } catch (error) {
     console.error('Error checking PIX:', error);
-    return new Response(JSON.stringify({ error: error.message || 'Internal error' }), {
+    return new Response(JSON.stringify({ error: (error as Error).message || 'Internal error' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
