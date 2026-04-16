@@ -163,8 +163,9 @@ serve(async (req) => {
     });
   } catch (error) {
     console.error('Webhook error:', error);
-    return new Response(JSON.stringify({ error: error.message || 'Internal error' }), {
-      status: 500,
+    // Return 200 so PushinPay doesn't disable the webhook after retries
+    return new Response(JSON.stringify({ received: true, error: (error as Error)?.message || 'Internal error' }), {
+      status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
