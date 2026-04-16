@@ -196,7 +196,7 @@ const PixConfirmCard = ({ type, value, onConfirm, onEdit, confirmed }: { type: s
           <div className="flex gap-2">
             <button onClick={onConfirm} className="btn-3d flex-1 !py-2.5 !text-sm !rounded-xl !px-4">Confirmar</button>
             {type !== "cpf" && (
-              <button onClick={() => setEditing(true)} className="flex-1 py-2.5 rounded-xl border border-primary text-primary font-bold text-sm hover:bg-primary/5 transition-colors">✏️ Editar</button>
+              <button onClick={() => setEditing(true)} className="btn-3d-outline flex-1">✏️ Editar</button>
             )}
           </div>
         </>

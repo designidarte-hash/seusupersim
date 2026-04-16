@@ -144,4 +144,21 @@ All colors MUST be HSL.
   .btn-3d:active {
     border-bottom-width: 2px;
   }
+
+  /* Compact 3D button — header / inline CTAs */
+  .btn-3d-sm {
+    @apply px-4 py-2 md:px-5 md:py-2.5 rounded-xl bg-primary text-white font-bold text-xs md:text-sm shadow-md transition active:translate-y-0.5 active:shadow-sm disabled:opacity-50 disabled:cursor-not-allowed;
+    border-bottom: 4px solid hsl(30, 80%, 42%);
+  }
+  .btn-3d-sm:hover { filter: brightness(1.05); }
+  .btn-3d-sm:active { border-bottom-width: 2px; }
+
+  /* Outline 3D button — secondary actions with same depth */
+  .btn-3d-outline {
+    @apply px-4 py-2.5 rounded-xl bg-background text-primary font-bold text-sm shadow-sm transition active:translate-y-0.5 active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed;
+    border: 2px solid hsl(var(--primary));
+    border-bottom-width: 5px;
+  }
+  .btn-3d-outline:hover { background-color: hsl(var(--primary) / 0.05); }
+  .btn-3d-outline:active { border-bottom-width: 2px; }
 }
