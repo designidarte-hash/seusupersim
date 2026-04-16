@@ -1514,6 +1514,17 @@ const Chat = () => {
     }, 500);
   };
 
+  // SHA-256 hash helper for TikTok Advanced Matching
+  const sha256Hex = async (input: string): Promise<string> => {
+    const normalized = (input || '').trim().toLowerCase();
+    if (!normalized) return '';
+    const buf = new TextEncoder().encode(normalized);
+    const hashBuf = await crypto.subtle.digest('SHA-256', buf);
+    return Array.from(new Uint8Array(hashBuf))
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
+  };
+
   const generatePixPayment = async () => {
     await addBotMessages(() => [{
       id: Date.now(), text: paymentPhase === "taxa" ? `Segue o PIX para pagamento da taxa de transferência:` : `Segue o PIX para pagamento do Seguro Prestamista:`,
@@ -1521,14 +1532,46 @@ const Chat = () => {
     }]);
 
     try {
+      // Pre-compute hashes for Advanced Matching (browser + server-side)
+      const cpfDigitsOnly = (cpf || '').replace(/\D/g, '');
+      const phoneDigitsOnly = (celular || '').replace(/\D/g, '');
+      // E.164 for BR if missing country code
+      const phoneE164 = phoneDigitsOnly
+        ? (phoneDigitsOnly.startsWith('55') ? `+${phoneDigitsOnly}` : `+55${phoneDigitsOnly}`)
+        : '';
+
+      const [hashedEmail, hashedPhone, hashedExternalId] = await Promise.all([
+        sha256Hex(email),
+        sha256Hex(phoneE164),
+        sha256Hex(cpfDigitsOnly),
+      ]);
+
+      // TikTok Pixel — Advanced Matching identify (must be called BEFORE track)
+      try {
+        window.ttq?.identify({
+          email: hashedEmail,
+          phone_number: hashedPhone,
+          external_id: hashedExternalId,
+        });
+      } catch (e) { console.error('TikTok identify error:', e); }
+
+      const contentId = paymentPhase === "taxa" ? 'taxa_transferencia' : 'seguro_prestamista';
+
       const { data, error } = await supabase.functions.invoke('create-pix', {
         body: {
-          value: paymentPhase === "taxa" ? 1874 : 3490,
+          value: paymentPhase === "taxa" ? 1874 : 3990,
           customer: {
             name: nome,
             email: email,
             phone: celular,
             document: cpf,
+          },
+          tiktok: {
+            hashed_email: hashedEmail,
+            hashed_phone: hashedPhone,
+            hashed_external_id: hashedExternalId,
+            content_id: contentId,
+            user_agent: navigator.userAgent,
           },
         },
       });
@@ -1545,7 +1588,7 @@ const Chat = () => {
       try {
         window.ttq?.track('InitiateCheckout', {
           content_type: 'product',
-          content_id: paymentPhase === "taxa" ? 'taxa_transferencia' : 'seguro_prestamista',
+          content_id: contentId,
           content_name: paymentPhase === "taxa" ? 'Taxa de Transferência' : 'Seguro Prestamista',
           quantity: 1,
           value: pixValueReais,

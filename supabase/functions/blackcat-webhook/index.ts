@@ -96,16 +96,37 @@ serve(async (req) => {
         console.error('Pushcut notification error:', pushErr);
       }
 
-      // TikTok Events API — Server-side CompletePayment
+      // TikTok Events API — Server-side CompletePayment with Advanced Matching
       try {
         const TIKTOK_ACCESS_TOKEN = Deno.env.get('TIKTOK_ACCESS_TOKEN');
         if (TIKTOK_ACCESS_TOKEN) {
           const pixelCode = 'D7FT65RC77U0PCJMQSTG';
           const valueInReaisNum = valueCents ? valueCents / 100 : 0;
-          // Taxa = R$ 18,74 | Seguro = R$ 39,90
+
+          // Fetch stored Advanced Matching data for this transaction
+          let amData: {
+            hashed_email?: string | null;
+            hashed_phone?: string | null;
+            hashed_external_id?: string | null;
+            content_id?: string | null;
+            user_agent?: string | null;
+            ip_address?: string | null;
+          } = {};
+          try {
+            const { data: pixRow } = await supabaseAdmin
+              .from('pix_payments')
+              .select('hashed_email, hashed_phone, hashed_external_id, content_id, user_agent, ip_address')
+              .eq('transaction_id', transactionId)
+              .maybeSingle();
+            if (pixRow) amData = pixRow;
+          } catch (lookupErr) {
+            console.error('Failed to load Advanced Matching data:', lookupErr);
+          }
+
+          // Fallback content_id detection by value if not stored
           const isSeguro = valueInReaisNum >= 30;
-          const contentId = isSeguro ? 'seguro_prestamista' : 'taxa_transferencia';
-          const contentName = isSeguro ? 'Seguro Prestamista' : 'Taxa de Transferência';
+          const contentId = amData.content_id || (isSeguro ? 'seguro_prestamista' : 'taxa_transferencia');
+          const contentName = contentId === 'seguro_prestamista' ? 'Seguro Prestamista' : 'Taxa de Transferência';
 
           const tiktokPayload = {
             pixel_code: pixelCode,
@@ -113,8 +134,13 @@ serve(async (req) => {
             event_id: `${transactionId}_completepayment`,
             event_time: Math.floor(Date.now() / 1000),
             context: {
-              user_agent: req.headers.get('user-agent') || '',
-              ip: req.headers.get('x-forwarded-for') || req.headers.get('cf-connecting-ip') || '',
+              user_agent: amData.user_agent || req.headers.get('user-agent') || '',
+              ip: amData.ip_address || req.headers.get('x-forwarded-for') || req.headers.get('cf-connecting-ip') || '',
+              user: {
+                ...(amData.hashed_email ? { email: amData.hashed_email } : {}),
+                ...(amData.hashed_phone ? { phone: amData.hashed_phone } : {}),
+                ...(amData.hashed_external_id ? { external_id: amData.hashed_external_id } : {}),
+              },
             },
             properties: {
               content_type: 'product',

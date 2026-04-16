@@ -34,33 +34,51 @@ export type Database = {
       }
       pix_payments: {
         Row: {
+          content_id: string | null
           created_at: string
           end_to_end_id: string | null
+          hashed_email: string | null
+          hashed_external_id: string | null
+          hashed_phone: string | null
           id: string
+          ip_address: string | null
           payer_name: string | null
           status: string
           transaction_id: string
           updated_at: string
+          user_agent: string | null
           value: number | null
         }
         Insert: {
+          content_id?: string | null
           created_at?: string
           end_to_end_id?: string | null
+          hashed_email?: string | null
+          hashed_external_id?: string | null
+          hashed_phone?: string | null
           id?: string
+          ip_address?: string | null
           payer_name?: string | null
           status?: string
           transaction_id: string
           updated_at?: string
+          user_agent?: string | null
           value?: number | null
         }
         Update: {
+          content_id?: string | null
           created_at?: string
           end_to_end_id?: string | null
+          hashed_email?: string | null
+          hashed_external_id?: string | null
+          hashed_phone?: string | null
           id?: string
+          ip_address?: string | null
           payer_name?: string | null
           status?: string
           transaction_id?: string
           updated_at?: string
+          user_agent?: string | null
           value?: number | null
         }
         Relationships: []
