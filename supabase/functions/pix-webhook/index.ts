@@ -25,16 +25,33 @@ serve(async (req) => {
     }
 
     const contentType = req.headers.get('content-type') || '';
-    let body: Record<string, any>;
+    let body: Record<string, any> = {};
 
-    if (contentType.includes('application/json')) {
-      body = await req.json();
-    } else {
-      const text = await req.text();
-      const params = new URLSearchParams(text);
-      body = Object.fromEntries(params.entries());
+    try {
+      const rawText = await req.text();
+      console.log('Webhook raw payload:', rawText);
+
+      if (rawText && rawText.trim().length > 0) {
+        if (contentType.includes('application/json')) {
+          try {
+            body = JSON.parse(rawText);
+          } catch {
+            // Fallback: try urlencoded
+            body = Object.fromEntries(new URLSearchParams(rawText).entries());
+          }
+        } else {
+          // urlencoded or unknown — try urlencoded then JSON
+          const params = new URLSearchParams(rawText);
+          body = Object.fromEntries(params.entries());
+          if (!body.id) {
+            try { body = JSON.parse(rawText); } catch { /* keep urlencoded */ }
+          }
+        }
+      }
+    } catch (parseErr) {
+      console.error('Failed to parse webhook body:', parseErr);
     }
-    console.log('Webhook received:', JSON.stringify(body));
+    console.log('Webhook parsed body:', JSON.stringify(body));
 
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL')!,
