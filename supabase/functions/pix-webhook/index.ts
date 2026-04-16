@@ -101,7 +101,7 @@ serve(async (req) => {
             pixel_code: pixelCode,
             event: 'CompletePayment',
             event_id: `${transactionId}_${Date.now()}`,
-            timestamp: new Date().toISOString(),
+            event_time: Math.floor(Date.now() / 1000),
             context: {
               user_agent: req.headers.get('user-agent') || '',
               ip: req.headers.get('x-forwarded-for') || req.headers.get('cf-connecting-ip') || '',
