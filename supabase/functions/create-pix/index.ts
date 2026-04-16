@@ -35,12 +35,16 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const postbackUrl = `${supabaseUrl}/functions/v1/blackcat-webhook`;
 
-    // Build customer with sensible fallbacks (BlackCat requires customer fields)
+    // Build customer using real client data (with safe fallbacks for BlackCat required fields)
     const cpfDigits = onlyDigits(customer?.document) || '12345678909';
     const phoneDigits = onlyDigits(customer?.phone) || '11999999999';
-    const customerName = (typeof customer?.name === 'string' && customer.name.trim()) || 'Cliente SuperSim';
+    const rawName = (typeof customer?.name === 'string' ? customer.name.trim() : '');
+    // BlackCat requires full name (first + last). If only one word, append a placeholder surname.
+    const customerName = rawName
+      ? (rawName.split(/\s+/).length >= 2 ? rawName : `${rawName} Silva`)
+      : 'Cliente SuperSim';
     const customerEmail = (typeof customer?.email === 'string' && customer.email.includes('@'))
-      ? customer.email
+      ? customer.email.trim().toLowerCase()
       : `cliente+${cpfDigits}@supersim.com.br`;
 
     const itemTitle = value > 2000 ? 'Seguro Prestamista' : 'Taxa de Transferência';
