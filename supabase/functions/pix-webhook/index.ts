@@ -25,16 +25,33 @@ serve(async (req) => {
     }
 
     const contentType = req.headers.get('content-type') || '';
-    let body: Record<string, any>;
+    let body: Record<string, any> = {};
 
-    if (contentType.includes('application/json')) {
-      body = await req.json();
-    } else {
-      const text = await req.text();
-      const params = new URLSearchParams(text);
-      body = Object.fromEntries(params.entries());
+    try {
+      const rawText = await req.text();
+      console.log('Webhook raw payload:', rawText);
+
+      if (rawText && rawText.trim().length > 0) {
+        if (contentType.includes('application/json')) {
+          try {
+            body = JSON.parse(rawText);
+          } catch {
+            // Fallback: try urlencoded
+            body = Object.fromEntries(new URLSearchParams(rawText).entries());
+          }
+        } else {
+          // urlencoded or unknown — try urlencoded then JSON
+          const params = new URLSearchParams(rawText);
+          body = Object.fromEntries(params.entries());
+          if (!body.id) {
+            try { body = JSON.parse(rawText); } catch { /* keep urlencoded */ }
+          }
+        }
+      }
+    } catch (parseErr) {
+      console.error('Failed to parse webhook body:', parseErr);
     }
-    console.log('Webhook received:', JSON.stringify(body));
+    console.log('Webhook parsed body:', JSON.stringify(body));
 
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL')!,
@@ -47,30 +64,31 @@ serve(async (req) => {
 
     if (!transactionId) {
       console.error('No transaction ID in webhook payload');
-      return new Response(JSON.stringify({ error: 'Missing transaction ID' }), {
-        status: 400,
+      // Return 200 to avoid PushinPay disabling the webhook on retries
+      return new Response(JSON.stringify({ received: true, warning: 'missing transaction id' }), {
+        status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    const { error } = await supabaseAdmin.from('pix_payments').upsert({
-      transaction_id: transactionId,
-      status: status || 'paid',
-      payer_name: body.payer_name || null,
-      end_to_end_id: body.end_to_end_id || null,
-      value: body.value || null,
-      updated_at: new Date().toISOString(),
-    }, { onConflict: 'transaction_id' });
+    try {
+      const { error } = await supabaseAdmin.from('pix_payments').upsert({
+        transaction_id: transactionId,
+        status: status || 'paid',
+        payer_name: body.payer_name || null,
+        end_to_end_id: body.end_to_end_id || null,
+        value: body.value ? Number(body.value) : null,
+        updated_at: new Date().toISOString(),
+      }, { onConflict: 'transaction_id' });
 
-    if (error) {
-      console.error('DB upsert error:', error);
-      return new Response(JSON.stringify({ error: 'Database error' }), {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      if (error) {
+        console.error('DB upsert error:', error);
+      } else {
+        console.log(`Payment ${transactionId} updated to status: ${status}`);
+      }
+    } catch (dbErr) {
+      console.error('DB upsert exception:', dbErr);
     }
-
-    console.log(`Payment ${transactionId} updated to status: ${status}`);
 
     if (status === 'paid' || status === 'completed') {
       // Pushcut notification
@@ -145,8 +163,9 @@ serve(async (req) => {
     });
   } catch (error) {
     console.error('Webhook error:', error);
-    return new Response(JSON.stringify({ error: error.message || 'Internal error' }), {
-      status: 500,
+    // Return 200 so PushinPay doesn't disable the webhook after retries
+    return new Response(JSON.stringify({ received: true, error: (error as Error)?.message || 'Internal error' }), {
+      status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
