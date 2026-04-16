@@ -1306,6 +1306,33 @@ const Chat = () => {
   const bottomRef = useRef<HTMLDivElement>(null);
   const typingQueue = useRef<(() => void)[]>([]);
   const processingQueue = useRef(false);
+  const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const paymentConfirmedRef = useRef(false);
+
+  // Auto-poll payment status every 5s when a PIX is generated
+  useEffect(() => {
+    if (!pixTransactionId || pixPaid || paymentConfirmedRef.current) {
+      if (pollingRef.current) { clearInterval(pollingRef.current); pollingRef.current = null; }
+      return;
+    }
+    const poll = async () => {
+      try {
+        const { data } = await supabase.functions.invoke('check-pix', {
+          body: { transactionId: pixTransactionId },
+        });
+        const status = data?.status;
+        if (status === 'paid' || status === 'completed' || status === 'confirmed' || status === 'approved') {
+          if (paymentConfirmedRef.current) return;
+          paymentConfirmedRef.current = true;
+          if (pollingRef.current) { clearInterval(pollingRef.current); pollingRef.current = null; }
+          // Simulate "Já paguei" button click
+          document.querySelector<HTMLButtonElement>('[data-pix-paid-btn]')?.click();
+        }
+      } catch (e) { /* silent */ }
+    };
+    pollingRef.current = setInterval(poll, 5000);
+    return () => { if (pollingRef.current) { clearInterval(pollingRef.current); pollingRef.current = null; } };
+  }, [pixTransactionId, pixPaid]);
 
   // Helper: show typing for 3s then add bot message(s)
   const addBotMessages = (msgsFn: () => ChatMessage[], delayAfterTyping = 0) => {
@@ -1782,6 +1809,7 @@ const Chat = () => {
                 <div className="space-y-2">
                   <p className="text-sm text-foreground">Após realizar o pagamento, clique no botão abaixo:</p>
                   <button
+                    data-pix-paid-btn
                     onClick={async () => {
                       if (checkingPayment) return;
                       setCheckingPayment(true);

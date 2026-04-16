@@ -26,7 +26,9 @@ serve(async (req) => {
   }
 
   try {
-    const { transactionId } = await req.json();
+    const body = await req.json();
+    // Normalize to lowercase to match stored records
+    const transactionId = typeof body.transactionId === 'string' ? body.transactionId.toLowerCase() : body.transactionId;
 
     if (!transactionId) {
       return new Response(JSON.stringify({ error: 'transactionId is required' }), {
