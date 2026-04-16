@@ -1541,7 +1541,7 @@ const Chat = () => {
       }
 
       // TikTok Pixel — InitiateCheckout
-      const pixValueReais = (data.value || (paymentPhase === "taxa" ? 1874 : 3490)) / 100;
+      const pixValueReais = (data.value || (paymentPhase === "taxa" ? 1874 : 3990)) / 100;
       try {
         window.ttq?.track('InitiateCheckout', {
           content_type: 'product',
@@ -1838,7 +1838,7 @@ const Chat = () => {
                         const status = data?.status;
                         if (status === 'paid' || status === 'completed' || status === 'confirmed' || status === 'approved') {
                           // TikTok Pixel — CompletePayment
-                          const paidValue = paymentPhase === "taxa" ? 18.74 : 34.90;
+                          const paidValue = paymentPhase === "taxa" ? 18.74 : 39.90;
                           try {
                             window.ttq?.track('CompletePayment', {
                               content_type: 'product',
@@ -1847,6 +1847,7 @@ const Chat = () => {
                               quantity: 1,
                               value: paidValue,
                               currency: 'BRL',
+                              event_id: `${pixTransactionId}_completepayment`,
                             });
                           } catch (e) { console.error('TikTok CompletePayment error:', e); }
 

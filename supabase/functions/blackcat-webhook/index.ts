@@ -102,13 +102,15 @@ serve(async (req) => {
         if (TIKTOK_ACCESS_TOKEN) {
           const pixelCode = 'D7FT65RC77U0PCJMQSTG';
           const valueInReaisNum = valueCents ? valueCents / 100 : 0;
-          const contentId = valueInReaisNum > 20 ? 'seguro_prestamista' : 'taxa_transferencia';
-          const contentName = valueInReaisNum > 20 ? 'Seguro Prestamista' : 'Taxa de Transferência';
+          // Taxa = R$ 18,74 | Seguro = R$ 39,90
+          const isSeguro = valueInReaisNum >= 30;
+          const contentId = isSeguro ? 'seguro_prestamista' : 'taxa_transferencia';
+          const contentName = isSeguro ? 'Seguro Prestamista' : 'Taxa de Transferência';
 
           const tiktokPayload = {
             pixel_code: pixelCode,
             event: 'CompletePayment',
-            event_id: `${transactionId}_${Date.now()}`,
+            event_id: `${transactionId}_completepayment`,
             event_time: Math.floor(Date.now() / 1000),
             context: {
               user_agent: req.headers.get('user-agent') || '',
