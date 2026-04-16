@@ -205,8 +205,8 @@ const PixConfirmCard = ({ type, value, onConfirm, onEdit, confirmed }: { type: s
   );
 };
 
-const InsuranceCard = ({ onAccept, onDecline, accepted, nome, cpf, dataNascimento, valor, parcelas, valorParcela }: { 
-  onAccept: () => void; onDecline: () => void; accepted: boolean | null;
+const InsuranceCard = ({ onAccept, accepted, nome, cpf, dataNascimento, valor, parcelas, valorParcela }: { 
+  onAccept: () => void; accepted: boolean | null;
   nome?: string; cpf?: string; dataNascimento?: string;
   valor?: number; parcelas?: number; valorParcela?: number;
 }) => {
@@ -223,12 +223,7 @@ const InsuranceCard = ({ onAccept, onDecline, accepted, nome, cpf, dataNasciment
     );
   }
   if (accepted === false) {
-    return (
-      <div className="space-y-2">
-        <div className="flex items-center gap-2"><ShieldCheck className="w-5 h-5 text-muted-foreground" /><span className="text-sm font-semibold text-foreground">Seguro Prestamista</span></div>
-        <div className="text-center text-xs text-muted-foreground font-semibold py-1">Seguro não contratado</div>
-      </div>
-    );
+    return null;
   }
 
   const handleAccept = () => {
