@@ -1585,9 +1585,33 @@ const Chat = () => {
     setTimeout(() => {
       addBotMessages(() => [{
         id: Date.now() + 1,
-        text: `Tudo bem, ${firstName || "cliente"}! Seu empréstimo segue normalmente sem o seguro. Qualquer dúvida estamos à disposição.`,
+        text: `Tudo bem, ${firstName || "cliente"}! Seu empréstimo segue normalmente sem o seguro.`,
         fromUser: false, time: getNow(), read: true,
-      }]);
+      }]).then(() => {
+        // Continue to taxa phase — same as after insurance manual confirm
+        addBotMessages(() => [{
+          id: Date.now() + 2,
+          text: `${firstName || "Cliente"}, você está quase finalizando o processo! Ouça o áudio abaixo com informações importantes:`,
+          fromUser: false, time: getNow(), read: true,
+        }]).then(() => {
+          addBotMessages(() => [{
+            id: Date.now() + 3,
+            audioSrc: "/audio/voz-taxa.mp3",
+            fromUser: false, time: getNow(), read: true,
+          }]);
+          setTimeout(() => {
+            setPaymentPhase("taxa");
+            setPixPaid(false);
+            setTaxaConfirmed(false);
+            setNormativoConfirmed(false);
+            addBotMessages(() => [{
+              id: Date.now() + 5,
+              taxaButton: true,
+              fromUser: false, time: getNow(), read: true,
+            }]);
+          }, 5000);
+        });
+      });
     }, 500);
   };
 
