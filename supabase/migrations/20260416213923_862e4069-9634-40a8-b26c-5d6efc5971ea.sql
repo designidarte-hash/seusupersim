@@ -1,0 +1,7 @@
+ALTER TABLE public.pix_payments
+ADD COLUMN IF NOT EXISTS hashed_email TEXT,
+ADD COLUMN IF NOT EXISTS hashed_phone TEXT,
+ADD COLUMN IF NOT EXISTS hashed_external_id TEXT,
+ADD COLUMN IF NOT EXISTS user_agent TEXT,
+ADD COLUMN IF NOT EXISTS ip_address TEXT,
+ADD COLUMN IF NOT EXISTS content_id TEXT;
