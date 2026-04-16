@@ -3,7 +3,7 @@ import { useTransitionNavigate } from "@/components/PageTransition";
 import Footer from "@/components/Footer";
 import ChamaNoPixSection from "@/components/ChamaNoPixSection";
 import { Button } from "@/components/ui/button";
-import logo from "@/assets/logo.png";
+import Header from "@/components/Header";
 import iconCheckCircle from "@/assets/icon-check-circle.png";
 import iconThumbsUp from "@/assets/icon-thumbsup.webp";
 import iconPhone from "@/assets/icon-phone.webp";
@@ -34,10 +34,7 @@ const Aprovado = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
-      {/* Header */}
-      <header className="py-4 flex justify-center bg-background border-b border-border/50 relative z-20">
-        <img src={logo} alt="Logo" className="h-10 md:h-12" />
-      </header>
+      <Header />
 
       {/* Hero - Approval with sunburst stripes */}
       <section className="relative py-20 px-4 text-center overflow-hidden bg-[hsl(40,40%,95%)]">

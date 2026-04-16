@@ -14,6 +14,7 @@ import seloFebraban from "@/assets/selo-febraban.png";
 import seloAnbima from "@/assets/selo-anbima.png";
 import seloSsl from "@/assets/selo-ssl.png";
 import { ClipboardList, UserCheck, CreditCard, Send, Quote, Facebook, Youtube, Instagram, Linkedin } from "lucide-react";
+import Header from "@/components/Header";
 
 const benefits = [
   { img: iconPix, title: "PIX na Hora", desc: "Rápido e descomplicado, dinheiro em instantes" },
@@ -106,21 +107,7 @@ const Index = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      {/* Header */}
-      <header className="py-3 px-4 flex items-center justify-between bg-background border-b border-border/50">
-        <img
-          src={logo}
-          alt="Logo"
-          className="h-8 md:h-10"
-        />
-        <div className="flex items-center gap-3">
-          <button className="flex flex-col gap-[5px] p-1">
-            <span className="w-6 h-[2.5px] bg-foreground rounded-full"></span>
-            <span className="w-6 h-[2.5px] bg-foreground rounded-full"></span>
-            <span className="w-6 h-[2.5px] bg-foreground rounded-full"></span>
-          </button>
-        </div>
-      </header>
+      <Header showCta onCtaClick={scrollToTop} />
 
       {/* Hero */}
       <section className="relative bg-sunburst pt-4 px-4 overflow-hidden">
