@@ -1709,7 +1709,6 @@ const Chat = () => {
               {msg.insuranceCard && (
                 <InsuranceCard 
                   onAccept={handleInsuranceAccept} 
-                  onDecline={handleInsuranceDecline} 
                   accepted={insuranceAccepted}
                   nome={nome}
                   cpf={cpf}
