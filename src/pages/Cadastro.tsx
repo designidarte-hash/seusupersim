@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTransitionNavigate } from "@/components/PageTransition";
-import logo from "@/assets/logo.png";
+import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 import { ArrowLeft, UserPlus } from "lucide-react";
@@ -74,9 +74,7 @@ const Cadastro = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <header className="py-4 flex justify-center bg-background border-b border-border/50">
-        <img src={logo} alt="Logo" className="h-10 md:h-12" />
-      </header>
+      <Header />
 
       <div className="bg-primary py-6 px-4">
         <div className="max-w-lg mx-auto flex items-center justify-center gap-3 text-center">

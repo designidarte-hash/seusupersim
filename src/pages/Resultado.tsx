@@ -3,7 +3,7 @@ import { useTransitionNavigate } from "@/components/PageTransition";
 import Footer from "@/components/Footer";
 
 import { Button } from "@/components/ui/button";
-import logo from "@/assets/logo.png";
+import Header from "@/components/Header";
 import { ArrowLeft, User, CalendarDays } from "lucide-react";
 import iconCheckOrange from "@/assets/icon-check-orange.png";
 import emprestimo1 from "@/assets/emprestimo1.jpg";
@@ -90,10 +90,7 @@ const Resultado = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      {/* Header — same as Index */}
-      <header className="py-4 flex justify-center bg-background border-b border-border/50">
-        <img src={logo} alt="Logo" className="h-10 md:h-12" />
-      </header>
+      <Header />
 
       {/* Hero strip matching Index primary band */}
       <div className="bg-primary py-6 px-4">

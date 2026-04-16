@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Footer from "@/components/Footer";
-import logo from "@/assets/logo.png";
+import Header from "@/components/Header";
 import bannerEmprestimo from "@/assets/banner-emprestimo-hd.webp";
 import { ShieldCheck, CheckCircle2, Search, FileCheck, BadgeDollarSign, Loader2, Lock, XCircle, AlertTriangle } from "lucide-react";
 import logoSupersim from "@/assets/logo-supersim.png";
