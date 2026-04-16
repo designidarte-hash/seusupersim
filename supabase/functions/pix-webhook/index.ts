@@ -41,7 +41,8 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
-    const transactionId = body.id;
+    // Normalize to lowercase to avoid case-mismatch with create-pix
+    const transactionId = typeof body.id === 'string' ? body.id.toLowerCase() : body.id;
     const status = body.status;
 
     if (!transactionId) {
