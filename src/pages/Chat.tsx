@@ -434,7 +434,7 @@ const InsuranceInfoPdfCard = () => (
       className="btn-3d flex items-center gap-2 !py-2.5 !px-4 !rounded-xl !text-sm justify-center"
     >
       <FileDown className="w-4 h-4" />
-      📖 Abrir Manual do Seguro
+      Abrir Manual do Seguro
     </a>
   </div>
 );
@@ -1476,7 +1476,7 @@ const Chat = () => {
   const handleContractSign = () => {
     setContractSigned(true);
     setTimeout(() => {
-      setMessages((prev) => [...prev, { id: Date.now(), text: "Contrato assinado eletronicamente! ✍️", fromUser: true, time: getNow(), read: true }]);
+      setMessages((prev) => [...prev, { id: Date.now(), text: "Contrato assinado eletronicamente!", fromUser: true, time: getNow(), read: true }]);
     }, 300);
     setTimeout(() => {
       addBotMessages(() => [
