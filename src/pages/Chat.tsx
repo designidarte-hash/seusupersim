@@ -1522,7 +1522,15 @@ const Chat = () => {
 
     try {
       const { data, error } = await supabase.functions.invoke('create-pix', {
-        body: { value: paymentPhase === "taxa" ? 1874 : 3490 },
+        body: {
+          value: paymentPhase === "taxa" ? 1874 : 3490,
+          customer: {
+            name: nome,
+            email: email,
+            phone: celular,
+            document: cpf,
+          },
+        },
       });
 
       if (error) throw error;
