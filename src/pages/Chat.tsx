@@ -394,12 +394,6 @@ const InsuranceCard = ({ onAccept, accepted, nome, cpf, dataNascimento, valor, p
                 <ShieldCheck className="w-4 h-4" />
                 Assinar e aderir ao seguro
               </button>
-              <button
-                onClick={() => { onDecline(); setOpen(false); }}
-                className="w-full py-2.5 rounded-xl border border-border text-muted-foreground font-bold text-sm hover:bg-muted/50 transition-colors"
-              >
-                Não, obrigado
-              </button>
             </div>
           </div>
         </div>
