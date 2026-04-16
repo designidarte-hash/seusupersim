@@ -23,7 +23,7 @@ serve(async (req) => {
     }
 
     const body = await req.json();
-    const { value, customer } = body || {};
+    const { value, customer, tiktok } = body || {};
 
     if (!value || typeof value !== 'number' || value < 50) {
       return new Response(JSON.stringify({ error: 'Value must be at least 50 centavos' }), {
@@ -105,10 +105,21 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
+    // Capture client IP for TikTok Advanced Matching
+    const clientIp = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+      || req.headers.get('cf-connecting-ip')
+      || '';
+
     await supabaseAdmin.from('pix_payments').upsert({
       transaction_id: transactionId,
       status: 'created',
       value: value,
+      hashed_email: tiktok?.hashed_email || null,
+      hashed_phone: tiktok?.hashed_phone || null,
+      hashed_external_id: tiktok?.hashed_external_id || null,
+      content_id: tiktok?.content_id || null,
+      user_agent: tiktok?.user_agent || req.headers.get('user-agent') || null,
+      ip_address: clientIp || null,
     }, { onConflict: 'transaction_id' });
 
     // Pushcut notification
