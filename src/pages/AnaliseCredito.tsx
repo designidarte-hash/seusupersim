@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Footer from "@/components/Footer";
-import logo from "@/assets/logo.png";
+import Header from "@/components/Header";
 import bannerEmprestimo from "@/assets/banner-emprestimo-hd.webp";
 import { ShieldCheck, CheckCircle2, Search, FileCheck, BadgeDollarSign, Loader2, Lock, XCircle, AlertTriangle } from "lucide-react";
 import logoSupersim from "@/assets/logo-supersim.png";
@@ -133,9 +133,7 @@ const AnaliseCredito = () => {
   if (phase === "rejected") {
     return (
       <div className="min-h-screen flex flex-col bg-[#f7f7f7]">
-        <header className="py-4 flex justify-center bg-white border-b border-border/30">
-          <img src={logo} alt="Logo" className="h-10 md:h-12" />
-        </header>
+        <Header />
 
         <main className="flex-1 flex items-center justify-center px-4 py-10">
           <div className="w-full max-w-md space-y-5">
@@ -214,9 +212,7 @@ const AnaliseCredito = () => {
   // Analyzing / Reanalyzing phase
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <header className="py-4 flex justify-center bg-background border-b border-border/50">
-        <img src={logo} alt="Logo" className="h-10 md:h-12" />
-      </header>
+      <Header />
 
       <div className="w-full">
         <img src={bannerEmprestimo} alt="Empréstimo rápido e fácil" className="w-full h-auto" />

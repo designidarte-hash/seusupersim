@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useTransitionNavigate } from "@/components/PageTransition";
 import Footer from "@/components/Footer";
-import logo from "@/assets/logo.png";
+import Header from "@/components/Header";
 import iconCheckCircle from "@/assets/icon-check-circle.png";
 import { Mail, Clock, CreditCard, Shield } from "lucide-react";
 import { markCPFCompleted } from "@/lib/cpf-block";
@@ -25,10 +25,7 @@ const Sucesso = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      {/* Header */}
-      <header className="py-4 flex justify-center bg-background border-b border-border/50">
-        <img src={logo} alt="Logo SuperSim" className="h-10 md:h-12" />
-      </header>
+      <Header />
 
       {/* Hero Success */}
       <section className="py-16 px-4 text-center">

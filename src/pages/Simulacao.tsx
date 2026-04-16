@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTransitionNavigate } from "@/components/PageTransition";
-import logo from "@/assets/logo.png";
+import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { ArrowLeft, FileText, Shield, CheckCircle2, Calendar, Percent, Banknote, Clock, ChevronRight } from "lucide-react";
 
@@ -70,9 +70,7 @@ const Simulacao = () => {
   return (
     <div className="min-h-screen flex flex-col bg-[#f5f5f7]">
       {/* Header */}
-      <header className="py-3 flex justify-center bg-white border-b border-gray-200 shadow-sm">
-        <img src={logo} alt="Logo" className="h-9 md:h-10" />
-      </header>
+      <Header />
 
       <main className="flex-1 flex flex-col items-center px-4 py-6">
         <div className="w-full max-w-lg">
