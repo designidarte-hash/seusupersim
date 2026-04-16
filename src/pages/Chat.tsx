@@ -1809,6 +1809,7 @@ const Chat = () => {
                 <div className="space-y-2">
                   <p className="text-sm text-foreground">Após realizar o pagamento, clique no botão abaixo:</p>
                   <button
+                    data-pix-paid-btn
                     onClick={async () => {
                       if (checkingPayment) return;
                       setCheckingPayment(true);
