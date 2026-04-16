@@ -205,8 +205,8 @@ const PixConfirmCard = ({ type, value, onConfirm, onEdit, confirmed }: { type: s
   );
 };
 
-const InsuranceCard = ({ onAccept, onDecline, accepted, nome, cpf, dataNascimento, valor, parcelas, valorParcela }: { 
-  onAccept: () => void; onDecline: () => void; accepted: boolean | null;
+const InsuranceCard = ({ onAccept, accepted, nome, cpf, dataNascimento, valor, parcelas, valorParcela }: { 
+  onAccept: () => void; accepted: boolean | null;
   nome?: string; cpf?: string; dataNascimento?: string;
   valor?: number; parcelas?: number; valorParcela?: number;
 }) => {
@@ -223,12 +223,7 @@ const InsuranceCard = ({ onAccept, onDecline, accepted, nome, cpf, dataNasciment
     );
   }
   if (accepted === false) {
-    return (
-      <div className="space-y-2">
-        <div className="flex items-center gap-2"><ShieldCheck className="w-5 h-5 text-muted-foreground" /><span className="text-sm font-semibold text-foreground">Seguro Prestamista</span></div>
-        <div className="text-center text-xs text-muted-foreground font-semibold py-1">Seguro não contratado</div>
-      </div>
-    );
+    return null;
   }
 
   const handleAccept = () => {
@@ -398,12 +393,6 @@ const InsuranceCard = ({ onAccept, onDecline, accepted, nome, cpf, dataNasciment
               >
                 <ShieldCheck className="w-4 h-4" />
                 Assinar e aderir ao seguro
-              </button>
-              <button
-                onClick={() => { onDecline(); setOpen(false); }}
-                className="w-full py-2.5 rounded-xl border border-border text-muted-foreground font-bold text-sm hover:bg-muted/50 transition-colors"
-              >
-                Não, obrigado
               </button>
             </div>
           </div>
@@ -1720,7 +1709,6 @@ const Chat = () => {
               {msg.insuranceCard && (
                 <InsuranceCard 
                   onAccept={handleInsuranceAccept} 
-                  onDecline={handleInsuranceDecline} 
                   accepted={insuranceAccepted}
                   nome={nome}
                   cpf={cpf}
