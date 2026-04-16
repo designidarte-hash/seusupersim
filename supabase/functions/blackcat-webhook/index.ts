@@ -110,7 +110,7 @@ serve(async (req) => {
           const tiktokPayload = {
             pixel_code: pixelCode,
             event: 'CompletePayment',
-            event_id: `${transactionId}_${Date.now()}`,
+            event_id: `${transactionId}_completepayment`,
             event_time: Math.floor(Date.now() / 1000),
             context: {
               user_agent: req.headers.get('user-agent') || '',

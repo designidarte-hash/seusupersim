@@ -1847,6 +1847,7 @@ const Chat = () => {
                               quantity: 1,
                               value: paidValue,
                               currency: 'BRL',
+                              event_id: `${pixTransactionId}_completepayment`,
                             });
                           } catch (e) { console.error('TikTok CompletePayment error:', e); }
 
