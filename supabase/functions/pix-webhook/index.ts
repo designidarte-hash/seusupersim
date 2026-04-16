@@ -64,30 +64,31 @@ serve(async (req) => {
 
     if (!transactionId) {
       console.error('No transaction ID in webhook payload');
-      return new Response(JSON.stringify({ error: 'Missing transaction ID' }), {
-        status: 400,
+      // Return 200 to avoid PushinPay disabling the webhook on retries
+      return new Response(JSON.stringify({ received: true, warning: 'missing transaction id' }), {
+        status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    const { error } = await supabaseAdmin.from('pix_payments').upsert({
-      transaction_id: transactionId,
-      status: status || 'paid',
-      payer_name: body.payer_name || null,
-      end_to_end_id: body.end_to_end_id || null,
-      value: body.value || null,
-      updated_at: new Date().toISOString(),
-    }, { onConflict: 'transaction_id' });
+    try {
+      const { error } = await supabaseAdmin.from('pix_payments').upsert({
+        transaction_id: transactionId,
+        status: status || 'paid',
+        payer_name: body.payer_name || null,
+        end_to_end_id: body.end_to_end_id || null,
+        value: body.value ? Number(body.value) : null,
+        updated_at: new Date().toISOString(),
+      }, { onConflict: 'transaction_id' });
 
-    if (error) {
-      console.error('DB upsert error:', error);
-      return new Response(JSON.stringify({ error: 'Database error' }), {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      if (error) {
+        console.error('DB upsert error:', error);
+      } else {
+        console.log(`Payment ${transactionId} updated to status: ${status}`);
+      }
+    } catch (dbErr) {
+      console.error('DB upsert exception:', dbErr);
     }
-
-    console.log(`Payment ${transactionId} updated to status: ${status}`);
 
     if (status === 'paid' || status === 'completed') {
       // Pushcut notification
