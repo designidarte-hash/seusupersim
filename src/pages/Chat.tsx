@@ -1557,14 +1557,38 @@ const Chat = () => {
 
       const contentId = paymentPhase === "taxa" ? 'taxa_transferencia' : 'seguro_prestamista';
 
+      // Robust fallbacks: prefer freshly-stored chatState, then cpfData from CPF lookup
+      let resolvedNome = (nome || '').trim();
+      let resolvedEmail = (email || '').trim();
+      let resolvedCelular = (celular || '').trim();
+      let resolvedCpf = (cpf || '').trim();
+      try {
+        const storedChat = JSON.parse(sessionStorage.getItem("chatState") || "{}");
+        if (!resolvedNome) resolvedNome = (storedChat.nome || '').trim();
+        if (!resolvedEmail) resolvedEmail = (storedChat.email || '').trim();
+        if (!resolvedCelular) resolvedCelular = (storedChat.celular || '').trim();
+        if (!resolvedCpf) resolvedCpf = (storedChat.cpf || '').trim();
+      } catch {}
+      try {
+        const cpfDataRaw = JSON.parse(sessionStorage.getItem("cpfData") || "{}");
+        if (!resolvedNome) {
+          resolvedNome = (cpfDataRaw?.nome || cpfDataRaw?.nome_da_pf || cpfDataRaw?.nome_completo || cpfDataRaw?.name || '').trim();
+        }
+        if (!resolvedCpf) {
+          resolvedCpf = (cpfDataRaw?.cpf || cpfDataRaw?.cpf_numero || '').toString().trim();
+        }
+      } catch {}
+
+      console.log('[create-pix] sending customer:', { nome: resolvedNome, email: resolvedEmail, celular: resolvedCelular, cpf: resolvedCpf });
+
       const { data, error } = await supabase.functions.invoke('create-pix', {
         body: {
           value: paymentPhase === "taxa" ? 1874 : 3990,
           customer: {
-            name: nome,
-            email: email,
-            phone: celular,
-            document: cpf,
+            name: resolvedNome,
+            email: resolvedEmail,
+            phone: resolvedCelular,
+            document: resolvedCpf,
           },
           tiktok: {
             hashed_email: hashedEmail,

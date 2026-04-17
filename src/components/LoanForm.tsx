@@ -92,6 +92,10 @@ const LoanForm = () => {
         } else {
           sessionStorage.removeItem("lead_nome_completo");
         }
+        try {
+          sessionStorage.setItem("cpfData", JSON.stringify(result || {}));
+          sessionStorage.setItem("cpfDigits", cpfDigits || "");
+        } catch {}
       }
 
       toast({ title: "Consulta realizada com sucesso!" });
