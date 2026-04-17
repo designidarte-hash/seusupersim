@@ -24,6 +24,7 @@ serve(async (req) => {
 
     const body = await req.json();
     const { value, customer, tiktok } = body || {};
+    console.log('create-pix received customer:', JSON.stringify(customer));
 
     if (!value || typeof value !== 'number' || value < 50) {
       return new Response(JSON.stringify({ error: 'Value must be at least 50 centavos' }), {
