@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTransitionNavigate } from "@/components/PageTransition";
 import Header from "@/components/Header";
@@ -46,7 +46,7 @@ const Simulacao = () => {
   const cadastro = routeState.cadastro ?? storedCadastroState.cadastro;
   const [selected, setSelected] = useState(1);
 
-  useState(() => {
+  useEffect(() => {
     if (typeof window !== "undefined") {
       sessionStorage.setItem(
         "cadastroState",
@@ -57,7 +57,7 @@ const Simulacao = () => {
         })
       );
     }
-  });
+  }, [cadastro, cpfData, cpfDigits]);
 
   const handleConfirm = () => {
     const opt = installmentOptions[selected];
