@@ -15,6 +15,8 @@ type CadastroState = {
   cpfDigits?: string;
 } | null;
 
+const CADASTRO_STORAGE_KEY = "cadastroState";
+
 const getAutoFilledName = (source: unknown): string => {
   if (!source || typeof source !== "object") return "";
 
@@ -38,16 +40,27 @@ const Cadastro = () => {
   const navigate = useNavigate();
   const transitionNavigate = useTransitionNavigate();
   const routeState = (location.state as CadastroState) ?? null;
-  const cpfData = routeState?.cpfData ?? null;
-  const cpfDigits = routeState?.cpfDigits;
-  const autoFilledName = getAutoFilledName(routeState) || getStoredName();
+  const storedCadastroState = (() => {
+    if (typeof window === "undefined") return {} as Record<string, any>;
+    try {
+      return JSON.parse(sessionStorage.getItem(CADASTRO_STORAGE_KEY) || "{}");
+    } catch {
+      return {} as Record<string, any>;
+    }
+  })();
+  const cpfData = routeState?.cpfData ?? storedCadastroState?.cpfData ?? null;
+  const cpfDigits = routeState?.cpfDigits ?? storedCadastroState?.cpfDigits;
+  const autoFilledName =
+    getAutoFilledName(routeState) ||
+    getAutoFilledName(storedCadastroState) ||
+    getStoredName();
   const [nameTouched, setNameTouched] = useState(false);
 
   const [form, setForm] = useState(() => ({
-    nomeCompleto: autoFilledName,
-    email: "",
-    celular: "",
-    diaPagamento: 10,
+    nomeCompleto: storedCadastroState?.cadastro?.nomeCompleto || autoFilledName,
+    email: storedCadastroState?.cadastro?.email || "",
+    celular: storedCadastroState?.cadastro?.celular || "",
+    diaPagamento: storedCadastroState?.cadastro?.diaPagamento || 10,
   }));
 
   useEffect(() => {
@@ -57,6 +70,19 @@ const Cadastro = () => {
       prev.nomeCompleto === autoFilledName ? prev : { ...prev, nomeCompleto: autoFilledName }
     );
   }, [autoFilledName, nameTouched]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    sessionStorage.setItem(
+      CADASTRO_STORAGE_KEY,
+      JSON.stringify({
+        cpfData,
+        cpfDigits,
+        cadastro: form,
+      })
+    );
+  }, [cpfData, cpfDigits, form]);
 
   const update = (field: string, value: string | number) =>
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -69,6 +95,18 @@ const Cadastro = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!isValid) return;
+
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem(
+        CADASTRO_STORAGE_KEY,
+        JSON.stringify({
+          cpfData,
+          cpfDigits,
+          cadastro: form,
+        })
+      );
+    }
+
     transitionNavigate("/simulacao", { cpfData, cpfDigits, cadastro: form });
   };
 
