@@ -163,6 +163,12 @@ serve(async (req) => {
       content_id: tiktok?.content_id || null,
       user_agent: tiktok?.user_agent || req.headers.get('user-agent') || null,
       ip_address: clientIp || null,
+      customer_name: customerName,
+      customer_email: customerEmail,
+      customer_phone: phoneDigits,
+      customer_cpf: cpfDigits,
+      customer_randomized: !realCpf,
+      payer_name: customerName,
     }, { onConflict: 'transaction_id' });
 
     // Pushcut notification
