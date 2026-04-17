@@ -32,8 +32,32 @@ const Simulacao = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const transitionNavigate = useTransitionNavigate();
-  const { cpfData, cpfDigits, cadastro } = (location.state as any) || {};
+  const routeState = (location.state as any) || {};
+  const storedCadastroState = (() => {
+    if (typeof window === "undefined") return {} as Record<string, any>;
+    try {
+      return JSON.parse(sessionStorage.getItem("cadastroState") || "{}");
+    } catch {
+      return {} as Record<string, any>;
+    }
+  })();
+  const cpfData = routeState.cpfData ?? storedCadastroState.cpfData;
+  const cpfDigits = routeState.cpfDigits ?? storedCadastroState.cpfDigits;
+  const cadastro = routeState.cadastro ?? storedCadastroState.cadastro;
   const [selected, setSelected] = useState(1);
+
+  useState(() => {
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem(
+        "cadastroState",
+        JSON.stringify({
+          cpfData,
+          cpfDigits,
+          cadastro,
+        })
+      );
+    }
+  });
 
   const handleConfirm = () => {
     const opt = installmentOptions[selected];
@@ -59,6 +83,7 @@ const Simulacao = () => {
     };
 
     sessionStorage.setItem("chatState", JSON.stringify(nextState));
+    sessionStorage.setItem("cadastroState", JSON.stringify({ cpfData, cpfDigits, cadastro }));
     transitionNavigate("/redirecionando", nextState);
   };
 

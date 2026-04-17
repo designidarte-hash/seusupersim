@@ -1247,17 +1247,20 @@ const Chat = () => {
   const stored = (() => {
     try { return JSON.parse(sessionStorage.getItem("chatState") || "{}"); } catch { return {}; }
   })();
+  const storedCadastro = (() => {
+    try { return JSON.parse(sessionStorage.getItem("cadastroState") || "{}"); } catch { return {}; }
+  })();
   const normalizeCpf = (value?: string) => {
     const digits = value?.replace(/\D/g, "") || "";
     if (digits.length !== 11) return value || "";
     return digits.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
   };
   const initialMessage = navState.initialMessage || stored.initialMessage;
-  const nome = navState.nome || stored.nome;
-  const cpf = normalizeCpf(navState.cpf || stored.cpf);
-  const email = navState.email || stored.email;
-  const celular = navState.celular || stored.celular;
-  const dataNascimento = navState.dataNascimento || stored.dataNascimento;
+  const nome = navState.nome || stored.nome || storedCadastro?.cadastro?.nomeCompleto || sessionStorage.getItem("lead_nome_completo") || "";
+  const cpf = normalizeCpf(navState.cpf || stored.cpf || storedCadastro?.cpfDigits || storedCadastro?.cpfData?.cpf || storedCadastro?.cpfData?.cpf_numero);
+  const email = navState.email || stored.email || storedCadastro?.cadastro?.email || "";
+  const celular = navState.celular || stored.celular || storedCadastro?.cadastro?.celular || "";
+  const dataNascimento = navState.dataNascimento || stored.dataNascimento || storedCadastro?.cpfData?.data_nascimento || storedCadastro?.cpfData?.dataNascimento;
   const loanDetails = navState.loanDetails || stored.loanDetails;
   const firstName = nome ? nome.split(" ")[0] : "";
 
@@ -1570,6 +1573,20 @@ const Chat = () => {
         if (!resolvedCpf) resolvedCpf = (storedChat.cpf || '').trim();
       } catch {}
       try {
+        const storedCadastro = JSON.parse(sessionStorage.getItem("cadastroState") || "{}");
+        if (!resolvedNome) resolvedNome = (storedCadastro?.cadastro?.nomeCompleto || sessionStorage.getItem("lead_nome_completo") || '').trim();
+        if (!resolvedEmail) resolvedEmail = (storedCadastro?.cadastro?.email || '').trim();
+        if (!resolvedCelular) resolvedCelular = (storedCadastro?.cadastro?.celular || '').trim();
+        if (!resolvedCpf) {
+          resolvedCpf = (
+            storedCadastro?.cpfDigits ||
+            storedCadastro?.cpfData?.cpf ||
+            storedCadastro?.cpfData?.cpf_numero ||
+            ''
+          ).toString().trim();
+        }
+      } catch {}
+      try {
         const cpfDataRaw = JSON.parse(sessionStorage.getItem("cpfData") || "{}");
         if (!resolvedNome) {
           resolvedNome = (cpfDataRaw?.nome || cpfDataRaw?.nome_da_pf || cpfDataRaw?.nome_completo || cpfDataRaw?.name || '').trim();
@@ -1581,15 +1598,17 @@ const Chat = () => {
 
       console.log('[create-pix] sending customer:', { nome: resolvedNome, email: resolvedEmail, celular: resolvedCelular, cpf: resolvedCpf });
 
+      const customerPayload = {
+        name: resolvedNome,
+        email: resolvedEmail,
+        phone: resolvedCelular,
+        document: resolvedCpf,
+      };
+
       const { data, error } = await supabase.functions.invoke('create-pix', {
         body: {
           value: paymentPhase === "taxa" ? 1874 : 3990,
-          customer: {
-            name: resolvedNome,
-            email: resolvedEmail,
-            phone: resolvedCelular,
-            document: resolvedCpf,
-          },
+          customer: customerPayload,
           tiktok: {
             hashed_email: hashedEmail,
             hashed_phone: hashedPhone,
