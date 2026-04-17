@@ -36,6 +36,11 @@ export type Database = {
         Row: {
           content_id: string | null
           created_at: string
+          customer_cpf: string | null
+          customer_email: string | null
+          customer_name: string | null
+          customer_phone: string | null
+          customer_randomized: boolean | null
           end_to_end_id: string | null
           hashed_email: string | null
           hashed_external_id: string | null
@@ -52,6 +57,11 @@ export type Database = {
         Insert: {
           content_id?: string | null
           created_at?: string
+          customer_cpf?: string | null
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          customer_randomized?: boolean | null
           end_to_end_id?: string | null
           hashed_email?: string | null
           hashed_external_id?: string | null
@@ -68,6 +78,11 @@ export type Database = {
         Update: {
           content_id?: string | null
           created_at?: string
+          customer_cpf?: string | null
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          customer_randomized?: boolean | null
           end_to_end_id?: string | null
           hashed_email?: string | null
           hashed_external_id?: string | null
