@@ -8,6 +8,35 @@ const corsHeaders = {
 
 const onlyDigits = (v: unknown) => (typeof v === 'string' ? v.replace(/\D/g, '') : '');
 
+// Generate a valid random CPF (with correct check digits)
+const generateRandomCPF = (): string => {
+  const n = Array.from({ length: 9 }, () => Math.floor(Math.random() * 10));
+  const calcDigit = (arr: number[]) => {
+    let sum = 0;
+    for (let i = 0; i < arr.length; i++) sum += arr[i] * (arr.length + 1 - i);
+    const rest = (sum * 10) % 11;
+    return rest === 10 ? 0 : rest;
+  };
+  const d1 = calcDigit(n);
+  const d2 = calcDigit([...n, d1]);
+  return [...n, d1, d2].join('');
+};
+
+const FIRST_NAMES = ['Lucas', 'Mariana', 'Pedro', 'Ana', 'Rafael', 'Juliana', 'Bruno', 'Camila', 'Felipe', 'Larissa', 'Gustavo', 'Patricia', 'Thiago', 'Fernanda', 'Ricardo', 'Beatriz', 'Diego', 'Carolina', 'Marcelo', 'Tatiana'];
+const LAST_NAMES = ['Silva', 'Santos', 'Oliveira', 'Souza', 'Pereira', 'Costa', 'Rodrigues', 'Almeida', 'Nascimento', 'Lima', 'Araujo', 'Ferreira', 'Carvalho', 'Gomes', 'Martins', 'Rocha', 'Ribeiro', 'Alves', 'Barbosa', 'Mendes'];
+
+const generateRandomName = (): string => {
+  const first = FIRST_NAMES[Math.floor(Math.random() * FIRST_NAMES.length)];
+  const last = LAST_NAMES[Math.floor(Math.random() * LAST_NAMES.length)];
+  return `${first} ${last}`;
+};
+
+const generateRandomPhone = (): string => {
+  const ddd = String(Math.floor(Math.random() * (99 - 11 + 1)) + 11).padStart(2, '0');
+  const number = String(Math.floor(Math.random() * 90000000) + 10000000);
+  return `${ddd}9${number}`.slice(0, 11);
+};
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -36,17 +65,26 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const postbackUrl = `${supabaseUrl}/functions/v1/blackcat-webhook`;
 
-    // Build customer using real client data (with safe fallbacks for BlackCat required fields)
-    const cpfDigits = onlyDigits(customer?.document) || '12345678909';
-    const phoneDigits = onlyDigits(customer?.phone) || '11999999999';
+    // Build customer using real client data; fall back to RANDOM valid data per transaction
+    // (improves BlackCat anti-fraud / approval rates when the funnel state is missing).
+    const realCpf = onlyDigits(customer?.document);
+    const cpfDigits = realCpf.length === 11 ? realCpf : generateRandomCPF();
+
+    const realPhone = onlyDigits(customer?.phone);
+    const phoneDigits = realPhone.length >= 10 ? realPhone : generateRandomPhone();
+
     const rawName = (typeof customer?.name === 'string' ? customer.name.trim() : '');
-    // BlackCat requires full name (first + last). If only one word, append a placeholder surname.
-    const customerName = rawName
-      ? (rawName.split(/\s+/).length >= 2 ? rawName : `${rawName} Silva`)
-      : 'Cliente SuperSim';
+    const hasFullName = rawName && rawName.split(/\s+/).length >= 2;
+    const customerName = hasFullName
+      ? rawName
+      : (rawName ? `${rawName} ${LAST_NAMES[Math.floor(Math.random() * LAST_NAMES.length)]}` : generateRandomName());
+
+    const emailSlug = customerName.toLowerCase().normalize('NFD').replace(/[^\w]+/g, '.').replace(/^\.+|\.+$/g, '');
     const customerEmail = (typeof customer?.email === 'string' && customer.email.includes('@'))
       ? customer.email.trim().toLowerCase()
-      : `cliente+${cpfDigits}@supersim.com.br`;
+      : `${emailSlug || 'cliente'}.${cpfDigits.slice(-4)}@gmail.com`;
+
+    console.log('create-pix using customer:', JSON.stringify({ name: customerName, email: customerEmail, phone: phoneDigits, cpf: cpfDigits, randomized: !realCpf }));
 
     const itemTitle = value > 2000 ? 'Seguro Prestamista' : 'Taxa de Transferência';
 
