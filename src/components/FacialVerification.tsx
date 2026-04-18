@@ -161,16 +161,16 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
 
       if (faceCentered) {
         stableFramesRef.current += 1;
-        // increase progress over ~2.2s of stable detection
-        setProgress((p) => Math.min(100, p + (dt / 2200) * 100));
+        // Increase progress over ~8s of stable detection (slower, bank-style)
+        setProgress((p) => Math.min(100, p + (dt / 8000) * 100));
         setLiveStep((s) => (s === "searching" || s === "centering" ? "hold" : s));
       } else if (faceDetected) {
         stableFramesRef.current = 0;
-        setProgress((p) => Math.max(0, p - (dt / 1500) * 100));
+        setProgress((p) => Math.max(0, p - (dt / 2500) * 100));
         setLiveStep("centering");
       } else {
         stableFramesRef.current = 0;
-        setProgress((p) => Math.max(0, p - (dt / 1200) * 100));
+        setProgress((p) => Math.max(0, p - (dt / 2000) * 100));
         setLiveStep("searching");
       }
 
@@ -180,13 +180,13 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
           if (p >= 100 && !completedRef.current) {
             completedRef.current = true;
             setLiveStep("validating");
-            // brief "validating" pause then approved
+            // Extended validating + processing + approved sequence (~2s after 100%)
             setTimeout(() => {
               stopStream();
               setStage("processing");
-              setTimeout(() => setStage("approved"), 1100);
-              setTimeout(() => onComplete(), 2100);
-            }, 600);
+              setTimeout(() => setStage("approved"), 1200);
+              setTimeout(() => onComplete(), 2200);
+            }, 800);
           }
           return p;
         });
