@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import FunnelProgress from "@/components/FunnelProgress";
 import bannerEmprestimo from "@/assets/banner-emprestimo-hd.webp";
 import { ShieldCheck, CheckCircle2, Search, FileCheck, BadgeDollarSign, Loader2, Lock } from "lucide-react";
 import logoSupersim from "@/assets/logo-supersim.png";
@@ -61,6 +62,7 @@ const AnaliseCredito = () => {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
+      <FunnelProgress current="analise" />
 
       <div className="w-full">
         <img src={bannerEmprestimo} alt="Empréstimo rápido e fácil" className="w-full h-auto" />

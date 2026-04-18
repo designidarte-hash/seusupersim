@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useTransitionNavigate } from "@/components/PageTransition";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import FunnelProgress from "@/components/FunnelProgress";
 
 import { ArrowLeft, UserPlus } from "lucide-react";
 
@@ -149,6 +150,7 @@ const Cadastro = () => {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
+      <FunnelProgress current="cadastro" />
 
       <div className="bg-primary py-6 px-4">
         <div className="max-w-lg mx-auto flex items-center justify-center gap-3 text-center">
