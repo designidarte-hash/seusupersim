@@ -1656,6 +1656,7 @@ const Chat = () => {
             { id: Date.now() + 5, insuranceAudioConfirm: true, fromUser: false, time: getNow(), read: true },
           ]);
         });
+        });
       });
     }, 500);
   };
