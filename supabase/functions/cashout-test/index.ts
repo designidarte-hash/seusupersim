@@ -93,7 +93,7 @@ Deno.serve(async (req) => {
     console.log("Chamando BlackCat create-withdrawal:", payload);
 
     const blackcatRes = await fetch(
-      "https://api.blackcatpagamentos.com/v1/sales/create-withdrawal",
+      "https://api.blackcatpay.com.br/api/sales/create-withdrawal",
       {
         method: "POST",
         headers: {
