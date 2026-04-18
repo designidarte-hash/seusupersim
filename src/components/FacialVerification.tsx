@@ -316,6 +316,11 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
       ? "Mantenha-se parado…"
       : "Validando biometria…";
 
+  // Progress ring math
+  const radius = 46;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (progress / 100) * circumference;
+
   // Inline card placeholder while overlay is open (so chat keeps space)
   const inlinePlaceholder = (
     <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl p-4 border border-primary/20 flex items-center gap-3">
