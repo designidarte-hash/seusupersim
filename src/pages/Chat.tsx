@@ -1458,6 +1458,16 @@ const Chat = () => {
   const carencia = storedCadastro?.cadastro?.carencia || 30;
   const diaPagamento = storedCadastro?.cadastro?.diaPagamento || loanDetails?.diaPagamento;
   const firstName = nome ? nome.split(" ")[0] : "";
+  const maskedCpf = (() => {
+    const digits = (cpf || "").replace(/\D/g, "");
+    if (digits.length !== 11) return cpf || "";
+    return `***.${digits.slice(3, 6)}.${digits.slice(6, 9)}-**`;
+  })();
+  const protocolo = useMemo(() => {
+    const stamp = Date.now().toString().slice(-6);
+    const rnd = Math.floor(Math.random() * 9000 + 1000);
+    return `SS-${stamp}${rnd}`;
+  }, []);
 
   // Persist state to sessionStorage for refresh resilience
   useEffect(() => {
