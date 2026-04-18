@@ -7,7 +7,7 @@ import FunnelProgress from "@/components/FunnelProgress";
 import { useFunnelUser } from "@/hooks/use-funnel-user";
 import iconThumbsUp from "@/assets/icon-thumbsup.webp";
 import iconPhone from "@/assets/icon-phone.webp";
-import logoSuperSim from "@/assets/logo-supersim.png";
+import supersimLogo from "@/assets/supersim-logo.svg";
 
 import { CheckCircle2, ShieldCheck, Lock } from "lucide-react";
 
@@ -76,42 +76,38 @@ const Aprovado = () => {
             </p>
           </div>
 
-          {/* Card de proposta — identidade do contrato (escuro) */}
-          <div className="relative rounded-3xl bg-gradient-to-br from-[hsl(222,47%,11%)] via-[hsl(222,47%,15%)] to-[hsl(222,47%,11%)] p-7 md:p-9 shadow-2xl ring-1 ring-white/10 overflow-hidden">
-            <div className="absolute -top-24 -right-24 w-64 h-64 rounded-full bg-primary/30 blur-3xl pointer-events-none" />
-            <div className="absolute -bottom-32 -left-20 w-72 h-72 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
+          {/* Card de proposta — mesma identidade do contrato no chat */}
+          <div className="relative rounded-3xl bg-gradient-to-br from-primary to-[hsl(30,95%,45%)] p-7 md:p-9 shadow-2xl ring-1 ring-white/20 overflow-hidden text-primary-foreground">
+            <div className="absolute -top-24 -right-24 w-64 h-64 rounded-full bg-white/15 blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-32 -left-20 w-72 h-72 rounded-full bg-white/10 blur-3xl pointer-events-none" />
 
             <div className="relative flex items-start justify-between mb-8">
               <div>
-                <p className="text-white/50 text-[11px] font-semibold uppercase tracking-[0.2em]">
+                <p className="text-primary-foreground/70 text-[11px] font-semibold uppercase tracking-[0.2em]">
                   Crédito Pessoal
                 </p>
-                <img
-                  src={logoSuperSim}
-                  alt="SuperSim"
-                  className="h-8 mt-2"
-                />
+                <img src={supersimLogo} alt="SuperSim" className="h-7 mt-2" />
               </div>
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/10 backdrop-blur border border-white/10">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-300" />
-                <span className="text-[10px] font-bold text-white tracking-wider">SEGURO</span>
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/20 backdrop-blur border border-white/20">
+                <ShieldCheck className="w-3.5 h-3.5 text-primary-foreground" />
+                <span className="text-[10px] font-bold text-primary-foreground tracking-wider">SEGURO</span>
               </div>
             </div>
 
             <div className="relative">
-              <p className="text-white/50 text-xs uppercase tracking-wider font-semibold">
+              <p className="text-primary-foreground/70 text-xs uppercase tracking-wider font-semibold">
                 Valor liberado
               </p>
               <div className="flex items-baseline gap-2 mt-1">
-                <span className="text-white/60 text-2xl font-light">R$</span>
-                <span className="text-white text-5xl md:text-6xl font-black tracking-tight">
+                <span className="text-primary-foreground/80 text-2xl font-light">R$</span>
+                <span className="text-primary-foreground text-5xl md:text-6xl font-black tracking-tight drop-shadow-sm">
                   {loanAmount.toLocaleString("pt-BR")}
                 </span>
-                <span className="text-white/60 text-2xl font-light">,00</span>
+                <span className="text-primary-foreground/80 text-2xl font-light">,00</span>
               </div>
-              <p className="text-white/60 text-sm mt-2">
-                em até <strong className="text-white">24x</strong> · a partir de{" "}
-                <strong className="text-white">R$ 137,50/mês</strong>
+              <p className="text-primary-foreground/85 text-sm mt-2">
+                em até <strong className="text-primary-foreground">24x</strong> · a partir de{" "}
+                <strong className="text-primary-foreground">R$ 137,50/mês</strong>
               </p>
             </div>
 
@@ -119,31 +115,31 @@ const Aprovado = () => {
             <div className="relative my-7 flex items-center">
               <div className="absolute -left-9 w-5 h-5 rounded-full bg-[hsl(220,20%,97%)]" />
               <div className="absolute -right-9 w-5 h-5 rounded-full bg-[hsl(220,20%,97%)]" />
-              <div className="flex-1 border-t border-dashed border-white/20" />
+              <div className="flex-1 border-t border-dashed border-primary-foreground/30" />
             </div>
 
             {/* Detalhes do contrato */}
             <div className="relative grid grid-cols-3 gap-5 text-left">
               <div>
-                <p className="text-white/50 text-[10px] uppercase tracking-wider font-semibold">
+                <p className="text-primary-foreground/70 text-[10px] uppercase tracking-wider font-semibold">
                   Proposta nº
                 </p>
-                <p className="text-white text-sm font-mono font-semibold mt-1">
+                <p className="text-primary-foreground text-sm font-mono font-semibold mt-1">
                   #{proposalNumber}
                 </p>
               </div>
               <div>
-                <p className="text-white/50 text-[10px] uppercase tracking-wider font-semibold">
+                <p className="text-primary-foreground/70 text-[10px] uppercase tracking-wider font-semibold">
                   Válida até
                 </p>
-                <p className="text-white text-sm font-semibold mt-1">{fmtDate(validade)}</p>
+                <p className="text-primary-foreground text-sm font-semibold mt-1">{fmtDate(validade)}</p>
               </div>
               <div>
-                <p className="text-white/50 text-[10px] uppercase tracking-wider font-semibold">
+                <p className="text-primary-foreground/70 text-[10px] uppercase tracking-wider font-semibold">
                   Taxa de juros
                 </p>
-                <p className="text-white text-sm font-semibold mt-1">
-                  1,32% <span className="text-white/50 font-normal">a.m.</span>
+                <p className="text-primary-foreground text-sm font-semibold mt-1">
+                  1,32% <span className="text-primary-foreground/70 font-normal">a.m.</span>
                 </p>
               </div>
             </div>
