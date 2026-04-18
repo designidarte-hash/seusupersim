@@ -7,7 +7,7 @@ import FunnelProgress from "@/components/FunnelProgress";
 import { useFunnelUser } from "@/hooks/use-funnel-user";
 import iconThumbsUp from "@/assets/icon-thumbsup.webp";
 import iconPhone from "@/assets/icon-phone.webp";
-import { formatBRL } from "@/lib/loan-amount";
+
 import { CheckCircle2, ShieldCheck, Zap, Lock, ArrowRight, Sparkles } from "lucide-react";
 
 const benefits = [
