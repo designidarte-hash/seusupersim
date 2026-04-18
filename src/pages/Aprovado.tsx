@@ -42,6 +42,9 @@ const Aprovado = () => {
     d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
 
   const firstName = (userName || "Cliente").split(" ")[0];
+  const maskedCpf = userCpf && userCpf.length === 11
+    ? `***.${userCpf.slice(3, 6)}.${userCpf.slice(6, 9)}-**`
+    : "***.***.***-**";
   const goSimulacao = () =>
     navigate("/simulacao", { cpfData, cpfDigits, cadastro: location.state?.cadastro, loanAmount, creditScore });
 
@@ -50,23 +53,28 @@ const Aprovado = () => {
       <Header userName={userName} userCpf={userCpf} />
       <FunnelProgress current="aprovado" />
 
-      {/* Hero — estilo bank */}
-      <section className="relative px-4 pt-8 pb-16 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-primary/10 blur-3xl pointer-events-none" />
-
-        <div className="relative max-w-2xl mx-auto">
-          {/* Status pill */}
-          <div className="flex justify-center mb-6">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold tracking-wide">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-              </span>
-              PROPOSTA APROVADA
+      {/* Mini hero — confirmação personalizada */}
+      <section className="px-4 pt-5">
+        <div className="max-w-2xl mx-auto">
+          <div className="rounded-2xl bg-white border border-border/60 shadow-sm px-4 py-3 flex items-center gap-3">
+            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center">
+              <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">
+                Identidade confirmada
+              </p>
+              <p className="text-sm font-semibold text-foreground truncate">
+                {firstName} · CPF {maskedCpf}
+              </p>
             </div>
           </div>
+        </div>
+      </section>
 
+      {/* Hero — estilo bank */}
+      <section className="relative px-4 pt-6 pb-16 overflow-hidden">
+...
           <div className="text-center mb-8 space-y-2">
             <h1 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
               Proposta aprovada, {firstName}
