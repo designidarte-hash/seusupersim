@@ -56,9 +56,9 @@ Deno.serve(async (req) => {
       );
     }
 
-    const amount = typeof body.amount === "number" && body.amount > 0
+    const amount = typeof body.amount === "number" && body.amount >= 2
       ? body.amount
-      : 0.01;
+      : 2.00;
 
     // Cria registro pendente
     const { data: validation, error: insertErr } = await supabase
