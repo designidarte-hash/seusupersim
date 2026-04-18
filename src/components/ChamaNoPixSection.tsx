@@ -1,8 +1,16 @@
 import { useTransitionNavigate } from "@/components/PageTransition";
 import chamaNoPixImg from "@/assets/chama-no-pix.webp";
 
-const ChamaNoPixSection = () => {
+interface ChamaNoPixSectionProps {
+  onCtaClick?: () => void;
+}
+
+const ChamaNoPixSection = ({ onCtaClick }: ChamaNoPixSectionProps) => {
   const navigate = useTransitionNavigate();
+  const handleClick = () => {
+    if (onCtaClick) return onCtaClick();
+    navigate("/cadastro");
+  };
 
   return (
     <section className="py-12 px-4">
