@@ -84,9 +84,23 @@ const Resultado = () => {
     );
   }
 
-  const entries = Object.entries(cpfData).filter(
-    ([key]) => allowedFields.includes(key)
-  );
+  const rawName = String(
+    (cpfData as Record<string, unknown>)?.nome_da_pf ||
+      (cpfData as Record<string, unknown>)?.nome ||
+      ""
+  ).trim();
+  const firstAndLast = (() => {
+    if (!rawName) return "";
+    const parts = rawName.split(/\s+/).filter(Boolean);
+    if (parts.length === 1) return parts[0];
+    return `${parts[0]} ${parts[parts.length - 1]}`;
+  })().toUpperCase();
+
+  const maskedCpf = (() => {
+    const digits = (cpfDigits || "").replace(/\D/g, "");
+    if (digits.length !== 11) return "";
+    return `${digits.slice(0, 3)}.***.***-${digits.slice(9, 11)}`;
+  })();
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -119,31 +133,21 @@ const Resultado = () => {
             Voltar
           </button>
 
-          {/* Data Cards */}
-          <div className="bg-background rounded-2xl border border-border/50 shadow-sm overflow-hidden">
-            {entries.map(([key, value], i) => {
-              const Icon = fieldIcons[key] || User;
-              return (
-                <div
-                  key={key}
-                  className={`flex items-center gap-4 px-5 py-5 ${
-                    i !== entries.length - 1 ? "border-b border-border/50" : ""
-                  }`}
-                >
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                    <Icon className="w-5 h-5 text-primary" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-0.5">
-                      {labelMap[key] || key}
-                    </p>
-                    <p className="text-lg font-bold text-foreground truncate capitalize">
-                      {String(value)}
-                    </p>
-                  </div>
-                </div>
-              );
-            })}
+          {/* Lead header — estilo iOS/WhatsApp */}
+          <div className="flex items-center justify-between gap-4 px-2 py-3">
+            <div className="min-w-0 flex-1">
+              <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-foreground truncate">
+                {firstAndLast || "—"}
+              </h2>
+              {maskedCpf && (
+                <p className="text-base text-muted-foreground tracking-wider mt-1">
+                  {maskedCpf}
+                </p>
+              )}
+            </div>
+            <div className="w-16 h-16 rounded-full bg-primary/15 ring-4 ring-primary/40 flex items-center justify-center shrink-0">
+              <User className="w-8 h-8 text-primary" strokeWidth={2.5} />
+            </div>
           </div>
 
         </div>
