@@ -46,7 +46,7 @@ const Aprovado = () => {
     navigate("/simulacao", { cpfData, cpfDigits, cadastro: location.state?.cadastro, loanAmount, creditScore });
 
   return (
-    <div className="min-h-screen flex flex-col bg-[hsl(220,20%,97%)] text-foreground">
+    <div className="min-h-screen flex flex-col bg-[hsl(36,60%,97%)] text-foreground">
       <Header userName={userName} userCpf={userCpf} />
       <FunnelProgress current="aprovado" />
 
