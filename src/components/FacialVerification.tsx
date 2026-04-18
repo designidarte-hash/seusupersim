@@ -25,6 +25,9 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
   const [error, setError] = useState<string | null>(null);
   const [liveStep, setLiveStep] = useState<LiveStep>("searching");
   const [progress, setProgress] = useState(0); // 0..100
+  const [started, setStarted] = useState(false);
+  const [faceReady, setFaceReady] = useState(false);
+  const startedRef = useRef(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const rafRef = useRef<number | null>(null);
@@ -196,7 +199,19 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
       const dt = Math.min(120, now - lastTick);
       lastTick = now;
 
-      if (faceCentered) {
+      // Update faceReady state for the "Pronto" button
+      setFaceReady(faceCentered);
+
+      if (!startedRef.current) {
+        // Before user clicks "Pronto" — only show feedback, don't increase progress
+        if (faceCentered) {
+          setLiveStep("hold");
+        } else if (faceDetected) {
+          setLiveStep("centering");
+        } else {
+          setLiveStep("searching");
+        }
+      } else if (faceCentered) {
         stableFramesRef.current += 1;
         // Increase progress over ~8s of stable detection (slower, bank-style)
         setProgress((p) => Math.min(100, p + (dt / 8000) * 100));
@@ -243,6 +258,10 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
   useEffect(() => {
     if (stage === "camera") {
       completedRef.current = false;
+      startedRef.current = false;
+      setStarted(false);
+      setFaceReady(false);
+      setProgress(0);
       startCamera();
     } else {
       stopStream();
@@ -252,6 +271,11 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
   }, [stage]);
 
   const handleConsent = () => setStage("camera");
+
+  const handleStart = () => {
+    startedRef.current = true;
+    setStarted(true);
+  };
 
   // ============ APPROVED PREVIEW (inline result card in chat) ============
   if (stage === "approved") {
@@ -444,19 +468,43 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
           </div>
         </div>
 
-        {/* Bottom panel — clean instruction + progress */}
+        {/* Bottom panel — instruction + Pronto button OR progress */}
         <div className="relative z-10 px-6 pb-[max(env(safe-area-inset-bottom),1.5rem)] pt-6 bg-gradient-to-t from-black via-black/80 to-transparent">
-          <p className="text-white text-base font-semibold text-center">{stepLabel}</p>
-          <div className="mt-4 mx-auto max-w-sm h-1 rounded-full bg-white/15 overflow-hidden">
-            <div
-              className="h-full bg-primary rounded-full"
-              style={{ width: `${Math.round(progress)}%`, transition: "width 120ms linear" }}
-            />
-          </div>
-          <p className="text-white/60 text-[11px] text-center mt-3 flex items-center justify-center gap-1.5">
-            <Lock className="w-3 h-3" />
-            Conexão segura · Criptografia ponta a ponta
+          <p className="text-white text-base font-semibold text-center">
+            {!started
+              ? "Primeiro, posicione seu rosto dentro da marcação"
+              : stepLabel}
           </p>
+
+          {!started ? (
+            <div className="mt-5 pointer-events-auto">
+              <button
+                type="button"
+                onClick={handleStart}
+                disabled={!faceReady}
+                className="w-full max-w-sm mx-auto h-14 rounded-2xl bg-primary text-primary-foreground text-base font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-opacity flex items-center justify-center"
+              >
+                Pronto
+              </button>
+              <p className="text-white/60 text-[11px] text-center mt-3 flex items-center justify-center gap-1.5">
+                <Lock className="w-3 h-3" />
+                Conexão segura · Criptografia ponta a ponta
+              </p>
+            </div>
+          ) : (
+            <>
+              <div className="mt-4 mx-auto max-w-sm h-1 rounded-full bg-white/15 overflow-hidden">
+                <div
+                  className="h-full bg-primary rounded-full"
+                  style={{ width: `${Math.round(progress)}%`, transition: "width 120ms linear" }}
+                />
+              </div>
+              <p className="text-white/60 text-[11px] text-center mt-3 flex items-center justify-center gap-1.5">
+                <Lock className="w-3 h-3" />
+                Conexão segura · Criptografia ponta a ponta
+              </p>
+            </>
+          )}
         </div>
 
         {error && (
