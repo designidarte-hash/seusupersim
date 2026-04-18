@@ -339,7 +339,7 @@ const BankSelectorCard = ({ onSelect, selected }: { onSelect: (bank: string) => 
       <p className="text-sm font-semibold text-foreground">Em qual banco está registrada sua chave Pix?</p>
       <div className="bg-amber-50 border border-amber-200 rounded-xl p-3">
         <p className="text-[11px] text-amber-800 leading-relaxed">
-          ⚠️ Selecione o banco vinculado à chave informada. O valor será creditado <strong>diretamente nessa instituição</strong>.
+          Selecione o banco vinculado à chave informada. O valor será creditado <strong>diretamente nessa instituição</strong>.
         </p>
       </div>
       <input
@@ -399,7 +399,7 @@ const PixConfirmCard = ({ type, value, onConfirm, onEdit, confirmed }: { type: s
           <div className="flex gap-2">
             <button onClick={onConfirm} className="btn-3d flex-1 !py-2.5 !text-sm !rounded-xl !px-4">Confirmar</button>
             {type !== "cpf" && (
-              <button onClick={() => setEditing(true)} className="btn-3d-outline flex-1">✏️ Editar</button>
+              <button onClick={() => setEditing(true)} className="btn-3d-outline flex-1">Editar</button>
             )}
           </div>
         </>
@@ -1654,7 +1654,7 @@ const Chat = () => {
   const handleProceed = () => {
     if (proceeded) return;
     setProceeded(true);
-    setMessages((prev) => [...prev, { id: Date.now(), text: "Prosseguir ▶️", fromUser: true, time: getNow(), read: true }]);
+    setMessages((prev) => [...prev, { id: Date.now(), text: "Prosseguir", fromUser: true, time: getNow(), read: true }]);
     if (loanDetails) {
       setTimeout(() => {
         addBotMessages(() => [
@@ -1779,7 +1779,7 @@ const Chat = () => {
     if (facialVerified) return;
     setFacialVerified(true);
     setTimeout(() => {
-      setMessages((prev) => [...prev, { id: Date.now(), text: "Verificação facial concluída ✅", fromUser: true, time: getNow(), read: true }]);
+      setMessages((prev) => [...prev, { id: Date.now(), text: "Verificação facial concluída", fromUser: true, time: getNow(), read: true }]);
     }, 300);
     setTimeout(() => {
       addBotMessages(() => [
@@ -1999,7 +1999,7 @@ const Chat = () => {
     setTimeout(() => {
       addBotMessages(() => [{
         id: Date.now() + 1,
-        text: `Excelente escolha, ${firstName || "cliente"}! Seguro Prestamista assinado com sucesso! ✅\n\nAgora vamos gerar o PIX do pagamento único do seguro.`,
+        text: `Excelente escolha, ${firstName || "cliente"}! Seguro Prestamista assinado com sucesso!\n\nAgora vamos gerar o PIX do pagamento único do seguro.`,
         fromUser: false, time: getNow(), read: true,
       }]).then(() => {
         generatePixPayment();
@@ -2263,7 +2263,7 @@ const Chat = () => {
                     onClick={handleProceed}
                     className="btn-3d w-full !py-2.5 !rounded-xl !text-sm !px-4"
                   >
-                    ▶️ Prosseguir
+                    Prosseguir
                   </button>
                 </div>
               )}
@@ -2453,7 +2453,7 @@ const Chat = () => {
             onClick={handleSendGreeting}
             className="w-full py-3 rounded-2xl bg-[#DCF8C6] text-foreground font-medium text-sm shadow-sm hover:bg-[#d0f0b8] transition-colors border border-green-200 text-left px-4"
           >
-            <span className="text-muted-foreground text-xs block mb-0.5">Toque para enviar 👇</span>
+            <span className="text-muted-foreground text-xs block mb-0.5">Toque para enviar</span>
             {initialMessage || "Olá, gostaria de solicitar meu empréstimo!"}
           </button>
         </div>
