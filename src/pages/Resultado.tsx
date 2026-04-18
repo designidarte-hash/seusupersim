@@ -120,6 +120,7 @@ const Resultado = () => {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
+      <FunnelProgress current="resultado" />
 
       {/* Hero strip matching Index primary band */}
       <div className="bg-primary py-6 px-4">

@@ -150,6 +150,7 @@ const Cadastro = () => {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
+      <FunnelProgress current="cadastro" />
 
       <div className="bg-primary py-6 px-4">
         <div className="max-w-lg mx-auto flex items-center justify-center gap-3 text-center">

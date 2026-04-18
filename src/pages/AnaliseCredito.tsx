@@ -62,6 +62,7 @@ const AnaliseCredito = () => {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
+      <FunnelProgress current="analise" />
 
       <div className="w-full">
         <img src={bannerEmprestimo} alt="Empréstimo rápido e fácil" className="w-full h-auto" />

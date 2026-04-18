@@ -36,6 +36,7 @@ const Aprovado = () => {
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <Header />
+      <FunnelProgress current="aprovado" />
 
       {/* Hero - Approval with sunburst stripes */}
       <section className="relative py-20 px-4 text-center overflow-hidden bg-[hsl(40,40%,95%)]">
