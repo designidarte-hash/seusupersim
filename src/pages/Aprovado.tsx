@@ -87,7 +87,11 @@ const Aprovado = () => {
         </div>
       </section>
 
-      <ChamaNoPixSection />
+      <ChamaNoPixSection
+        onCtaClick={() =>
+          navigate("/simulacao", { cpfData, cpfDigits, cadastro: location.state?.cadastro, loanAmount, creditScore })
+        }
+      />
 
       {/* Benefits */}
       <section className="py-12 px-4 bg-sunburst">
