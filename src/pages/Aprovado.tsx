@@ -74,7 +74,20 @@ const Aprovado = () => {
 
       {/* Hero — estilo bank */}
       <section className="relative px-4 pt-6 pb-16 overflow-hidden">
-...
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-primary/10 blur-3xl pointer-events-none" />
+
+        <div className="relative max-w-2xl mx-auto">
+          {/* Status pill */}
+          <div className="flex justify-center mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold tracking-wide">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+              </span>
+              PROPOSTA APROVADA
+            </div>
+          </div>
           <div className="text-center mb-8 space-y-2">
             <h1 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
               Proposta aprovada, {firstName}
