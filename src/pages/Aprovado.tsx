@@ -79,7 +79,7 @@ const Aprovado = () => {
           </div>
 
           <button
-            onClick={() => navigate("/cadastro", { cpfData, cpfDigits, loanAmount, creditScore })}
+            onClick={() => navigate("/simulacao", { cpfData, cpfDigits, cadastro: location.state?.cadastro, loanAmount, creditScore })}
             className="btn-3d w-full max-w-sm mx-auto mt-6 relative z-10 shadow-2xl text-xl"
           >
             Solicitar agora
