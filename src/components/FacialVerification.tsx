@@ -400,17 +400,15 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
   const overlay =
     stage === "camera" ? (
       <div className="fixed inset-0 z-[9999] bg-black flex flex-col animate-in fade-in duration-200">
-        {/* Camera feed — contain to avoid the cropped/zoomed-in look */}
-        <div className="absolute inset-0 bg-black overflow-hidden flex items-center justify-center">
-          <video
-            ref={videoRef}
-            playsInline
-            muted
-            autoPlay
-            className="max-w-full max-h-full w-auto h-auto object-contain"
-            style={{ transform: "scaleX(-1)" }}
-          />
-        </div>
+        {/* Camera feed — cover the screen using natural lens framing (no digital zoom applied) */}
+        <video
+          ref={videoRef}
+          playsInline
+          muted
+          autoPlay
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ transform: "scaleX(-1)" }}
+        />
 
         {/* Dark mask with oval cutout — bank-style spotlight on the face */}
         <svg
@@ -421,10 +419,10 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
           <defs>
             <mask id="face-oval-mask">
               <rect width="100" height="100" fill="white" />
-              <ellipse cx="50" cy="50" rx="22" ry="32" fill="black" />
+              <ellipse cx="50" cy="42" rx="28" ry="34" fill="black" />
             </mask>
           </defs>
-          <rect width="100" height="100" fill="rgba(0,0,0,0.72)" mask="url(#face-oval-mask)" />
+          <rect width="100" height="100" fill="rgba(0,0,0,0.78)" mask="url(#face-oval-mask)" />
         </svg>
 
         {/* Top bar */}
