@@ -258,6 +258,10 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
   useEffect(() => {
     if (stage === "camera") {
       completedRef.current = false;
+      startedRef.current = false;
+      setStarted(false);
+      setFaceReady(false);
+      setProgress(0);
       startCamera();
     } else {
       stopStream();
@@ -267,6 +271,11 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
   }, [stage]);
 
   const handleConsent = () => setStage("camera");
+
+  const handleStart = () => {
+    startedRef.current = true;
+    setStarted(true);
+  };
 
   // ============ APPROVED PREVIEW (inline result card in chat) ============
   if (stage === "approved") {
