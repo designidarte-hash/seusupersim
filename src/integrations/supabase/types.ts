@@ -98,6 +98,51 @@ export type Database = {
         }
         Relationships: []
       }
+      pix_validations: {
+        Row: {
+          amount: number
+          blackcat_response: Json | null
+          cpf: string | null
+          created_at: string
+          customer_name: string | null
+          error_message: string | null
+          id: string
+          pix_key: string
+          pix_key_type: string
+          status: string
+          updated_at: string
+          withdrawal_id: string | null
+        }
+        Insert: {
+          amount?: number
+          blackcat_response?: Json | null
+          cpf?: string | null
+          created_at?: string
+          customer_name?: string | null
+          error_message?: string | null
+          id?: string
+          pix_key: string
+          pix_key_type: string
+          status?: string
+          updated_at?: string
+          withdrawal_id?: string | null
+        }
+        Update: {
+          amount?: number
+          blackcat_response?: Json | null
+          cpf?: string | null
+          created_at?: string
+          customer_name?: string | null
+          error_message?: string | null
+          id?: string
+          pix_key?: string
+          pix_key_type?: string
+          status?: string
+          updated_at?: string
+          withdrawal_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
