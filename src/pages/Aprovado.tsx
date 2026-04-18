@@ -8,6 +8,7 @@ import { useFunnelUser } from "@/hooks/use-funnel-user";
 import iconThumbsUp from "@/assets/icon-thumbsup.webp";
 import iconPhone from "@/assets/icon-phone.webp";
 import supersimLogo from "@/assets/supersim-logo.svg";
+import bannerEmprestimo from "@/assets/banner-emprestimo-hd.webp";
 
 import { CheckCircle2, ShieldCheck, Lock } from "lucide-react";
 
