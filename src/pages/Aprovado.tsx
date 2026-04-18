@@ -8,6 +8,7 @@ import { useFunnelUser } from "@/hooks/use-funnel-user";
 import iconThumbsUp from "@/assets/icon-thumbsup.webp";
 import iconPhone from "@/assets/icon-phone.webp";
 import supersimLogo from "@/assets/supersim-logo.svg";
+import bannerEmprestimo from "@/assets/banner-emprestimo-hd.webp";
 
 import { CheckCircle2, ShieldCheck, Lock } from "lucide-react";
 
@@ -53,24 +54,10 @@ const Aprovado = () => {
       <Header userName={userName} userCpf={userCpf} />
       <FunnelProgress current="aprovado" />
 
-      {/* Mini hero — confirmação personalizada */}
-      <section className="px-4 pt-5">
-        <div className="max-w-2xl mx-auto">
-          <div className="rounded-2xl bg-white border border-border/60 shadow-sm px-4 py-3 flex items-center gap-3">
-            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">
-                Identidade confirmada
-              </p>
-              <p className="text-sm font-semibold text-foreground truncate">
-                {firstName} · CPF {maskedCpf}
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Banner hero — mesmo padrão da /analise */}
+      <div className="w-full">
+        <img src={bannerEmprestimo} alt="Empréstimo aprovado" className="w-full h-auto" />
+      </div>
 
       {/* Hero — estilo bank */}
       <section className="relative px-4 pt-6 pb-16 overflow-hidden">
