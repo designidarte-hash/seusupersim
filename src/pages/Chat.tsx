@@ -1829,7 +1829,9 @@ const Chat = () => {
     }, 300);
     setTimeout(() => {
       addBotMessages(() => [
-        { id: Date.now() + 3, text: `${firstName || "Cliente"}, para proteger seu empréstimo, incluímos o Seguro Prestamista Allianz com pagamento único de R$ 34,90.`, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 3, text: `${firstName || "Cliente"}, boa notícia! Junto com o seu empréstimo você tem um benefício de proteção opcional: o Seguro Prestamista Allianz. 🛡️`, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 31, text: `Funciona assim: por um valor único de R$ 34,90, se acontecer algum imprevisto e você ficar impossibilitado de pagar (como desemprego involuntário ou problemas de saúde), a seguradora quita as parcelas restantes do empréstimo. Sua família fica tranquila e seu nome continua limpo.`, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 32, text: `Preparamos um vídeo curtinho explicando como funciona. Dá uma olhada 👇`, fromUser: false, time: getNow(), read: true },
       ]).then(() => {
         addBotMessages(() => [
           { id: Date.now() + 35, videoSrc: "/seguro-prestamista.mov", fromUser: false, time: getNow(), read: true },
@@ -2170,15 +2172,22 @@ const Chat = () => {
               {msg.text && <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.text}</p>}
               {msg.audioSrc && <AudioPlayer src={msg.audioSrc} />}
               {msg.videoSrc && (
-                <video
-                  src={msg.videoSrc}
-                  controls
-                  playsInline
-                  autoPlay
-                  muted
-                  preload="auto"
-                  className="rounded-xl max-w-[260px] w-full bg-black"
-                />
+                <div className="rounded-xl overflow-hidden bg-black w-[260px] max-w-full ring-1 ring-black/10 shadow-md">
+                  <video
+                    src={msg.videoSrc}
+                    controls
+                    playsInline
+                    autoPlay
+                    muted
+                    preload="auto"
+                    poster="/placeholder.svg"
+                    className="w-full h-auto block"
+                  />
+                  <div className="px-3 py-1.5 bg-white/95 flex items-center gap-1.5 border-t border-black/5">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                    <span className="text-[11px] font-medium text-gray-700">Vídeo explicativo · Allianz</span>
+                  </div>
+                </div>
               )}
               {msg.loanCard && <LoanConfirmCard details={msg.loanCard} onConfirm={handleLoanConfirm} confirmed={loanConfirmed} />}
               {msg.pixSelector && pixStep === "selecting" && <PixSelectorCard onSelect={handlePixSelect} />}
