@@ -168,28 +168,97 @@ const PixSelectorCard = ({ onSelect }: { onSelect: (type: string) => void }) => 
 
 const BANK_OPTIONS = [
   "Nubank",
-  "Caixa Econômica",
-  "Itaú",
+  "Caixa Econômica Federal",
+  "Itaú Unibanco",
   "Bradesco",
   "Banco do Brasil",
   "Santander",
-  "Inter",
+  "Banco Inter",
   "C6 Bank",
   "PicPay",
   "Mercado Pago",
   "Next",
-  "Original",
+  "Banco Original",
   "Sicoob",
   "Sicredi",
   "BTG Pactual",
   "Will Bank",
   "Neon",
-  "Pan",
-  "Safra",
-  "Outro",
+  "Banco Pan",
+  "Banco Safra",
+  "Banco BMG",
+  "Banco Daycoval",
+  "Banco Votorantim (BV)",
+  "Banco ABC Brasil",
+  "Banco Modal",
+  "Banco Banrisul",
+  "Banestes",
+  "Banco do Nordeste",
+  "Banco da Amazônia",
+  "Banco Bocom BBM",
+  "Banco Cetelem",
+  "Banco Citibank",
+  "Banco Credit Suisse",
+  "Banco Crefisa",
+  "Banco Daycred",
+  "Banco Fibra",
+  "Banco Industrial do Brasil",
+  "Banco Mercantil do Brasil",
+  "Banco Olé Bonsucesso",
+  "Banco Paulista",
+  "Banco Pine",
+  "Banco Rendimento",
+  "Banco Ribeirão Preto",
+  "Banco Semear",
+  "Banco Sofisa",
+  "Banco Topázio",
+  "Banco Triângulo (Tribanco)",
+  "Banco Votorantim",
+  "Banco XP",
+  "BS2",
+  "Agibank",
+  "Ailos",
+  "Banco Bari",
+  "Banco BV",
+  "Banco Cresol",
+  "Banco Digio",
+  "Banco Genial",
+  "Banco Letsbank",
+  "Banco Master",
+  "Banco Pottencial",
+  "Banco PSA Finance",
+  "Banco Renner",
+  "Banco Topázio",
+  "Banco Voiter",
+  "Banese",
+  "Banpará",
+  "BancoSeguro",
+  "Caruana SCFI",
+  "Cooperativa Central Ailos",
+  "Cora",
+  "Iti (Itaú)",
+  "Juno",
+  "MoneyP",
+  "Neon Pagamentos",
+  "Pagseguro / PagBank",
+  "Pefisa",
+  "Pinbank",
+  "RecargaPay",
+  "Stone",
+  "Superdigital",
+  "Trinus",
+  "Unicred",
+  "Uniprime",
+  "Via Certa Financiadora",
+  "VR Pagamentos",
+  "Western Union",
+  "Banco Topázio",
+  "Outro / Não listado",
 ];
 
 const BankSelectorCard = ({ onSelect, selected }: { onSelect: (bank: string) => void; selected: string | null }) => {
+  const [search, setSearch] = useState("");
+
   if (selected) {
     return (
       <div className="space-y-2">
@@ -199,6 +268,13 @@ const BankSelectorCard = ({ onSelect, selected }: { onSelect: (bank: string) => 
       </div>
     );
   }
+
+  const uniqueBanks = Array.from(new Set(BANK_OPTIONS));
+  const normalized = search.trim().toLowerCase();
+  const filtered = normalized
+    ? uniqueBanks.filter((b) => b.toLowerCase().includes(normalized))
+    : uniqueBanks;
+
   return (
     <div className="space-y-3">
       <p className="text-sm font-semibold text-foreground">Em qual banco está registrada sua chave Pix?</p>
@@ -207,8 +283,18 @@ const BankSelectorCard = ({ onSelect, selected }: { onSelect: (bank: string) => 
           ⚠️ Selecione o banco vinculado à chave informada. O valor será creditado <strong>diretamente nessa instituição</strong>.
         </p>
       </div>
+      <input
+        type="text"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        placeholder="Buscar banco..."
+        className="w-full px-3 py-2 text-sm rounded-xl border border-border focus:outline-none focus:border-primary bg-background"
+      />
       <div className="max-h-64 overflow-y-auto space-y-1.5 pr-1">
-        {BANK_OPTIONS.map((bank) => (
+        {filtered.length === 0 && (
+          <p className="text-xs text-muted-foreground text-center py-3">Nenhum banco encontrado.</p>
+        )}
+        {filtered.map((bank) => (
           <button
             key={bank}
             onClick={() => onSelect(bank)}
