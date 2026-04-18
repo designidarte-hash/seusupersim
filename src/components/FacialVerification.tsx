@@ -216,7 +216,10 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
             setTimeout(() => {
               stopStream();
               setStage("processing");
-              setTimeout(() => setStage("approved"), 1200);
+              setTimeout(() => {
+                playSuccessBeep();
+                setStage("approved");
+              }, 1200);
               setTimeout(() => onComplete(), 2200);
             }, 800);
           }
