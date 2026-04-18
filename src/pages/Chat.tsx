@@ -1523,6 +1523,36 @@ const Chat = () => {
     return `SS-${stamp}${rnd}`;
   }, []);
 
+  // Pré-carrega o vídeo do seguro logo na entrada do chat
+  // para que ele apareça quase instantâneo quando o bot enviar.
+  useEffect(() => {
+    const VIDEO_URL = "/seguro-prestamista.mov";
+
+    // 1) <link rel="preload"> no <head> — inicia o download em paralelo
+    const link = document.createElement("link");
+    link.rel = "preload";
+    link.as = "video";
+    link.href = VIDEO_URL;
+    link.type = "video/quicktime";
+    document.head.appendChild(link);
+
+    // 2) Elemento <video> oculto que efetivamente baixa os bytes
+    //    (alguns navegadores ignoram preload de vídeo via <link>)
+    const v = document.createElement("video");
+    v.src = VIDEO_URL;
+    v.preload = "auto";
+    v.muted = true;
+    (v as any).playsInline = true;
+    v.style.display = "none";
+    document.body.appendChild(v);
+    try { v.load(); } catch {}
+
+    return () => {
+      try { document.head.removeChild(link); } catch {}
+      try { document.body.removeChild(v); } catch {}
+    };
+  }, []);
+
   // Persist state to sessionStorage for refresh resilience
   useEffect(() => {
     if (!nome && !cpf) return;
