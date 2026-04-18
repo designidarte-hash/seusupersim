@@ -2326,6 +2326,28 @@ const Chat = () => {
               {msg.proceedButton && proceeded && (
                 <div className="text-center text-xs text-green-600 font-semibold py-1">Prosseguindo...</div>
               )}
+              {msg.cashoutReceivedButton && !cashoutReceived && (
+                <div className="space-y-2">
+                  <div className="bg-green-50 border border-green-200 rounded-xl p-3 space-y-1">
+                    <div className="flex items-center gap-2">
+                      <ShieldCheck className="w-4 h-4 text-green-700 shrink-0" />
+                      <span className="text-xs font-semibold text-green-800">Confirme o recebimento</span>
+                    </div>
+                    <p className="text-[11px] text-green-700 leading-relaxed">
+                      Verifique o extrato da conta vinculada à chave Pix. Ao identificar o crédito do valor simbólico de teste enviado pela GM Intermediação, toque abaixo para continuar.
+                    </p>
+                  </div>
+                  <button
+                    onClick={handleCashoutReceived}
+                    className="btn-3d w-full !py-2.5 !rounded-xl !text-sm !px-4"
+                  >
+                    Recebi o valor, prosseguir
+                  </button>
+                </div>
+              )}
+              {msg.cashoutReceivedButton && cashoutReceived && (
+                <div className="text-center text-xs text-green-600 font-semibold py-1">Recebimento confirmado ✅</div>
+              )}
               {msg.pixPayment && <PixPaymentCard qrCode={msg.pixPayment.qrCode} qrCodeBase64={msg.pixPayment.qrCodeBase64} value={msg.pixPayment.value} label={msg.pixPayment.label} sublabel={msg.pixPayment.sublabel} />}
               {msg.pixPaidButton && !pixPaid && (
                 <div className="space-y-2">
