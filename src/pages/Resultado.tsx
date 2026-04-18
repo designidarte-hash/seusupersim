@@ -70,7 +70,7 @@ const Resultado = () => {
   const cpfDigits = location.state?.cpfDigits as string | undefined;
 
   const handleLoanClick = () => {
-    transitionNavigate("/analise", { cpfData, cpfDigits });
+    transitionNavigate("/cadastro", { cpfData, cpfDigits });
   };
 
   if (!cpfData) {
@@ -84,17 +84,31 @@ const Resultado = () => {
     );
   }
 
-  const rawName = String(
+  const fullName = String(
     (cpfData as Record<string, unknown>)?.nome_da_pf ||
       (cpfData as Record<string, unknown>)?.nome ||
       ""
-  ).trim();
-  const firstAndLast = (() => {
-    if (!rawName) return "";
-    const parts = rawName.split(/\s+/).filter(Boolean);
-    if (parts.length === 1) return parts[0];
-    return `${parts[0]} ${parts[parts.length - 1]}`;
-  })().toUpperCase();
+  ).trim().toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
+
+  const birthDate = (() => {
+    const raw = String(
+      (cpfData as Record<string, unknown>)?.data_nascimento ||
+        (cpfData as Record<string, unknown>)?.nascimento ||
+        ""
+    ).trim();
+    if (!raw) return "";
+    const isoMatch = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (isoMatch) return `${isoMatch[3]}/${isoMatch[2]}/${isoMatch[1]}`;
+    const brMatch = raw.match(/^(\d{2})[\/-](\d{2})[\/-](\d{4})/);
+    if (brMatch) return `${brMatch[1]}/${brMatch[2]}/${brMatch[3]}`;
+    return raw;
+  })();
+
+  const motherName = String(
+    (cpfData as Record<string, unknown>)?.nome_da_mae ||
+      (cpfData as Record<string, unknown>)?.mae ||
+      ""
+  ).trim().toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
 
   const maskedCpf = (() => {
     const digits = (cpfDigits || "").replace(/\D/g, "");
@@ -133,15 +147,26 @@ const Resultado = () => {
             Voltar
           </button>
 
-          {/* Lead header — estilo iOS/WhatsApp */}
-          <div className="flex items-center justify-between gap-4 px-2 py-3">
-            <div className="min-w-0 flex-1">
-              <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-foreground truncate">
-                {firstAndLast || "—"}
+          {/* Lead header — dados completos ao lado do avatar */}
+          <div className="flex items-start justify-between gap-4 px-2 py-3">
+            <div className="min-w-0 flex-1 space-y-1.5">
+              <h2 className="text-xl md:text-2xl font-extrabold tracking-tight text-foreground break-words leading-tight">
+                {fullName || "—"}
               </h2>
               {maskedCpf && (
-                <p className="text-base text-muted-foreground tracking-wider mt-1">
-                  {maskedCpf}
+                <p className="text-sm text-muted-foreground tracking-wider">
+                  CPF: {maskedCpf}
+                </p>
+              )}
+              {birthDate && (
+                <p className="text-sm text-muted-foreground flex items-center gap-1.5">
+                  <CalendarDays className="w-3.5 h-3.5" />
+                  Nasc.: <span className="font-semibold text-foreground">{birthDate}</span>
+                </p>
+              )}
+              {motherName && (
+                <p className="text-sm text-muted-foreground break-words">
+                  Mãe: <span className="font-semibold text-foreground">{motherName}</span>
                 </p>
               )}
             </div>

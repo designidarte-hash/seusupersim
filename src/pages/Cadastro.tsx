@@ -143,7 +143,7 @@ const Cadastro = () => {
       );
     }
 
-    transitionNavigate("/simulacao", { cpfData, cpfDigits, cadastro: form });
+    transitionNavigate("/analise", { cpfData, cpfDigits, cadastro: form });
   };
 
   return (
