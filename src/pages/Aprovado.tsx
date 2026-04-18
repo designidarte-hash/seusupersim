@@ -31,12 +31,13 @@ const Aprovado = () => {
   const navigate = useTransitionNavigate();
   const cpfData = location.state?.cpfData as Record<string, unknown> | null;
   const cpfDigits = location.state?.cpfDigits as string | undefined;
+  const { userName, userCpf } = useFunnelUser();
   const loanAmount = 2500;
   const creditScore = (location.state?.creditScore as number) || 500;
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
-      <Header />
+      <Header userName={userName} userCpf={userCpf} />
       <FunnelProgress current="aprovado" />
 
       {/* Hero - Approval with sunburst stripes */}

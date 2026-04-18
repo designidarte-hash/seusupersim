@@ -21,6 +21,7 @@ const AnaliseCredito = () => {
   const location = useLocation();
   const cpfData = location.state?.cpfData;
   const cpfDigits = location.state?.cpfDigits;
+  const { userName, userCpf } = useFunnelUser();
   const cadastro = location.state?.cadastro;
   const [currentStep, setCurrentStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
@@ -62,7 +63,7 @@ const AnaliseCredito = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
+      <Header userName={userName} userCpf={userCpf} />
       <FunnelProgress current="analise" />
 
       <div className="w-full">

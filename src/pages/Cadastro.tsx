@@ -70,6 +70,7 @@ const Cadastro = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const transitionNavigate = useTransitionNavigate();
+  const { userName, userCpf } = useFunnelUser();
   const routeState = (location.state as CadastroState) ?? null;
   const storedCadastroState = (() => {
     if (typeof window === "undefined") return {} as Record<string, any>;
@@ -150,7 +151,7 @@ const Cadastro = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
+      <Header userName={userName} userCpf={userCpf} />
       <FunnelProgress current="cadastro" />
 
       <div className="bg-primary py-6 px-4">
