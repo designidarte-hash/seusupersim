@@ -1800,9 +1800,12 @@ const Chat = () => {
     }, 200);
     setTimeout(() => {
       addBotMessages(() => [
-        { id: Date.now() + 1, text: `Ótimo, ${firstName || "cliente"}! Conta verificada com sucesso. Agora me confirme em qual banco essa chave Pix está registrada para finalizarmos a validação da instituição financeira.`, fromUser: false, time: getNow(), read: true },
-        { id: Date.now() + 2, bankSelector: true, fromUser: false, time: getNow(), read: true },
-      ]);
+        { id: Date.now() + 1, text: `Ótimo, ${firstName || "cliente"}! Conta verificada com sucesso ✅. Antes de assinar o contrato, precisamos validar sua identidade com uma selfie. É rápido e seguro:`, fromUser: false, time: getNow(), read: true },
+      ]).then(() => {
+        addBotMessages(() => [
+          { id: Date.now() + 2, facialVerification: true, fromUser: false, time: getNow(), read: true },
+        ]);
+      });
     }, 500);
   };
 
