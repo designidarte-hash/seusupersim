@@ -1871,6 +1871,9 @@ const Chat = () => {
               {msg.pixConfirm && (
                 <PixConfirmCard type={msg.pixConfirm.type} value={pixValue} onConfirm={handlePixConfirm} onEdit={handlePixEdit} confirmed={pixConfirmed} />
               )}
+              {msg.bankSelector && (
+                <BankSelectorCard onSelect={handleBankSelect} selected={selectedBank} />
+              )}
               {msg.contractCard && (
                 <ContractCard
                   nome={nome || "N/A"}
