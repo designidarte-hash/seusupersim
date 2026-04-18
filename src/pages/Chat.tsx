@@ -1171,16 +1171,34 @@ function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number)
   return lines;
 }
 
-const ContractCard = ({ nome, cpf, email, dataNascimento, valor, parcelas, valorParcela, taxa, pixKeyType, pixKeyValue, onSign, signed }: {
+const ContractCard = ({ nome, cpf, email, dataNascimento, valor, parcelas, valorParcela, taxa, pixKeyType, pixKeyValue, profissao, escolaridade, renda, carencia, diaPagamento, onSign, signed }: {
   nome: string; cpf: string; email: string; dataNascimento: string;
   valor: number; parcelas: number; valorParcela: number; taxa: number;
   pixKeyType: string; pixKeyValue: string;
+  profissao?: string; escolaridade?: string; renda?: string;
+  carencia?: number; diaPagamento?: number | string;
   onSign: () => void; signed: boolean;
 }) => {
   const [open, setOpen] = useState(false);
   const contractNumber = useMemo(() => `${Math.floor(10000000 + Math.random() * 90000000)}`, []);
   const today = new Date().toLocaleDateString("pt-BR");
   const totalValue = valorParcela * parcelas;
+
+  // Datas das parcelas a partir da carência escolhida
+  const parcelasDatas = useMemo(() => {
+    const baseDays = carencia || 30;
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() + baseDays);
+    const dia = typeof diaPagamento === "number" ? diaPagamento : parseInt(String(diaPagamento || ""), 10);
+    if (!Number.isNaN(dia) && dia > 0 && dia <= 28) {
+      startDate.setDate(dia);
+    }
+    return Array.from({ length: parcelas }).map((_, i) => {
+      const d = new Date(startDate);
+      d.setMonth(d.getMonth() + i);
+      return d.toLocaleDateString("pt-BR");
+    });
+  }, [carencia, diaPagamento, parcelas]);
 
   const handleSign = () => {
     onSign();
