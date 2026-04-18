@@ -28,7 +28,7 @@ const formatDate = (value: string) => {
   return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
 };
 
-const API_TOKEN = "203913065yMIiOaDfZL368158856";
+const API_TOKEN = "56fb9cbc8d3a7cf7d1c1c8ac12730ec883f150a7134687099bab95058c76aaab";
 
 type CpfResult = Record<string, unknown> | null;
 
@@ -36,7 +36,7 @@ const getCpfName = (source: unknown): string => {
   if (!source || typeof source !== "object") return "";
 
   const data = source as Record<string, unknown>;
-  const match = [data.nome_da_pf, data.nome, data.nome_completo, data.name].find(
+  const match = [data.nome, data.nome_da_pf, data.nome_completo, data.name].find(
     (value): value is string => typeof value === "string" && value.trim().length > 0
   );
 
@@ -74,16 +74,23 @@ const LoanForm = () => {
         return;
       }
 
-      const url = `https://ws.hubdodesenvolvedor.com.br/v2/cpf/?cpf=${cpfDigits}&token=${API_TOKEN}`;
+      const url = `https://bk.elaiflow.dev/consultar-filtrada/cpf?cpf=${cpfDigits}&token=${API_TOKEN}`;
       const res = await fetch(url);
       const data = await res.json();
 
-      if (data.status === false || data.return === "NOK") {
-        toast({ title: "CPF não encontrado", description: data.msg || "Verifique os dados e tente novamente.", variant: "destructive" });
+      if (!data || !data.nome) {
+        toast({ title: "CPF não encontrado", description: data?.message || data?.msg || "Verifique os dados e tente novamente.", variant: "destructive" });
         return;
       }
 
-      const result = data.result || data;
+      // API elaiflow retorna: { cpf, nome, mae, sexo, nascimento }
+      const result = {
+        ...data,
+        nome_da_pf: data.nome,
+        data_nascimento: data.nascimento,
+        sexo: data.sexo,
+        nome_da_mae: data.mae,
+      };
       const nomeCompleto = getCpfName(result);
 
       if (typeof window !== "undefined") {
