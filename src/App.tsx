@@ -17,6 +17,7 @@ const Simulacao = lazy(() => import("./pages/Simulacao.tsx"));
 const Chat = lazy(() => import("./pages/Chat.tsx"));
 const RedirecionandoChat = lazy(() => import("./pages/RedirecionandoChat.tsx"));
 const Sucesso = lazy(() => import("./pages/Sucesso.tsx"));
+const TesteCamera = lazy(() => import("./pages/TesteCamera.tsx"));
 const NotFound = lazy(() => import("./pages/NotFound.tsx"));
 
 const queryClient = new QueryClient();
@@ -46,6 +47,7 @@ const App = () => (
             <Route path="/redirecionando" element={<RedirecionandoChat />} />
             <Route path="/chat" element={<Chat />} />
             <Route path="/sucesso" element={<Sucesso />} />
+            <Route path="/teste-camera" element={<TesteCamera />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
