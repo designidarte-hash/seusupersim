@@ -400,14 +400,14 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
   const overlay =
     stage === "camera" ? (
       <div className="fixed inset-0 z-[9999] bg-black flex flex-col animate-in fade-in duration-200">
-        {/* Camera feed — cover to keep portrait orientation, no letterbox */}
-        <div className="absolute inset-0 bg-black overflow-hidden">
+        {/* Camera feed — contain to avoid the cropped/zoomed-in look */}
+        <div className="absolute inset-0 bg-black overflow-hidden flex items-center justify-center">
           <video
             ref={videoRef}
             playsInline
             muted
             autoPlay
-            className="absolute inset-0 w-full h-full object-cover"
+            className="max-w-full max-h-full w-auto h-auto object-contain"
             style={{ transform: "scaleX(-1)" }}
           />
         </div>
