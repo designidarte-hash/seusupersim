@@ -70,7 +70,7 @@ const Resultado = () => {
   const cpfDigits = location.state?.cpfDigits as string | undefined;
 
   const handleLoanClick = () => {
-    transitionNavigate("/analise", { cpfData, cpfDigits });
+    transitionNavigate("/cadastro", { cpfData, cpfDigits });
   };
 
   if (!cpfData) {
