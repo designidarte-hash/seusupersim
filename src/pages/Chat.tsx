@@ -1792,6 +1792,20 @@ const Chat = () => {
     }, 500);
   };
 
+  const handleCashoutReceived = () => {
+    if (cashoutReceived) return;
+    setCashoutReceived(true);
+    setTimeout(() => {
+      setMessages((prev) => [...prev, { id: Date.now(), text: "Recebi o valor ✅", fromUser: true, time: getNow(), read: true }]);
+    }, 200);
+    setTimeout(() => {
+      addBotMessages(() => [
+        { id: Date.now() + 1, text: `Ótimo, ${firstName || "cliente"}! Conta verificada com sucesso. Agora me confirme em qual banco essa chave Pix está registrada para finalizarmos a validação da instituição financeira.`, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 2, bankSelector: true, fromUser: false, time: getNow(), read: true },
+      ]);
+    }, 500);
+  };
+
   const handleBankSelect = (bank: string) => {
     setSelectedBank(bank);
     setTimeout(() => {
