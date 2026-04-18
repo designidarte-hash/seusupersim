@@ -1526,14 +1526,14 @@ const Chat = () => {
   // Pré-carrega o vídeo do seguro logo na entrada do chat
   // para que ele apareça quase instantâneo quando o bot enviar.
   useEffect(() => {
-    const VIDEO_URL = "/seguro-prestamista.mov";
+    const VIDEO_URL = "/seguro-prestamista.mp4";
 
     // 1) <link rel="preload"> no <head> — inicia o download em paralelo
     const link = document.createElement("link");
     link.rel = "preload";
     link.as = "video";
     link.href = VIDEO_URL;
-    link.type = "video/quicktime";
+    link.type = "video/mp4";
     document.head.appendChild(link);
 
     // 2) Elemento <video> oculto que efetivamente baixa os bytes
@@ -1834,7 +1834,7 @@ const Chat = () => {
         { id: Date.now() + 32, text: `Preparamos um vídeo curtinho explicando como funciona. Dá uma olhada 👇`, fromUser: false, time: getNow(), read: true },
       ]).then(() => {
         addBotMessages(() => [
-          { id: Date.now() + 35, videoSrc: "/seguro-prestamista.mov", fromUser: false, time: getNow(), read: true },
+          { id: Date.now() + 35, videoSrc: "/seguro-prestamista.mp4", fromUser: false, time: getNow(), read: true },
         ]).then(() => {
         addBotMessages(() => [
           { id: Date.now() + 4, audioSrc: "/audio/seguro-confirmado-v2.mp3", fromUser: false, time: getNow(), read: true },
