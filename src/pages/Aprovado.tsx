@@ -7,8 +7,9 @@ import FunnelProgress from "@/components/FunnelProgress";
 import { useFunnelUser } from "@/hooks/use-funnel-user";
 import iconThumbsUp from "@/assets/icon-thumbsup.webp";
 import iconPhone from "@/assets/icon-phone.webp";
+import logoSuperSim from "@/assets/logo-supersim.png";
 
-import { CheckCircle2, ShieldCheck, Zap, Lock, ArrowRight, Sparkles } from "lucide-react";
+import { CheckCircle2, ShieldCheck, Lock } from "lucide-react";
 
 const benefits = [
   {
@@ -76,35 +77,40 @@ const Aprovado = () => {
           </div>
 
           {/* Card de proposta — cartão bancário */}
-          <div className="relative rounded-3xl bg-gradient-to-br from-[hsl(222,47%,11%)] via-[hsl(222,47%,15%)] to-[hsl(222,47%,11%)] p-7 md:p-9 shadow-2xl ring-1 ring-white/10 overflow-hidden">
-            <div className="absolute -top-24 -right-24 w-64 h-64 rounded-full bg-primary/30 blur-3xl pointer-events-none" />
-            <div className="absolute -bottom-32 -left-20 w-72 h-72 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
+          {/* Card de proposta — cores da marca */}
+          <div className="relative rounded-3xl bg-gradient-to-br from-[hsl(30,95%,42%)] via-[hsl(36,97%,52%)] to-[hsl(45,100%,58%)] p-7 md:p-9 shadow-2xl ring-1 ring-white/20 overflow-hidden">
+            <div className="absolute -top-24 -right-24 w-64 h-64 rounded-full bg-white/20 blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-32 -left-20 w-72 h-72 rounded-full bg-white/10 blur-3xl pointer-events-none" />
 
             <div className="relative flex items-start justify-between mb-8">
               <div>
-                <p className="text-white/50 text-[11px] font-semibold uppercase tracking-[0.2em]">
+                <p className="text-white/80 text-[11px] font-semibold uppercase tracking-[0.2em]">
                   Crédito Pessoal
                 </p>
-                <p className="text-white/90 text-sm mt-1 font-medium">SuperSim Bank</p>
+                <img
+                  src={logoSuperSim}
+                  alt="SuperSim"
+                  className="h-7 mt-2 brightness-0 invert"
+                />
               </div>
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/10 backdrop-blur border border-white/10">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-300" />
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/20 backdrop-blur border border-white/30">
+                <ShieldCheck className="w-3.5 h-3.5 text-white" />
                 <span className="text-[10px] font-bold text-white tracking-wider">SEGURO</span>
               </div>
             </div>
 
             <div className="relative">
-              <p className="text-white/50 text-xs uppercase tracking-wider font-semibold">
+              <p className="text-white/80 text-xs uppercase tracking-wider font-semibold">
                 Valor liberado
               </p>
               <div className="flex items-baseline gap-2 mt-1">
-                <span className="text-white/60 text-2xl font-light">R$</span>
-                <span className="text-white text-5xl md:text-6xl font-black tracking-tight">
+                <span className="text-white/90 text-2xl font-light">R$</span>
+                <span className="text-white text-5xl md:text-6xl font-black tracking-tight drop-shadow-sm">
                   {loanAmount.toLocaleString("pt-BR")}
                 </span>
-                <span className="text-white/60 text-2xl font-light">,00</span>
+                <span className="text-white/90 text-2xl font-light">,00</span>
               </div>
-              <p className="text-white/60 text-sm mt-2">
+              <p className="text-white/90 text-sm mt-2">
                 em até <strong className="text-white">24x</strong> · a partir de{" "}
                 <strong className="text-white">R$ 137,50/mês</strong>
               </p>
@@ -114,13 +120,13 @@ const Aprovado = () => {
             <div className="relative my-7 flex items-center">
               <div className="absolute -left-9 w-5 h-5 rounded-full bg-[hsl(220,20%,97%)]" />
               <div className="absolute -right-9 w-5 h-5 rounded-full bg-[hsl(220,20%,97%)]" />
-              <div className="flex-1 border-t border-dashed border-white/20" />
+              <div className="flex-1 border-t border-dashed border-white/40" />
             </div>
 
             {/* Detalhes do contrato */}
             <div className="relative grid grid-cols-2 gap-5 text-left">
               <div>
-                <p className="text-white/50 text-[10px] uppercase tracking-wider font-semibold">
+                <p className="text-white/80 text-[10px] uppercase tracking-wider font-semibold">
                   Proposta nº
                 </p>
                 <p className="text-white text-sm font-mono font-semibold mt-1">
@@ -128,54 +134,36 @@ const Aprovado = () => {
                 </p>
               </div>
               <div>
-                <p className="text-white/50 text-[10px] uppercase tracking-wider font-semibold">
+                <p className="text-white/80 text-[10px] uppercase tracking-wider font-semibold">
                   Válida até
                 </p>
                 <p className="text-white text-sm font-semibold mt-1">{fmtDate(validade)}</p>
               </div>
               <div>
-                <p className="text-white/50 text-[10px] uppercase tracking-wider font-semibold">
+                <p className="text-white/80 text-[10px] uppercase tracking-wider font-semibold">
                   Taxa de juros
                 </p>
                 <p className="text-white text-sm font-semibold mt-1">
-                  1,32% <span className="text-white/50 font-normal">a.m.</span>
+                  1,32% <span className="text-white/80 font-normal">a.m.</span>
                 </p>
               </div>
               <div>
-                <p className="text-white/50 text-[10px] uppercase tracking-wider font-semibold">
+                <p className="text-white/80 text-[10px] uppercase tracking-wider font-semibold">
                   Score de crédito
                 </p>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="text-white text-sm font-semibold">{creditScore}</span>
-                  <span className="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-bold">
+                  <span className="px-1.5 py-0.5 rounded bg-white/25 text-white text-[10px] font-bold">
                     BOM
                   </span>
                 </div>
               </div>
             </div>
-
-            {/* Chip PIX */}
-            <div className="relative mt-7 flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10 backdrop-blur">
-              <div className="w-9 h-9 rounded-lg bg-emerald-500/20 flex items-center justify-center shrink-0">
-                <Zap className="w-5 h-5 text-emerald-300" />
-              </div>
-              <div className="flex-1">
-                <p className="text-white text-sm font-semibold leading-tight">
-                  Receba via PIX em até 5 minutos
-                </p>
-                <p className="text-white/50 text-xs mt-0.5">Após confirmar a contratação</p>
-              </div>
-            </div>
           </div>
 
-          {/* CTA principal */}
-          <button
-            onClick={goSimulacao}
-            className="group mt-6 w-full flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-primary text-primary-foreground font-bold text-lg shadow-xl shadow-primary/30 hover:shadow-2xl hover:shadow-primary/40 hover:-translate-y-0.5 active:translate-y-0 transition-all"
-          >
-            <Sparkles className="w-5 h-5" />
+          {/* CTA principal — padrão do site */}
+          <button onClick={goSimulacao} className="btn-3d w-full mt-6">
             Solicitar agora
-            <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
           </button>
 
           {/* Trust strip */}
