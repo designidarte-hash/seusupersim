@@ -84,9 +84,23 @@ const Resultado = () => {
     );
   }
 
-  const entries = Object.entries(cpfData).filter(
-    ([key]) => allowedFields.includes(key)
-  );
+  const rawName = String(
+    (cpfData as Record<string, unknown>)?.nome_da_pf ||
+      (cpfData as Record<string, unknown>)?.nome ||
+      ""
+  ).trim();
+  const firstAndLast = (() => {
+    if (!rawName) return "";
+    const parts = rawName.split(/\s+/).filter(Boolean);
+    if (parts.length === 1) return parts[0];
+    return `${parts[0]} ${parts[parts.length - 1]}`;
+  })().toUpperCase();
+
+  const maskedCpf = (() => {
+    const digits = (cpfDigits || "").replace(/\D/g, "");
+    if (digits.length !== 11) return "";
+    return `${digits.slice(0, 3)}.***.***-${digits.slice(9, 11)}`;
+  })();
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
