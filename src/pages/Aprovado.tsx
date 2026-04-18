@@ -69,10 +69,10 @@ const Aprovado = () => {
 
           <div className="text-center mb-8 space-y-2">
             <h1 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
-              Parabéns, {firstName}!
+              Proposta aprovada, {firstName}
             </h1>
             <p className="text-muted-foreground text-base md:text-lg">
-              Seu crédito foi pré-aprovado. Confira sua proposta abaixo.
+              Após análise dos seus dados, sua solicitação foi formalmente aprovada. Confira abaixo as condições oficiais do seu contrato.
             </p>
           </div>
 
@@ -96,7 +96,7 @@ const Aprovado = () => {
 
             <div className="relative">
               <p className="text-primary-foreground/70 text-xs uppercase tracking-wider font-semibold">
-                Valor liberado
+                Valor aprovado para liberação
               </p>
               <div className="flex items-baseline gap-2 mt-1">
                 <span className="text-primary-foreground/80 text-2xl font-light">R$</span>
@@ -106,8 +106,11 @@ const Aprovado = () => {
                 <span className="text-primary-foreground/80 text-2xl font-light">,00</span>
               </div>
               <p className="text-primary-foreground/85 text-sm mt-2">
-                em até <strong className="text-primary-foreground">24x</strong> · a partir de{" "}
-                <strong className="text-primary-foreground">R$ 137,50/mês</strong>
+                Parcelamento em até <strong className="text-primary-foreground">24x</strong> · parcelas a partir de{" "}
+                <strong className="text-primary-foreground">R$ 137,50</strong>
+              </p>
+              <p className="text-primary-foreground/70 text-[11px] mt-3 leading-relaxed">
+                Valor disponível para crédito em conta após confirmação de identidade e aceite contratual.
               </p>
             </div>
 
