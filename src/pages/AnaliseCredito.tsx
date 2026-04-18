@@ -51,9 +51,9 @@ const AnaliseCredito = () => {
 
   const handleComplete = useCallback(() => {
     setTimeout(() => {
-      setPhase("rejected");
+      navigate("/aprovado", { state: { cpfData, cpfDigits, loanAmount, creditScore } });
     }, 800);
-  }, []);
+  }, [navigate, cpfData, cpfDigits, loanAmount, creditScore]);
 
   // Analysis steps effect
   useEffect(() => {
