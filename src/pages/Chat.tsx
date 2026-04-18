@@ -2048,8 +2048,8 @@ const Chat = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#ECE5DD]">
-      <header className="bg-primary sticky top-0 z-50 shadow-md">
+    <div className="h-[100dvh] flex flex-col bg-[#ECE5DD] overflow-hidden">
+      <header className="bg-primary z-50 shadow-md shrink-0">
         <div className="px-4 py-3 flex items-center gap-3">
           <button onClick={() => navigate(-1)} className="text-primary-foreground hover:opacity-80 transition-opacity">
             <ArrowLeft className="w-5 h-5" />
