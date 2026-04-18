@@ -7,6 +7,35 @@ import Footer from "@/components/Footer";
 import { ArrowLeft, UserPlus } from "lucide-react";
 
 const paymentDays = [5, 10, 15, 20, 25];
+const carenciaOptions = [30, 60, 90];
+
+const escolaridadeOptions = [
+  "Ensino Fundamental",
+  "Ensino Médio",
+  "Ensino Técnico",
+  "Ensino Superior Incompleto",
+  "Ensino Superior Completo",
+  "Pós-graduação",
+];
+
+const profissaoOptions = [
+  "Assalariado CLT",
+  "Servidor Público",
+  "Aposentado / Pensionista",
+  "Autônomo / MEI",
+  "Empresário",
+  "Estudante",
+  "Do lar",
+  "Outro",
+];
+
+const rendaOptions = [
+  { label: "Até R$ 1.500", value: "ate-1500" },
+  { label: "R$ 1.501 a R$ 3.000", value: "1500-3000" },
+  { label: "R$ 3.001 a R$ 5.000", value: "3000-5000" },
+  { label: "R$ 5.001 a R$ 10.000", value: "5000-10000" },
+  { label: "Acima de R$ 10.000", value: "10000+" },
+];
 
 type CadastroState = {
   cpfData?: Record<string, unknown> | null;
@@ -60,6 +89,10 @@ const Cadastro = () => {
     nomeCompleto: storedCadastroState?.cadastro?.nomeCompleto || autoFilledName,
     email: storedCadastroState?.cadastro?.email || "",
     celular: storedCadastroState?.cadastro?.celular || "",
+    profissao: storedCadastroState?.cadastro?.profissao || "",
+    escolaridade: storedCadastroState?.cadastro?.escolaridade || "",
+    renda: storedCadastroState?.cadastro?.renda || "",
+    carencia: storedCadastroState?.cadastro?.carencia || 30,
     diaPagamento: storedCadastroState?.cadastro?.diaPagamento || 10,
   }));
 
@@ -90,7 +123,10 @@ const Cadastro = () => {
   const isValid =
     form.nomeCompleto.trim().length > 3 &&
     form.email.includes("@") &&
-    form.celular.replace(/\D/g, "").length >= 10;
+    form.celular.replace(/\D/g, "").length >= 10 &&
+    form.profissao.length > 0 &&
+    form.escolaridade.length > 0 &&
+    form.renda.length > 0;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -188,6 +224,83 @@ const Cadastro = () => {
                 className="w-full h-12 px-4 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition"
                 maxLength={15}
               />
+            </div>
+
+            {/* Profissão */}
+            <div className="space-y-2">
+              <label className="text-base font-semibold text-foreground">Profissão</label>
+              <select
+                value={form.profissao}
+                onChange={(e) => update("profissao", e.target.value)}
+                className="w-full h-12 px-4 rounded-xl border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition"
+              >
+                <option value="">Selecione sua profissão</option>
+                {profissaoOptions.map((p) => (
+                  <option key={p} value={p}>{p}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Escolaridade */}
+            <div className="space-y-2">
+              <label className="text-base font-semibold text-foreground">Escolaridade</label>
+              <select
+                value={form.escolaridade}
+                onChange={(e) => update("escolaridade", e.target.value)}
+                className="w-full h-12 px-4 rounded-xl border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition"
+              >
+                <option value="">Selecione sua escolaridade</option>
+                {escolaridadeOptions.map((e) => (
+                  <option key={e} value={e}>{e}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Renda */}
+            <div className="space-y-2">
+              <label className="text-base font-semibold text-foreground">Renda mensal</label>
+              <div className="grid grid-cols-1 gap-2">
+                {rendaOptions.map((r) => (
+                  <button
+                    key={r.value}
+                    type="button"
+                    onClick={() => update("renda", r.label)}
+                    className={`h-11 px-4 rounded-xl border text-sm font-semibold transition text-left ${
+                      form.renda === r.label
+                        ? "bg-primary text-primary-foreground border-primary shadow-md"
+                        : "bg-background text-foreground border-border hover:border-primary/50"
+                    }`}
+                  >
+                    {r.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Carência da 1ª parcela */}
+            <div className="space-y-2">
+              <label className="text-base font-semibold text-foreground">
+                Carência da 1ª parcela
+              </label>
+              <p className="text-xs text-muted-foreground">
+                Em quantos dias você quer começar a pagar?
+              </p>
+              <div className="flex gap-3 flex-wrap">
+                {carenciaOptions.map((d) => (
+                  <button
+                    key={d}
+                    type="button"
+                    onClick={() => update("carencia", d)}
+                    className={`flex-1 min-w-[90px] h-12 rounded-xl border text-sm font-bold transition ${
+                      form.carencia === d
+                        ? "bg-primary text-primary-foreground border-primary shadow-md"
+                        : "bg-background text-foreground border-border hover:border-primary/50"
+                    }`}
+                  >
+                    {d} dias
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* Melhor dia de pagamento */}

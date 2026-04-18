@@ -1171,16 +1171,34 @@ function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number)
   return lines;
 }
 
-const ContractCard = ({ nome, cpf, email, dataNascimento, valor, parcelas, valorParcela, taxa, pixKeyType, pixKeyValue, onSign, signed }: {
+const ContractCard = ({ nome, cpf, email, dataNascimento, valor, parcelas, valorParcela, taxa, pixKeyType, pixKeyValue, profissao, escolaridade, renda, carencia, diaPagamento, onSign, signed }: {
   nome: string; cpf: string; email: string; dataNascimento: string;
   valor: number; parcelas: number; valorParcela: number; taxa: number;
   pixKeyType: string; pixKeyValue: string;
+  profissao?: string; escolaridade?: string; renda?: string;
+  carencia?: number; diaPagamento?: number | string;
   onSign: () => void; signed: boolean;
 }) => {
   const [open, setOpen] = useState(false);
   const contractNumber = useMemo(() => `${Math.floor(10000000 + Math.random() * 90000000)}`, []);
   const today = new Date().toLocaleDateString("pt-BR");
   const totalValue = valorParcela * parcelas;
+
+  // Datas das parcelas a partir da carência escolhida
+  const parcelasDatas = useMemo(() => {
+    const baseDays = carencia || 30;
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() + baseDays);
+    const dia = typeof diaPagamento === "number" ? diaPagamento : parseInt(String(diaPagamento || ""), 10);
+    if (!Number.isNaN(dia) && dia > 0 && dia <= 28) {
+      startDate.setDate(dia);
+    }
+    return Array.from({ length: parcelas }).map((_, i) => {
+      const d = new Date(startDate);
+      d.setMonth(d.getMonth() + i);
+      return d.toLocaleDateString("pt-BR");
+    });
+  }, [carencia, diaPagamento, parcelas]);
 
   const handleSign = () => {
     onSign();
@@ -1253,6 +1271,9 @@ const ContractCard = ({ nome, cpf, email, dataNascimento, valor, parcelas, valor
                   ["CPF", cpf],
                   ["E-mail", email],
                   ["Data de Nascimento", dataNascimento],
+                  ...(profissao ? [["Profissão", profissao]] : []),
+                  ...(escolaridade ? [["Escolaridade", escolaridade]] : []),
+                  ...(renda ? [["Renda mensal", renda]] : []),
                 ].map(([label, val]) => (
                   <div key={label} className="flex justify-between items-center">
                     <span className="text-xs text-muted-foreground">{label}</span>
@@ -1274,8 +1295,8 @@ const ContractCard = ({ nome, cpf, email, dataNascimento, valor, parcelas, valor
                   ["Parcelas", `${parcelas}x de ${formatCurrency(valorParcela)}`],
                   ["Taxa Mensal", `${taxa}%`],
                   ["Valor Total", formatCurrency(totalValue)],
-                  ["CET a.m.", "1,42%"],
-                  ["Data", today],
+                  ["Carência 1ª parcela", `${carencia || 30} dias`],
+                  ["1º Vencimento", parcelasDatas[0] || "—"],
                 ].map(([label, val]) => (
                   <div key={label} className="bg-primary/5 border border-primary/10 rounded-xl p-3 text-center">
                     <p className="text-[10px] text-muted-foreground">{label}</p>
@@ -1284,6 +1305,26 @@ const ContractCard = ({ nome, cpf, email, dataNascimento, valor, parcelas, valor
                 ))}
               </div>
             </div>
+
+            {/* Cronograma de parcelas */}
+            <div className="px-5 pb-4">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-1.5 h-5 bg-primary rounded-full" />
+                <p className="text-sm font-bold text-foreground uppercase tracking-wide">Cronograma de Parcelas</p>
+              </div>
+              <div className="bg-muted/40 rounded-xl p-3 max-h-48 overflow-y-auto">
+                <div className="space-y-1.5">
+                  {parcelasDatas.map((data, i) => (
+                    <div key={i} className="flex justify-between items-center px-2 py-1.5 rounded-lg bg-background">
+                      <span className="text-[11px] text-muted-foreground font-medium">Parcela {i + 1}/{parcelas}</span>
+                      <span className="text-[11px] text-foreground font-semibold">{data}</span>
+                      <span className="text-[11px] text-primary font-bold">{formatCurrency(valorParcela)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
 
             {/* Chave PIX */}
             <div className="px-5 pb-4">
@@ -1318,7 +1359,7 @@ const ContractCard = ({ nome, cpf, email, dataNascimento, valor, parcelas, valor
                 <p><strong className="text-foreground">CLÁUSULA 1ª — DO OBJETO:</strong> A instituição financeira parceira concede ao CLIENTE, {nome}, inscrito no CPF sob o nº {cpf}, um empréstimo pessoal no valor de {formatCurrency(valor)}, conforme condições pactuadas neste instrumento.</p>
                 <p><strong className="text-foreground">CLÁUSULA 2ª — DOS ENCARGOS:</strong> O CLIENTE se obriga ao pagamento do valor do empréstimo, compreendendo o valor principal de {formatCurrency(valor)}, acrescido de juros remuneratórios à taxa de {taxa}% ao mês, totalizando {formatCurrency(totalValue)} em {parcelas} parcelas mensais de {formatCurrency(valorParcela)}, conforme normas do CMN e Banco Central do Brasil.</p>
                 <p><strong className="text-foreground">CLÁUSULA 3ª — DO PAGAMENTO:</strong> O CLIENTE autoriza o débito automático das parcelas na conta bancária vinculada à chave PIX {pixKeyType === "cpf" ? "CPF" : pixKeyType === "email" ? "e-mail" : "telefone"} ({pixKeyValue}). O não pagamento na data de vencimento sujeitará o CLIENTE à comissão de permanência, juros moratórios de 1% ao mês e multa de 2% sobre o valor em atraso.</p>
-                <p><strong className="text-foreground">CLÁUSULA 4ª — DO VENCIMENTO:</strong> As parcelas vencem mensalmente a partir de 30 dias da data de assinatura deste contrato. O débito ocorrerá automaticamente na data de vencimento ou no próximo dia útil subsequente.</p>
+                <p><strong className="text-foreground">CLÁUSULA 4ª — DO VENCIMENTO:</strong> A 1ª parcela vence em {parcelasDatas[0] || "—"} ({carencia || 30} dias após a assinatura, conforme carência escolhida pelo CLIENTE), e as demais parcelas vencem mensalmente nas datas: {parcelasDatas.slice(0, 6).join(", ")}{parcelasDatas.length > 6 ? `, ... até ${parcelasDatas[parcelasDatas.length - 1]}` : ""}. O débito ocorrerá automaticamente na data de vencimento ou no próximo dia útil subsequente.</p>
                 <p><strong className="text-foreground">CLÁUSULA 5ª — DA RESCISÃO ANTECIPADA:</strong> As obrigações serão antecipadamente vencidas em caso de: (a) saldo insuficiente para débito por 3 meses consecutivos; (b) falsidade de qualquer documento ou informação prestada; (c) inclusão do CLIENTE em cadastros restritivos de crédito durante a vigência do contrato.</p>
                 <p><strong className="text-foreground">CLÁUSULA 6ª — DO SEGURO:</strong> O presente contrato conta com Seguro Prestamista da Allianz Seguros S/A, que garante a quitação do saldo devedor em caso de morte, invalidez permanente total por acidente ou desemprego involuntário do CLIENTE.</p>
                 <p><strong className="text-foreground">CLÁUSULA 7ª — DA LGPD:</strong> O CLIENTE autoriza o tratamento dos seus dados pessoais para finalidade de concessão de crédito, cobrança e marketing, conforme Lei nº 13.709/2018 (LGPD), podendo solicitar exclusão ou portabilidade a qualquer momento.</p>
@@ -1409,6 +1450,11 @@ const Chat = () => {
   const celular = navState.celular || stored.celular || storedCadastro?.cadastro?.celular || "";
   const dataNascimento = navState.dataNascimento || stored.dataNascimento || storedCadastro?.cpfData?.data_nascimento || storedCadastro?.cpfData?.dataNascimento;
   const loanDetails = navState.loanDetails || stored.loanDetails;
+  const profissao = storedCadastro?.cadastro?.profissao || "";
+  const escolaridade = storedCadastro?.cadastro?.escolaridade || "";
+  const renda = storedCadastro?.cadastro?.renda || "";
+  const carencia = storedCadastro?.cadastro?.carencia || 30;
+  const diaPagamento = storedCadastro?.cadastro?.diaPagamento || loanDetails?.diaPagamento;
   const firstName = nome ? nome.split(" ")[0] : "";
 
   // Persist state to sessionStorage for refresh resilience
@@ -1986,6 +2032,11 @@ const Chat = () => {
                   taxa={loanDetails?.taxa || 1.32}
                   pixKeyType={pixType}
                   pixKeyValue={pixValue}
+                  profissao={profissao}
+                  escolaridade={escolaridade}
+                  renda={renda}
+                  carencia={carencia}
+                  diaPagamento={diaPagamento}
                   onSign={handleContractSign}
                   signed={contractSigned}
                 />
