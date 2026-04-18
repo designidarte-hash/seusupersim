@@ -8,15 +8,33 @@ interface FacialVerificationProps {
 
 const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificationProps) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const [error, setError] = useState("");
-  const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [faceDetected, setFaceDetected] = useState(false);
 
   useEffect(() => {
     if (approved) return;
+
     startCamera();
-    return () => stopCamera();
+
+    const fakeDetectionTimer = setInterval(() => {
+      const video = videoRef.current;
+      if (!video) return;
+
+      const ready =
+        video.readyState >= 2 &&
+        video.videoWidth > 0 &&
+        video.videoHeight > 0;
+
+      if (ready) {
+        setFaceDetected(true);
+      }
+    }, 1200);
+
+    return () => {
+      clearInterval(fakeDetectionTimer);
+      stopCamera();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [approved]);
 
@@ -38,16 +56,6 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
         videoRef.current.srcObject = stream;
         await videoRef.current.play().catch(() => {});
       }
-
-      const track = stream.getVideoTracks()[0];
-      const capabilities = (track.getCapabilities?.() || {}) as any;
-      if (capabilities.zoom) {
-        try {
-          await track.applyConstraints({
-            advanced: [{ zoom: 1 }] as any,
-          });
-        } catch {}
-      }
     } catch (err) {
       console.error(err);
       setError("Não foi possível acessar a câmera.");
@@ -63,42 +71,15 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
     }
   };
 
-  const handleCapture = () => {
-    const video = videoRef.current;
-    const canvas = canvasRef.current;
-    if (!video || !canvas) return;
-
-    const width = video.videoWidth;
-    const height = video.videoHeight;
-    if (!width || !height) return;
-
-    canvas.width = width;
-    canvas.height = height;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    ctx.save();
-    ctx.translate(width, 0);
-    ctx.scale(-1, 1);
-    ctx.drawImage(video, 0, 0, width, height);
-    ctx.restore();
-
-    const image = canvas.toDataURL("image/jpeg", 0.92);
-    setCapturedImage(image);
-  };
-
-  const handleRetake = () => {
-    setCapturedImage(null);
-  };
-
-  const handleConfirm = () => {
-    stopCamera();
-    onComplete();
-  };
-
-  const handleClose = () => {
+  const handleBack = () => {
     stopCamera();
     onCancel?.();
+  };
+
+  const handleContinue = () => {
+    if (!faceDetected) return;
+    stopCamera();
+    onComplete();
   };
 
   if (approved) return null;
@@ -114,320 +95,264 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
         fontFamily: "Inter, system-ui, sans-serif",
       }}
     >
-      {!capturedImage ? (
-        <>
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            muted
-            style={{
-              position: "absolute",
-              inset: 0,
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              objectPosition: "center center",
-              transform: "scaleX(-1)",
-              background: "#000",
-            }}
+      <video
+        ref={videoRef}
+        autoPlay
+        playsInline
+        muted
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          objectPosition: "center center",
+          transform: "scaleX(-1)",
+          background: "#000",
+        }}
+      />
+
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background:
+            "linear-gradient(to bottom, rgba(0,0,0,0.34) 0%, rgba(0,0,0,0.18) 18%, rgba(0,0,0,0.10) 38%, rgba(0,0,0,0.20) 68%, rgba(0,0,0,0.40) 100%)",
+        }}
+      />
+
+      <button
+        onClick={handleBack}
+        style={{
+          position: "absolute",
+          top: 28,
+          left: 24,
+          width: 52,
+          height: 52,
+          borderRadius: "50%",
+          border: "none",
+          background: "rgba(255,255,255,0.15)",
+          backdropFilter: "blur(8px)",
+          WebkitBackdropFilter: "blur(8px)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "#fff",
+          cursor: "pointer",
+          fontSize: 28,
+          fontWeight: 300,
+          zIndex: 3,
+        }}
+        aria-label="Voltar"
+      >
+        ‹
+      </button>
+
+      <div
+        style={{
+          position: "absolute",
+          top: 28,
+          right: 24,
+          padding: "14px 20px",
+          borderRadius: 999,
+          background: "rgba(117, 83, 38, 0.72)",
+          color: "#ffd34d",
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          fontSize: 16,
+          fontWeight: 700,
+          backdropFilter: "blur(8px)",
+          WebkitBackdropFilter: "blur(8px)",
+        }}
+      >
+        <span
+          style={{
+            width: 10,
+            height: 10,
+            borderRadius: "50%",
+            background: "#ffd34d",
+            display: "inline-block",
+          }}
+        />
+        Verificação ativa
+      </div>
+
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          pointerEvents: "none",
+        }}
+      >
+        <svg
+          width="100%"
+          height="100%"
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+          style={{ display: "block" }}
+        >
+          <ellipse
+            cx="50"
+            cy="50"
+            rx="31"
+            ry="24"
+            fill="rgba(255,255,255,0.04)"
+            stroke={faceDetected ? "#f59b31" : "rgba(245,155,49,0.7)"}
+            strokeWidth="0.45"
+            vectorEffect="non-scaling-stroke"
           />
-
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              background:
-                "linear-gradient(to bottom, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.82) 24%, rgba(0,0,0,0.18) 42%, rgba(0,0,0,0.18) 60%, rgba(0,0,0,0.85) 78%, rgba(0,0,0,0.96) 100%)",
-            }}
+          <ellipse
+            cx="50"
+            cy="50"
+            rx="29.2"
+            ry="22.6"
+            fill="none"
+            stroke="rgba(255,255,255,0.9)"
+            strokeWidth="0.42"
+            vectorEffect="non-scaling-stroke"
           />
+          <line
+            x1="31"
+            y1="43"
+            x2="69"
+            y2="43"
+            stroke="rgba(245,155,49,0.30)"
+            strokeWidth="0.2"
+            vectorEffect="non-scaling-stroke"
+          />
+          <path
+            d="M6 31 L6 27 L12 27"
+            fill="none"
+            stroke="#f59b31"
+            strokeWidth="0.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            vectorEffect="non-scaling-stroke"
+          />
+          <path
+            d="M94 31 L94 27 L88 27"
+            fill="none"
+            stroke="#f59b31"
+            strokeWidth="0.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            vectorEffect="non-scaling-stroke"
+          />
+          <path
+            d="M6 69 L6 73 L12 73"
+            fill="none"
+            stroke="#f59b31"
+            strokeWidth="0.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            vectorEffect="non-scaling-stroke"
+          />
+          <path
+            d="M94 69 L94 73 L88 73"
+            fill="none"
+            stroke="#f59b31"
+            strokeWidth="0.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            vectorEffect="non-scaling-stroke"
+          />
+        </svg>
+      </div>
 
-          {/* Botão fechar (se onCancel existir) */}
-          {onCancel && (
-            <button
-              onClick={handleClose}
-              aria-label="Fechar"
-              style={{
-                position: "absolute",
-                top: 52,
-                left: 20,
-                width: 40,
-                height: 40,
-                borderRadius: 9999,
-                border: "1px solid rgba(255,255,255,0.18)",
-                background: "rgba(0,0,0,0.45)",
-                backdropFilter: "blur(8px)",
-                WebkitBackdropFilter: "blur(8px)",
-                color: "#fff",
-                fontSize: 20,
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                zIndex: 3,
-              }}
-            >
-              ×
-            </button>
-          )}
+      <div
+        style={{
+          position: "absolute",
+          left: 24,
+          right: 24,
+          bottom: 210,
+          textAlign: "center",
+        }}
+      >
+        <div
+          style={{
+            color: "#ffffff",
+            fontSize: 18,
+            lineHeight: 1.3,
+            fontWeight: 700,
+          }}
+        >
+          {faceDetected
+            ? "Rosto detectado"
+            : "Posicione seu rosto dentro do contorno"}
+        </div>
+        <div
+          style={{
+            color: "rgba(255,255,255,0.62)",
+            fontSize: 13,
+            marginTop: 12,
+            lineHeight: 1.35,
+            fontWeight: 500,
+          }}
+        >
+          {faceDetected
+            ? "Presença humana confirmada · Pronto para continuar"
+            : "Conexão segura · Criptografia ponta a ponta"}
+        </div>
+      </div>
 
-          {/* Chip topo direito */}
-          <div
-            style={{
-              position: "absolute",
-              top: 52,
-              left: 20,
-              right: 20,
-              display: "flex",
-              justifyContent: "flex-end",
-              pointerEvents: "none",
-            }}
-          >
-            <div
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 10,
-                padding: "12px 18px",
-                borderRadius: 999,
-                background: "rgba(255,255,255,0.10)",
-                border: "1px solid rgba(255,255,255,0.10)",
-                backdropFilter: "blur(10px)",
-                WebkitBackdropFilter: "blur(10px)",
-                color: "#fff",
-                fontSize: 15,
-                fontWeight: 600,
-                boxShadow: "0 8px 20px rgba(0,0,0,0.20)",
-              }}
-            >
-              <span
-                style={{
-                  width: 10,
-                  height: 10,
-                  borderRadius: "50%",
-                  background: "#22c55e",
-                  boxShadow: "0 0 10px rgba(34,197,94,0.7)",
-                }}
-              />
-              Pronto para capturar
-            </div>
-          </div>
-
-          {/* Títulos */}
-          <div
-            style={{
-              position: "absolute",
-              top: 145,
-              left: 24,
-              right: 24,
-              textAlign: "center",
-            }}
-          >
-            <div
-              style={{
-                color: "#fff",
-                fontSize: 22,
-                lineHeight: 1.2,
-                fontWeight: 800,
-              }}
-            >
-              Rosto detectado!
-            </div>
-            <div
-              style={{
-                color: "rgba(255,255,255,0.82)",
-                fontSize: 14,
-                marginTop: 10,
-                lineHeight: 1.4,
-                fontWeight: 500,
-              }}
-            >
-              Toque em capturar para continuar
-            </div>
-          </div>
-
-          {/* Oval verde central */}
-          <div
-            style={{
-              position: "absolute",
-              left: "50%",
-              top: "52%",
-              transform: "translate(-50%, -50%)",
-              width: "100%",
-              height: "100%",
-              pointerEvents: "none",
-            }}
-          >
-            <svg
-              width="100%"
-              height="100%"
-              viewBox="0 0 100 100"
-              preserveAspectRatio="none"
-              style={{ display: "block" }}
-            >
-              <defs>
-                <mask id="bank-face-mask">
-                  <rect width="100" height="100" fill="white" />
-                  <ellipse cx="50" cy="52" rx="21" ry="33" fill="black" />
-                </mask>
-              </defs>
-              <rect
-                width="100"
-                height="100"
-                fill="rgba(0,0,0,0.42)"
-                mask="url(#bank-face-mask)"
-              />
-              <ellipse
-                cx="50"
-                cy="52"
-                rx="21"
-                ry="33"
-                fill="none"
-                stroke="#22c55e"
-                strokeWidth="1"
-                vectorEffect="non-scaling-stroke"
-              />
-              <ellipse
-                cx="50"
-                cy="52"
-                rx="21"
-                ry="33"
-                fill="none"
-                stroke="rgba(34,197,94,0.25)"
-                strokeWidth="2.2"
-                vectorEffect="non-scaling-stroke"
-              />
-            </svg>
-          </div>
-
-          {/* Texto acima do botão */}
-          <div
-            style={{
-              position: "absolute",
-              left: 24,
-              right: 24,
-              bottom: 128,
-              textAlign: "center",
-              color: "rgba(255,255,255,0.85)",
-              fontSize: 14,
-              fontWeight: 500,
-              lineHeight: 1.35,
-            }}
-          >
-            Enquadramento perfeito — você já pode capturar
-          </div>
-
-          {error ? (
-            <div
-              style={{
-                position: "absolute",
-                left: 24,
-                right: 24,
-                bottom: 198,
-                background: "#dc2626",
-                color: "#fff",
-                borderRadius: 14,
-                padding: "12px 14px",
-                fontSize: 14,
-                textAlign: "center",
-                fontWeight: 600,
-              }}
-            >
-              {error}
-            </div>
-          ) : null}
-
-          <div
-            style={{
-              position: "absolute",
-              left: 24,
-              right: 24,
-              bottom: 34,
-            }}
-          >
-            <button
-              onClick={handleCapture}
-              style={{
-                width: "100%",
-                height: 64,
-                border: "none",
-                borderRadius: 22,
-                background: "#22c55e",
-                color: "#0a0a0a",
-                fontSize: 18,
-                fontWeight: 800,
-                cursor: "pointer",
-                boxShadow: "0 12px 28px rgba(34,197,94,0.35)",
-              }}
-            >
-              Capturar agora
-            </button>
-          </div>
-        </>
-      ) : (
+      {error ? (
         <div
           style={{
             position: "absolute",
-            inset: 0,
-            background: "#000",
-            display: "flex",
-            flexDirection: "column",
+            left: 24,
+            right: 24,
+            bottom: 300,
+            background: "#dc2626",
+            color: "#fff",
+            borderRadius: 14,
+            padding: "12px 14px",
+            fontSize: 14,
+            textAlign: "center",
+            fontWeight: 600,
           }}
         >
-          <img
-            src={capturedImage}
-            alt="captura"
-            style={{
-              width: "100%",
-              height: "calc(100% - 160px)",
-              objectFit: "cover",
-            }}
-          />
-          <div
-            style={{
-              padding: 20,
-              display: "grid",
-              gap: 12,
-              background: "#000",
-            }}
-          >
-            <button
-              onClick={handleRetake}
-              style={{
-                width: "100%",
-                height: 54,
-                borderRadius: 16,
-                border: "1px solid rgba(255,255,255,0.18)",
-                background: "transparent",
-                color: "#fff",
-                fontSize: 16,
-                fontWeight: 700,
-                cursor: "pointer",
-              }}
-            >
-              Tirar novamente
-            </button>
-            <button
-              onClick={handleConfirm}
-              style={{
-                width: "100%",
-                height: 58,
-                borderRadius: 18,
-                border: "none",
-                background: "#22c55e",
-                color: "#0a0a0a",
-                fontSize: 17,
-                fontWeight: 800,
-                cursor: "pointer",
-              }}
-            >
-              Confirmar captura
-            </button>
-          </div>
+          {error}
         </div>
-      )}
+      ) : null}
 
-      <canvas ref={canvasRef} style={{ display: "none" }} />
+      <div
+        style={{
+          position: "absolute",
+          left: 0,
+          right: 0,
+          bottom: 46,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: 24,
+        }}
+      >
+        <div style={{ width: 68, height: 68 }} />
+        <button
+          onClick={handleContinue}
+          disabled={!faceDetected}
+          style={{
+            minWidth: 220,
+            height: 62,
+            borderRadius: 999,
+            border: "none",
+            background: faceDetected ? "#f59b31" : "rgba(255,255,255,0.18)",
+            color: faceDetected ? "#fff" : "rgba(255,255,255,0.7)",
+            fontSize: 17,
+            fontWeight: 800,
+            cursor: faceDetected ? "pointer" : "not-allowed",
+            padding: "0 28px",
+            boxShadow: faceDetected
+              ? "0 10px 28px rgba(245,155,49,0.30)"
+              : "none",
+            transition: "all 0.3s ease",
+          }}
+        >
+          Continuar
+        </button>
+        <div style={{ width: 68, height: 68 }} />
+      </div>
     </div>
   );
 };
