@@ -169,113 +169,155 @@ const PixSelectorCard = ({ onSelect }: { onSelect: (type: string) => void }) => 
   </div>
 );
 
-const BANK_OPTIONS = [
-  "Nubank",
-  "Caixa Econômica Federal",
-  "Itaú Unibanco",
-  "Bradesco",
-  "Banco do Brasil",
-  "Santander",
-  "Banco Inter",
-  "C6 Bank",
-  "PicPay",
-  "Mercado Pago",
-  "Next",
-  "Banco Original",
-  "Sicoob",
-  "Sicredi",
-  "BTG Pactual",
-  "Will Bank",
-  "Neon",
-  "Banco Pan",
-  "Banco Safra",
-  "Banco BMG",
-  "Banco Daycoval",
-  "Banco Votorantim (BV)",
-  "Banco ABC Brasil",
-  "Banco Modal",
-  "Banco Banrisul",
-  "Banestes",
-  "Banco do Nordeste",
-  "Banco da Amazônia",
-  "Banco Bocom BBM",
-  "Banco Cetelem",
-  "Banco Citibank",
-  "Banco Credit Suisse",
-  "Banco Crefisa",
-  "Banco Daycred",
-  "Banco Fibra",
-  "Banco Industrial do Brasil",
-  "Banco Mercantil do Brasil",
-  "Banco Olé Bonsucesso",
-  "Banco Paulista",
-  "Banco Pine",
-  "Banco Rendimento",
-  "Banco Ribeirão Preto",
-  "Banco Semear",
-  "Banco Sofisa",
-  "Banco Topázio",
-  "Banco Triângulo (Tribanco)",
-  "Banco Votorantim",
-  "Banco XP",
-  "BS2",
-  "Agibank",
-  "Ailos",
-  "Banco Bari",
-  "Banco BV",
-  "Banco Cresol",
-  "Banco Digio",
-  "Banco Genial",
-  "Banco Letsbank",
-  "Banco Master",
-  "Banco Pottencial",
-  "Banco PSA Finance",
-  "Banco Renner",
-  "Banco Topázio",
-  "Banco Voiter",
-  "Banese",
-  "Banpará",
-  "BancoSeguro",
-  "Caruana SCFI",
-  "Cooperativa Central Ailos",
-  "Cora",
-  "Iti (Itaú)",
-  "Juno",
-  "MoneyP",
-  "Neon Pagamentos",
-  "Pagseguro / PagBank",
-  "Pefisa",
-  "Pinbank",
-  "RecargaPay",
-  "Stone",
-  "Superdigital",
-  "Trinus",
-  "Unicred",
-  "Uniprime",
-  "Via Certa Financiadora",
-  "VR Pagamentos",
-  "Western Union",
-  "Banco Topázio",
-  "Outro / Não listado",
+type BankOption = { name: string; code?: string };
+
+const BANK_OPTIONS: BankOption[] = [
+  { name: "Nubank", code: "260" },
+  { name: "Caixa Econômica Federal", code: "104" },
+  { name: "Itaú Unibanco", code: "341" },
+  { name: "Bradesco", code: "237" },
+  { name: "Banco do Brasil", code: "001" },
+  { name: "Santander", code: "033" },
+  { name: "Banco Inter", code: "077" },
+  { name: "C6 Bank", code: "336" },
+  { name: "PicPay", code: "380" },
+  { name: "Mercado Pago", code: "323" },
+  { name: "Next", code: "237" },
+  { name: "Banco Original", code: "212" },
+  { name: "Sicoob", code: "756" },
+  { name: "Sicredi", code: "748" },
+  { name: "BTG Pactual", code: "208" },
+  { name: "Will Bank", code: "335" },
+  { name: "Neon", code: "735" },
+  { name: "Banco Pan", code: "623" },
+  { name: "Banco Safra", code: "422" },
+  { name: "Banco BMG", code: "318" },
+  { name: "Banco Daycoval", code: "707" },
+  { name: "Banco Votorantim (BV)", code: "655" },
+  { name: "Banco ABC Brasil", code: "246" },
+  { name: "Banco Modal", code: "746" },
+  { name: "Banco Banrisul", code: "041" },
+  { name: "Banestes", code: "021" },
+  { name: "Banco do Nordeste", code: "004" },
+  { name: "Banco da Amazônia", code: "003" },
+  { name: "Banco Citibank", code: "745" },
+  { name: "Banco Crefisa", code: "069" },
+  { name: "Banco Mercantil do Brasil", code: "389" },
+  { name: "Banco Olé Bonsucesso", code: "079" },
+  { name: "Banco Pine", code: "643" },
+  { name: "Banco Rendimento", code: "633" },
+  { name: "Banco Ribeirão Preto", code: "741" },
+  { name: "Banco Semear", code: "743" },
+  { name: "Banco Sofisa", code: "637" },
+  { name: "Banco Topázio", code: "082" },
+  { name: "Banco Triângulo (Tribanco)", code: "634" },
+  { name: "Banco XP", code: "348" },
+  { name: "BS2", code: "218" },
+  { name: "Agibank", code: "121" },
+  { name: "Ailos", code: "085" },
+  { name: "Banco Bari", code: "330" },
+  { name: "Banco Cresol", code: "133" },
+  { name: "Banco Digio", code: "335" },
+  { name: "Banco Genial", code: "125" },
+  { name: "Banco Master", code: "243" },
+  { name: "Banco Pottencial", code: "555" },
+  { name: "Banco Renner", code: "739" },
+  { name: "Banco Voiter", code: "653" },
+  { name: "Banese", code: "047" },
+  { name: "Banpará", code: "037" },
+  { name: "Cora", code: "403" },
+  { name: "Iti (Itaú)", code: "341" },
+  { name: "Juno", code: "383" },
+  { name: "Pagseguro / PagBank", code: "290" },
+  { name: "Pefisa", code: "174" },
+  { name: "RecargaPay", code: "329" },
+  { name: "Stone", code: "197" },
+  { name: "Superdigital", code: "340" },
+  { name: "Unicred", code: "136" },
+  { name: "Uniprime", code: "099" },
+  { name: "Western Union", code: "119" },
+  { name: "Banco Industrial do Brasil", code: "604" },
+  { name: "Banco Fibra", code: "224" },
+  { name: "Banco Bocom BBM", code: "107" },
+  { name: "Banco Cetelem", code: "739" },
+  { name: "Outro / Não listado" },
 ];
+
+// Stable color from name for fallback avatar
+const BANK_COLORS = [
+  "#8A05BE", "#EC7000", "#CC092F", "#FFD700", "#1976D2",
+  "#00A650", "#FF6900", "#000000", "#21C25E", "#00BFA5",
+  "#E91E63", "#3F51B5", "#009688", "#795548", "#607D8B",
+];
+const colorFromName = (name: string) => {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) hash = (hash * 31 + name.charCodeAt(i)) | 0;
+  return BANK_COLORS[Math.abs(hash) % BANK_COLORS.length];
+};
+const initialsFromName = (name: string) => {
+  const clean = name.replace(/\(.*?\)/g, "").trim();
+  const parts = clean.split(/\s+/).filter((p) => !/^(banco|do|de|da|cooperativa|central|sa|s\.a\.?)$/i.test(p));
+  const pick = parts.length ? parts : clean.split(/\s+/);
+  return (pick[0]?.[0] || "B").toUpperCase() + (pick[1]?.[0] || "").toUpperCase();
+};
+
+const BankLogo = ({ bank, size = 32 }: { bank: BankOption; size?: number }) => {
+  const [errored, setErrored] = useState(false);
+  const showImage = bank.code && !errored;
+  const color = colorFromName(bank.name);
+
+  return (
+    <div
+      className="rounded-full overflow-hidden flex items-center justify-center shrink-0 ring-1 ring-border bg-white"
+      style={{ width: size, height: size }}
+    >
+      {showImage ? (
+        <img
+          src={`https://cdn.brasilapi.com.br/logos/${bank.code}.png`}
+          alt={bank.name}
+          className="w-full h-full object-contain p-1"
+          onError={() => setErrored(true)}
+          loading="lazy"
+        />
+      ) : (
+        <div
+          className="w-full h-full flex items-center justify-center text-white font-bold"
+          style={{ backgroundColor: color, fontSize: size * 0.38 }}
+        >
+          {initialsFromName(bank.name)}
+        </div>
+      )}
+    </div>
+  );
+};
 
 const BankSelectorCard = ({ onSelect, selected }: { onSelect: (bank: string) => void; selected: string | null }) => {
   const [search, setSearch] = useState("");
 
   if (selected) {
+    const selectedBank = BANK_OPTIONS.find((b) => b.name === selected) || { name: selected };
     return (
       <div className="space-y-2">
         <p className="text-sm text-foreground">Banco da chave Pix:</p>
-        <div className="bg-muted/50 rounded-xl p-3 text-center"><p className="font-semibold text-foreground">{selected}</p></div>
+        <div className="bg-muted/50 rounded-xl p-3 flex items-center justify-center gap-2">
+          <BankLogo bank={selectedBank} size={28} />
+          <p className="font-semibold text-foreground">{selected}</p>
+        </div>
         <div className="text-center text-xs text-green-600 font-semibold py-1">Banco confirmado!</div>
       </div>
     );
   }
 
-  const uniqueBanks = Array.from(new Set(BANK_OPTIONS));
+  // De-duplicate by name
+  const seen = new Set<string>();
+  const uniqueBanks = BANK_OPTIONS.filter((b) => {
+    if (seen.has(b.name)) return false;
+    seen.add(b.name);
+    return true;
+  });
   const normalized = search.trim().toLowerCase();
   const filtered = normalized
-    ? uniqueBanks.filter((b) => b.toLowerCase().includes(normalized))
+    ? uniqueBanks.filter((b) => b.name.toLowerCase().includes(normalized))
     : uniqueBanks;
 
   return (
@@ -299,14 +341,12 @@ const BankSelectorCard = ({ onSelect, selected }: { onSelect: (bank: string) => 
         )}
         {filtered.map((bank) => (
           <button
-            key={bank}
-            onClick={() => onSelect(bank)}
+            key={bank.name}
+            onClick={() => onSelect(bank.name)}
             className="w-full flex items-center gap-3 p-2.5 rounded-xl border border-border hover:bg-primary/5 hover:border-primary/40 transition-colors text-left"
           >
-            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-              <CreditCard className="w-4 h-4 text-primary" />
-            </div>
-            <span className="text-sm font-semibold text-foreground">{bank}</span>
+            <BankLogo bank={bank} size={36} />
+            <span className="text-sm font-semibold text-foreground">{bank.name}</span>
           </button>
         ))}
       </div>
