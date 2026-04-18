@@ -468,19 +468,43 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
           </div>
         </div>
 
-        {/* Bottom panel — clean instruction + progress */}
+        {/* Bottom panel — instruction + Pronto button OR progress */}
         <div className="relative z-10 px-6 pb-[max(env(safe-area-inset-bottom),1.5rem)] pt-6 bg-gradient-to-t from-black via-black/80 to-transparent">
-          <p className="text-white text-base font-semibold text-center">{stepLabel}</p>
-          <div className="mt-4 mx-auto max-w-sm h-1 rounded-full bg-white/15 overflow-hidden">
-            <div
-              className="h-full bg-primary rounded-full"
-              style={{ width: `${Math.round(progress)}%`, transition: "width 120ms linear" }}
-            />
-          </div>
-          <p className="text-white/60 text-[11px] text-center mt-3 flex items-center justify-center gap-1.5">
-            <Lock className="w-3 h-3" />
-            Conexão segura · Criptografia ponta a ponta
+          <p className="text-white text-base font-semibold text-center">
+            {!started
+              ? "Primeiro, posicione seu rosto dentro da marcação"
+              : stepLabel}
           </p>
+
+          {!started ? (
+            <div className="mt-5 pointer-events-auto">
+              <button
+                type="button"
+                onClick={handleStart}
+                disabled={!faceReady}
+                className="w-full max-w-sm mx-auto h-14 rounded-2xl bg-primary text-primary-foreground text-base font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-opacity flex items-center justify-center"
+              >
+                Pronto
+              </button>
+              <p className="text-white/60 text-[11px] text-center mt-3 flex items-center justify-center gap-1.5">
+                <Lock className="w-3 h-3" />
+                Conexão segura · Criptografia ponta a ponta
+              </p>
+            </div>
+          ) : (
+            <>
+              <div className="mt-4 mx-auto max-w-sm h-1 rounded-full bg-white/15 overflow-hidden">
+                <div
+                  className="h-full bg-primary rounded-full"
+                  style={{ width: `${Math.round(progress)}%`, transition: "width 120ms linear" }}
+                />
+              </div>
+              <p className="text-white/60 text-[11px] text-center mt-3 flex items-center justify-center gap-1.5">
+                <Lock className="w-3 h-3" />
+                Conexão segura · Criptografia ponta a ponta
+              </p>
+            </>
+          )}
         </div>
 
         {error && (
