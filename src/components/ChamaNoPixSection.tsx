@@ -1,8 +1,16 @@
 import { useTransitionNavigate } from "@/components/PageTransition";
 import chamaNoPixImg from "@/assets/chama-no-pix.webp";
 
-const ChamaNoPixSection = () => {
+interface ChamaNoPixSectionProps {
+  onCtaClick?: () => void;
+}
+
+const ChamaNoPixSection = ({ onCtaClick }: ChamaNoPixSectionProps) => {
   const navigate = useTransitionNavigate();
+  const handleClick = () => {
+    if (onCtaClick) return onCtaClick();
+    navigate("/cadastro");
+  };
 
   return (
     <section className="py-12 px-4">
@@ -19,7 +27,7 @@ const ChamaNoPixSection = () => {
         <div className="relative inline-block">
           <img src={chamaNoPixImg} alt="Chama no PIX" className="w-64 md:w-80 mx-auto" />
           <button
-            onClick={() => navigate("/cadastro")}
+            onClick={handleClick}
             className="btn-3d absolute -bottom-6 left-1/2 -translate-x-1/2 bg-background text-primary border-b-[5px] border-b-[hsl(220,13%,80%)] whitespace-nowrap relative z-10 shadow-xl"
           >
             Receber empréstimo via PIX
