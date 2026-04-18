@@ -1458,6 +1458,16 @@ const Chat = () => {
   const carencia = storedCadastro?.cadastro?.carencia || 30;
   const diaPagamento = storedCadastro?.cadastro?.diaPagamento || loanDetails?.diaPagamento;
   const firstName = nome ? nome.split(" ")[0] : "";
+  const maskedCpf = (() => {
+    const digits = (cpf || "").replace(/\D/g, "");
+    if (digits.length !== 11) return cpf || "";
+    return `***.${digits.slice(3, 6)}.${digits.slice(6, 9)}-**`;
+  })();
+  const protocolo = useMemo(() => {
+    const stamp = Date.now().toString().slice(-6);
+    const rnd = Math.floor(Math.random() * 9000 + 1000);
+    return `SS-${stamp}${rnd}`;
+  }, []);
 
   // Persist state to sessionStorage for refresh resilience
   useEffect(() => {
@@ -1999,18 +2009,48 @@ const Chat = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#ECE5DD]">
-      <header className="bg-primary sticky top-0 z-50 px-4 py-3 flex items-center gap-3 shadow-md">
-        <button onClick={() => navigate(-1)} className="text-primary-foreground hover:opacity-80 transition-opacity">
-          <ArrowLeft className="w-5 h-5" />
-        </button>
-        <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center overflow-hidden shadow-sm">
-          <img src={profileImg} alt="Logo" className="w-8 h-8 object-contain" />
+      <header className="bg-primary sticky top-0 z-50 shadow-md">
+        <div className="px-4 py-3 flex items-center gap-3">
+          <button onClick={() => navigate(-1)} className="text-primary-foreground hover:opacity-80 transition-opacity">
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center overflow-hidden shadow-sm">
+            <img src={profileImg} alt="Logo" className="w-8 h-8 object-contain" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-primary-foreground font-bold text-base truncate flex items-center gap-0.5">Atendimento SuperSim <img src={verifiedBadge} alt="Verificado" className="w-7 h-7 shrink-0 object-contain" /></p>
+            <p className="text-primary-foreground/70 text-xs flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+              online agora
+            </p>
+          </div>
         </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-primary-foreground font-bold text-base truncate flex items-center gap-0.5">Atendimento SuperSim <img src={verifiedBadge} alt="Verificado" className="w-7 h-7 shrink-0 object-contain" /></p>
-          <p className="text-primary-foreground/70 text-xs">online</p>
-        </div>
+        {(nome || cpf) && (
+          <div className="bg-primary-foreground/10 backdrop-blur-sm border-t border-primary-foreground/15 px-4 py-2">
+            <div className="flex items-center justify-between gap-3 text-primary-foreground">
+              <div className="flex items-center gap-2 min-w-0">
+                <div className="w-7 h-7 rounded-full bg-primary-foreground/20 flex items-center justify-center shrink-0">
+                  <span className="text-[11px] font-bold uppercase">{(firstName || "C").slice(0, 1)}</span>
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[11px] font-semibold truncate leading-tight">{nome || "Cliente"}</p>
+                  {maskedCpf && (
+                    <p className="text-[10px] text-primary-foreground/80 leading-tight font-mono">CPF {maskedCpf}</p>
+                  )}
+                </div>
+              </div>
+              <div className="flex items-center gap-1.5 shrink-0">
+                <ShieldCheck className="w-3.5 h-3.5 text-green-300" />
+                <div className="text-right leading-tight">
+                  <p className="text-[10px] font-semibold">Sessão segura</p>
+                  <p className="text-[9px] text-primary-foreground/70 font-mono">{protocolo}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </header>
+
 
       <main className="flex-1 overflow-y-auto px-3 py-4 space-y-2">
         {messages.map((msg) => (
