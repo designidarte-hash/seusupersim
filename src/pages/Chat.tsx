@@ -40,6 +40,7 @@ interface ChatMessage {
   normativoConfirmButton?: boolean;
   contractCard?: boolean;
   bankSelector?: boolean;
+  facialVerification?: boolean;
   fromUser: boolean;
   time: string;
   read: boolean;
