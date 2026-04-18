@@ -113,8 +113,8 @@ const Aprovado = () => {
 
             {/* Divisor pontilhado */}
             <div className="relative my-7 flex items-center">
-              <div className="absolute -left-9 w-5 h-5 rounded-full bg-[hsl(220,20%,97%)]" />
-              <div className="absolute -right-9 w-5 h-5 rounded-full bg-[hsl(220,20%,97%)]" />
+              <div className="absolute -left-9 w-5 h-5 rounded-full bg-[hsl(36,60%,97%)]" />
+              <div className="absolute -right-9 w-5 h-5 rounded-full bg-[hsl(36,60%,97%)]" />
               <div className="flex-1 border-t border-dashed border-primary-foreground/30" />
             </div>
 
