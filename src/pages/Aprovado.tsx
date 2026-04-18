@@ -79,7 +79,7 @@ const Aprovado = () => {
           </div>
 
           <button
-            onClick={() => navigate("/cadastro", { cpfData, cpfDigits, loanAmount, creditScore })}
+            onClick={() => navigate("/simulacao", { cpfData, cpfDigits, cadastro: location.state?.cadastro, loanAmount, creditScore })}
             className="btn-3d w-full max-w-sm mx-auto mt-6 relative z-10 shadow-2xl text-xl"
           >
             Solicitar agora
@@ -110,7 +110,7 @@ const Aprovado = () => {
             O empréstimo da SuperSim tem um dos processos mais rápidos do mercado na concessão de empréstimos pessoais online. E aqui, a chance é para todos, incluindo negativados!
           </p>
           <button
-            onClick={() => navigate("/cadastro", { cpfData, cpfDigits, loanAmount, creditScore })}
+            onClick={() => navigate("/simulacao", { cpfData, cpfDigits, cadastro: location.state?.cadastro, loanAmount, creditScore })}
             className="btn-3d mt-4 bg-background text-primary border-b-[5px] border-b-[hsl(220,13%,80%)] relative z-10 shadow-xl"
           >
             Solicitar agora
