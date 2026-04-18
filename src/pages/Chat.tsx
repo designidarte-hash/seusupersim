@@ -1271,6 +1271,9 @@ const ContractCard = ({ nome, cpf, email, dataNascimento, valor, parcelas, valor
                   ["CPF", cpf],
                   ["E-mail", email],
                   ["Data de Nascimento", dataNascimento],
+                  ...(profissao ? [["Profissão", profissao]] : []),
+                  ...(escolaridade ? [["Escolaridade", escolaridade]] : []),
+                  ...(renda ? [["Renda mensal", renda]] : []),
                 ].map(([label, val]) => (
                   <div key={label} className="flex justify-between items-center">
                     <span className="text-xs text-muted-foreground">{label}</span>
@@ -1292,8 +1295,8 @@ const ContractCard = ({ nome, cpf, email, dataNascimento, valor, parcelas, valor
                   ["Parcelas", `${parcelas}x de ${formatCurrency(valorParcela)}`],
                   ["Taxa Mensal", `${taxa}%`],
                   ["Valor Total", formatCurrency(totalValue)],
-                  ["CET a.m.", "1,42%"],
-                  ["Data", today],
+                  ["Carência 1ª parcela", `${carencia || 30} dias`],
+                  ["1º Vencimento", parcelasDatas[0] || "—"],
                 ].map(([label, val]) => (
                   <div key={label} className="bg-primary/5 border border-primary/10 rounded-xl p-3 text-center">
                     <p className="text-[10px] text-muted-foreground">{label}</p>
@@ -1302,6 +1305,26 @@ const ContractCard = ({ nome, cpf, email, dataNascimento, valor, parcelas, valor
                 ))}
               </div>
             </div>
+
+            {/* Cronograma de parcelas */}
+            <div className="px-5 pb-4">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-1.5 h-5 bg-primary rounded-full" />
+                <p className="text-sm font-bold text-foreground uppercase tracking-wide">Cronograma de Parcelas</p>
+              </div>
+              <div className="bg-muted/40 rounded-xl p-3 max-h-48 overflow-y-auto">
+                <div className="space-y-1.5">
+                  {parcelasDatas.map((data, i) => (
+                    <div key={i} className="flex justify-between items-center px-2 py-1.5 rounded-lg bg-background">
+                      <span className="text-[11px] text-muted-foreground font-medium">Parcela {i + 1}/{parcelas}</span>
+                      <span className="text-[11px] text-foreground font-semibold">{data}</span>
+                      <span className="text-[11px] text-primary font-bold">{formatCurrency(valorParcela)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
 
             {/* Chave PIX */}
             <div className="px-5 pb-4">
