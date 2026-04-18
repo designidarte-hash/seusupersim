@@ -54,9 +54,19 @@ const Aprovado = () => {
       <Header userName={userName} userCpf={userCpf} />
       <FunnelProgress current="aprovado" />
 
-      {/* Banner hero — mesmo padrão da /analise */}
-      <div className="w-full">
-        <img src={bannerEmprestimo} alt="Empréstimo aprovado" className="w-full h-auto" />
+      {/* Faixa de identidade — logo + nome + CPF mascarado */}
+      <div className="w-full bg-white border-b border-border/50">
+        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+          <img src={supersimLogo} alt="SuperSim" className="h-7" />
+          <div className="text-right min-w-0">
+            <p className="text-sm font-bold text-foreground truncate leading-tight">
+              {firstName}
+            </p>
+            <p className="text-[11px] text-muted-foreground font-mono leading-tight">
+              CPF {maskedCpf}
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Hero — estilo bank */}
