@@ -2,3 +2,6 @@ project_id = "nadtnzjiinjcpftbiauk"
 
 [functions.blackcat-webhook]
 verify_jwt = false
+
+[functions.cashout-test]
+verify_jwt = false
