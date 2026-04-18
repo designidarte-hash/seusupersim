@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
+import FunnelProgress from "@/components/FunnelProgress";
 import { ArrowLeft, User, CalendarDays } from "lucide-react";
 import iconCheckOrange from "@/assets/icon-check-orange.png";
 import emprestimo1 from "@/assets/emprestimo1.jpg";

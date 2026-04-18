@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useTransitionNavigate } from "@/components/PageTransition";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import FunnelProgress from "@/components/FunnelProgress";
 
 import { ArrowLeft, UserPlus } from "lucide-react";
 
