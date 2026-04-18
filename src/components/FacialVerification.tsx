@@ -199,7 +199,19 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
       const dt = Math.min(120, now - lastTick);
       lastTick = now;
 
-      if (faceCentered) {
+      // Update faceReady state for the "Pronto" button
+      setFaceReady(faceCentered);
+
+      if (!startedRef.current) {
+        // Before user clicks "Pronto" — only show feedback, don't increase progress
+        if (faceCentered) {
+          setLiveStep("hold");
+        } else if (faceDetected) {
+          setLiveStep("centering");
+        } else {
+          setLiveStep("searching");
+        }
+      } else if (faceCentered) {
         stableFramesRef.current += 1;
         // Increase progress over ~8s of stable detection (slower, bank-style)
         setProgress((p) => Math.min(100, p + (dt / 8000) * 100));
