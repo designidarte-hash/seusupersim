@@ -412,8 +412,20 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
           />
         </div>
 
-        {/* Subtle vignette */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/70 pointer-events-none" />
+        {/* Dark mask with oval cutout — bank-style spotlight on the face */}
+        <svg
+          className="absolute inset-0 w-full h-full pointer-events-none z-[5]"
+          preserveAspectRatio="none"
+          viewBox="0 0 100 100"
+        >
+          <defs>
+            <mask id="face-oval-mask">
+              <rect width="100" height="100" fill="white" />
+              <ellipse cx="50" cy="50" rx="22" ry="32" fill="black" />
+            </mask>
+          </defs>
+          <rect width="100" height="100" fill="rgba(0,0,0,0.72)" mask="url(#face-oval-mask)" />
+        </svg>
 
         {/* Top bar */}
         <div className="relative z-10 px-4 pt-[max(env(safe-area-inset-top),1rem)] pb-3 flex items-center justify-between">
