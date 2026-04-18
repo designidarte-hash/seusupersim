@@ -44,6 +44,37 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
     }
   };
 
+  const playSuccessBeep = () => {
+    try {
+      const AudioCtx = (window.AudioContext || (window as any).webkitAudioContext);
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const now = ctx.currentTime;
+
+      const tone = (freq: number, start: number, dur: number) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, now + start);
+        gain.gain.setValueAtTime(0, now + start);
+        gain.gain.linearRampToValueAtTime(0.18, now + start + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + start + dur);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now + start);
+        osc.stop(now + start + dur + 0.05);
+      };
+
+      // Two-note bank-style success chime
+      tone(880, 0, 0.18);
+      tone(1320, 0.16, 0.32);
+
+      setTimeout(() => ctx.close().catch(() => {}), 800);
+    } catch {
+      // ignore
+    }
+  };
+
   const startCamera = async () => {
     try {
       stopStream();
@@ -185,7 +216,10 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
             setTimeout(() => {
               stopStream();
               setStage("processing");
-              setTimeout(() => setStage("approved"), 1200);
+              setTimeout(() => {
+                playSuccessBeep();
+                setStage("approved");
+              }, 1200);
               setTimeout(() => onComplete(), 2200);
             }, 800);
           }
@@ -337,17 +371,20 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
   const overlay =
     stage === "camera" ? (
       <div className="fixed inset-0 z-[9999] bg-black flex flex-col animate-in fade-in duration-200">
-        <video
-          ref={videoRef}
-          playsInline
-          muted
-          autoPlay
-          className="absolute inset-0 w-full h-full object-cover"
-          style={{ transform: "scaleX(-1)" }}
-        />
+        {/* Camera feed — contained to avoid heavy zoom */}
+        <div className="absolute inset-0 bg-black flex items-center justify-center overflow-hidden">
+          <video
+            ref={videoRef}
+            playsInline
+            muted
+            autoPlay
+            className="w-full h-full object-contain"
+            style={{ transform: "scaleX(-1)" }}
+          />
+        </div>
 
-        {/* Dark vignette overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/80 pointer-events-none" />
+        {/* Subtle vignette */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/70 pointer-events-none" />
 
         {/* Top bar */}
         <div className="relative z-10 px-4 pt-[max(env(safe-area-inset-top),1rem)] pb-3 flex items-center justify-between">
@@ -356,33 +393,32 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
               stopStream();
               setStage("consent");
             }}
-            className="w-10 h-10 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center text-white"
+            className="w-10 h-10 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white"
             aria-label="Voltar"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
-          <div className="flex items-center gap-1.5 bg-black/50 backdrop-blur-md rounded-full px-3 py-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse" />
-            <span className="text-[11px] font-bold text-yellow-300">Leitura biométrica</span>
-          </div>
+          <p className="text-white text-sm font-semibold">Verificação de identidade</p>
           <div className="w-10" />
         </div>
 
-        {/* Centered title */}
-        <div className="relative z-10 px-6 text-center mb-2">
-          <h2 className="text-white text-xl font-extrabold drop-shadow-md">Verificação de identidade</h2>
-          <p className="text-white/80 text-xs mt-1">Mantenha o rosto centralizado no contorno</p>
-        </div>
-
-        {/* Oval guide with progress ring — fills available space */}
-        <div className="relative flex-1 flex items-center justify-center px-6 pointer-events-none z-10">
-          <div className="relative w-full max-w-xs aspect-[3/4]">
+        {/* Single oval guide with thin progress arc */}
+        <div className="relative flex-1 flex items-center justify-center px-8 pointer-events-none z-10">
+          <div className="relative w-full max-w-[260px] aspect-[3/4]">
             <svg
               className="absolute inset-0 w-full h-full -rotate-90"
               viewBox="0 0 100 100"
               preserveAspectRatio="none"
             >
-              <ellipse cx="50" cy="50" rx="48" ry="48" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
+              <ellipse
+                cx="50"
+                cy="50"
+                rx="48"
+                ry="48"
+                fill="none"
+                stroke="rgba(255,255,255,0.35)"
+                strokeWidth="0.8"
+              />
               <ellipse
                 cx="50"
                 cy="50"
@@ -390,59 +426,29 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
                 ry="48"
                 fill="none"
                 stroke="hsl(var(--primary))"
-                strokeWidth="2.5"
+                strokeWidth="2"
                 strokeLinecap="round"
                 strokeDasharray={circumference}
                 strokeDashoffset={offset}
                 style={{ transition: "stroke-dashoffset 120ms linear" }}
               />
             </svg>
-
-            {/* Inner oval */}
-            <div className="absolute inset-3 rounded-[50%] border-[3px] border-white/80 shadow-[0_0_60px_rgba(255,255,255,0.15)_inset]" />
-
-            {/* Corner brackets */}
-            <div className="absolute -top-3 -left-3 w-9 h-9 border-t-[5px] border-l-[5px] border-primary rounded-tl-2xl" />
-            <div className="absolute -top-3 -right-3 w-9 h-9 border-t-[5px] border-r-[5px] border-primary rounded-tr-2xl" />
-            <div className="absolute -bottom-3 -left-3 w-9 h-9 border-b-[5px] border-l-[5px] border-primary rounded-bl-2xl" />
-            <div className="absolute -bottom-3 -right-3 w-9 h-9 border-b-[5px] border-r-[5px] border-primary rounded-br-2xl" />
-
-            {/* Animated scan line */}
-            {progress > 0 && progress < 100 && (
-              <div className="absolute inset-3 rounded-[50%] overflow-hidden pointer-events-none">
-                <div
-                  className="absolute left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent shadow-[0_0_12px_hsl(var(--primary))]"
-                  style={{
-                    top: `${(progress % 100)}%`,
-                    transition: "top 120ms linear",
-                  }}
-                />
-              </div>
-            )}
-
-            {liveStep === "searching" && (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <ScanFace className="w-20 h-20 text-white/40" />
-              </div>
-            )}
           </div>
         </div>
 
-        {/* Bottom panel */}
-        <div className="relative z-10 px-6 pb-[max(env(safe-area-inset-bottom),1.25rem)] pt-4 bg-gradient-to-t from-black via-black/85 to-transparent">
-          <p className="text-white text-base font-bold text-center">{stepLabel}</p>
-          <p className="text-white/70 text-[11px] text-center mt-1 flex items-center justify-center gap-1.5">
-            <Lock className="w-3 h-3" />
-            Conexão segura · Criptografia ponta a ponta
-          </p>
-
-          <div className="mt-4 mx-auto max-w-sm h-2.5 rounded-full bg-white/15 overflow-hidden">
+        {/* Bottom panel — clean instruction + progress */}
+        <div className="relative z-10 px-6 pb-[max(env(safe-area-inset-bottom),1.5rem)] pt-6 bg-gradient-to-t from-black via-black/80 to-transparent">
+          <p className="text-white text-base font-semibold text-center">{stepLabel}</p>
+          <div className="mt-4 mx-auto max-w-sm h-1 rounded-full bg-white/15 overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-primary to-primary/70 rounded-full"
+              className="h-full bg-primary rounded-full"
               style={{ width: `${Math.round(progress)}%`, transition: "width 120ms linear" }}
             />
           </div>
-          <p className="text-white text-sm text-center mt-2 font-bold">{Math.round(progress)}%</p>
+          <p className="text-white/60 text-[11px] text-center mt-3 flex items-center justify-center gap-1.5">
+            <Lock className="w-3 h-3" />
+            Conexão segura · Criptografia ponta a ponta
+          </p>
         </div>
 
         {error && (
