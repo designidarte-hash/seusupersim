@@ -1450,6 +1450,11 @@ const Chat = () => {
   const celular = navState.celular || stored.celular || storedCadastro?.cadastro?.celular || "";
   const dataNascimento = navState.dataNascimento || stored.dataNascimento || storedCadastro?.cpfData?.data_nascimento || storedCadastro?.cpfData?.dataNascimento;
   const loanDetails = navState.loanDetails || stored.loanDetails;
+  const profissao = storedCadastro?.cadastro?.profissao || "";
+  const escolaridade = storedCadastro?.cadastro?.escolaridade || "";
+  const renda = storedCadastro?.cadastro?.renda || "";
+  const carencia = storedCadastro?.cadastro?.carencia || 30;
+  const diaPagamento = storedCadastro?.cadastro?.diaPagamento || loanDetails?.diaPagamento;
   const firstName = nome ? nome.split(" ")[0] : "";
 
   // Persist state to sessionStorage for refresh resilience
@@ -2027,6 +2032,11 @@ const Chat = () => {
                   taxa={loanDetails?.taxa || 1.32}
                   pixKeyType={pixType}
                   pixKeyValue={pixValue}
+                  profissao={profissao}
+                  escolaridade={escolaridade}
+                  renda={renda}
+                  carencia={carencia}
+                  diaPagamento={diaPagamento}
                   onSign={handleContractSign}
                   signed={contractSigned}
                 />
