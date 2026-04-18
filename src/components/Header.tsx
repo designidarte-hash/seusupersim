@@ -34,7 +34,7 @@ const Header = ({ showCta = false, onCtaClick, userName, userCpf }: HeaderProps)
           <span className="w-6 h-[2.5px] bg-primary rounded-full"></span>
           <span className="w-6 h-[2.5px] bg-primary rounded-full"></span>
         </button>
-        <img src={logo} alt="SuperSim" className="h-8 md:h-10 shrink-0" />
+        <img src={logo} alt="SuperSim" className="h-8 md:h-10 shrink-0" loading="eager" fetchPriority="high" decoding="async" />
       </div>
 
       <div className="flex items-center gap-3 min-w-0">

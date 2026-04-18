@@ -40,7 +40,7 @@ const testimonials = [
   { name: "Tatiana Bispo Dos Santos", img: null, text: "Recebi o dinheiro no tempo certo" },
 ];
 
-const SPLASH_DURATION = 5000;
+const SPLASH_DURATION = 1500;
 
 const Index = () => {
   const alreadySeen = sessionStorage.getItem("splashSeen") === "true";
