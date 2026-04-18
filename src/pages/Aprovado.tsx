@@ -5,6 +5,7 @@ import ChamaNoPixSection from "@/components/ChamaNoPixSection";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import FunnelProgress from "@/components/FunnelProgress";
+import { useFunnelUser } from "@/hooks/use-funnel-user";
 import iconCheckCircle from "@/assets/icon-check-circle.png";
 import iconThumbsUp from "@/assets/icon-thumbsup.webp";
 import iconPhone from "@/assets/icon-phone.webp";
