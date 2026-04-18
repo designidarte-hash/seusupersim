@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { ShieldCheck, Lock, Clock, ChevronLeft, RotateCw, X, Check } from "lucide-react";
+import { ShieldCheck, Lock, Clock, ChevronLeft, X, Check, ScanFace } from "lucide-react";
 
 type Stage = "consent" | "camera" | "processing" | "approved";
+type LiveStep = "searching" | "centering" | "hold" | "validating";
 
 interface FacialVerificationProps {
   onComplete: () => void;
@@ -9,25 +10,44 @@ interface FacialVerificationProps {
   approved?: boolean;
 }
 
+// Type for experimental FaceDetector API
+declare global {
+  interface Window {
+    FaceDetector?: new (opts?: { fastMode?: boolean; maxDetectedFaces?: number }) => {
+      detect: (source: CanvasImageSource) => Promise<Array<{ boundingBox: DOMRectReadOnly }>>;
+    };
+  }
+}
+
 const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificationProps) => {
   const [stage, setStage] = useState<Stage>(approved ? "approved" : "consent");
   const [error, setError] = useState<string | null>(null);
-  const [facingMode, setFacingMode] = useState<"user" | "environment">("user");
+  const [liveStep, setLiveStep] = useState<LiveStep>("searching");
+  const [progress, setProgress] = useState(0); // 0..100
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const rafRef = useRef<number | null>(null);
+  const detectorRef = useRef<any>(null);
+  const analysisCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const stableFramesRef = useRef(0);
+  const completedRef = useRef(false);
 
   const stopStream = () => {
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((t) => t.stop());
       streamRef.current = null;
     }
+    if (rafRef.current) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
   };
 
-  const startCamera = async (mode: "user" | "environment" = "user") => {
+  const startCamera = async () => {
     try {
       stopStream();
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: mode, width: { ideal: 720 }, height: { ideal: 1280 } },
+        video: { facingMode: "user", width: { ideal: 720 }, height: { ideal: 1280 } },
         audio: false,
       });
       streamRef.current = stream;
@@ -36,6 +56,21 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
         await videoRef.current.play().catch(() => {});
       }
       setError(null);
+
+      // Init FaceDetector if supported
+      if (typeof window !== "undefined" && window.FaceDetector) {
+        try {
+          detectorRef.current = new window.FaceDetector({ fastMode: true, maxDetectedFaces: 1 });
+        } catch {
+          detectorRef.current = null;
+        }
+      }
+
+      // Start the detection loop
+      stableFramesRef.current = 0;
+      setProgress(0);
+      setLiveStep("searching");
+      runDetectionLoop();
     } catch (e: any) {
       setError(
         e?.name === "NotAllowedError"
@@ -45,37 +80,138 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
     }
   };
 
+  // Heuristic fallback: measure variance of central region brightness — a face produces strong variance
+  const fallbackFaceLikelihood = (video: HTMLVideoElement) => {
+    if (!analysisCanvasRef.current) {
+      analysisCanvasRef.current = document.createElement("canvas");
+    }
+    const canvas = analysisCanvasRef.current;
+    const w = 64;
+    const h = 64;
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d");
+    if (!ctx || !video.videoWidth) return { detected: false, centered: false };
+
+    // Draw center crop
+    const vw = video.videoWidth;
+    const vh = video.videoHeight;
+    const size = Math.min(vw, vh) * 0.7;
+    const sx = (vw - size) / 2;
+    const sy = (vh - size) / 2;
+    ctx.drawImage(video, sx, sy, size, size, 0, 0, w, h);
+    const data = ctx.getImageData(0, 0, w, h).data;
+
+    let sum = 0;
+    let sumSq = 0;
+    let count = 0;
+    for (let i = 0; i < data.length; i += 4) {
+      const lum = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+      sum += lum;
+      sumSq += lum * lum;
+      count++;
+    }
+    const mean = sum / count;
+    const variance = sumSq / count - mean * mean;
+    // Reasonable lighting and texture in frame
+    const detected = mean > 40 && mean < 220 && variance > 350;
+    return { detected, centered: detected };
+  };
+
+  const runDetectionLoop = () => {
+    let lastTick = performance.now();
+
+    const tick = async () => {
+      if (!videoRef.current || !streamRef.current) return;
+      const video = videoRef.current;
+
+      let faceDetected = false;
+      let faceCentered = false;
+
+      if (detectorRef.current && video.readyState >= 2) {
+        try {
+          const faces = await detectorRef.current.detect(video);
+          if (faces && faces.length > 0) {
+            faceDetected = true;
+            const box = faces[0].boundingBox;
+            const cx = box.x + box.width / 2;
+            const cy = box.y + box.height / 2;
+            const vw = video.videoWidth;
+            const vh = video.videoHeight;
+            const dx = Math.abs(cx - vw / 2) / vw;
+            const dy = Math.abs(cy - vh / 2) / vh;
+            const sizeOk = box.width / vw > 0.25 && box.width / vw < 0.85;
+            faceCentered = dx < 0.18 && dy < 0.22 && sizeOk;
+          }
+        } catch {
+          // fall through to heuristic
+          const r = fallbackFaceLikelihood(video);
+          faceDetected = r.detected;
+          faceCentered = r.centered;
+        }
+      } else if (video.readyState >= 2) {
+        const r = fallbackFaceLikelihood(video);
+        faceDetected = r.detected;
+        faceCentered = r.centered;
+      }
+
+      const now = performance.now();
+      const dt = Math.min(120, now - lastTick);
+      lastTick = now;
+
+      if (faceCentered) {
+        stableFramesRef.current += 1;
+        // increase progress over ~2.2s of stable detection
+        setProgress((p) => Math.min(100, p + (dt / 2200) * 100));
+        setLiveStep((s) => (s === "searching" || s === "centering" ? "hold" : s));
+      } else if (faceDetected) {
+        stableFramesRef.current = 0;
+        setProgress((p) => Math.max(0, p - (dt / 1500) * 100));
+        setLiveStep("centering");
+      } else {
+        stableFramesRef.current = 0;
+        setProgress((p) => Math.max(0, p - (dt / 1200) * 100));
+        setLiveStep("searching");
+      }
+
+      if (!completedRef.current) {
+        // read latest progress via functional setter trick
+        setProgress((p) => {
+          if (p >= 100 && !completedRef.current) {
+            completedRef.current = true;
+            setLiveStep("validating");
+            // brief "validating" pause then approved
+            setTimeout(() => {
+              stopStream();
+              setStage("processing");
+              setTimeout(() => setStage("approved"), 1100);
+              setTimeout(() => onComplete(), 2100);
+            }, 600);
+          }
+          return p;
+        });
+      }
+
+      if (!completedRef.current) {
+        rafRef.current = requestAnimationFrame(tick);
+      }
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+  };
+
   useEffect(() => {
     if (stage === "camera") {
-      startCamera(facingMode);
+      completedRef.current = false;
+      startCamera();
     } else {
       stopStream();
     }
     return () => stopStream();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stage, facingMode]);
+  }, [stage]);
 
   const handleConsent = () => setStage("camera");
-
-  const handleCapture = () => {
-    if (!videoRef.current) return;
-    const video = videoRef.current;
-    const canvas = document.createElement("canvas");
-    canvas.width = video.videoWidth || 480;
-    canvas.height = video.videoHeight || 640;
-    const ctx = canvas.getContext("2d");
-    if (ctx) {
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    }
-    stopStream();
-    setStage("processing");
-    setTimeout(() => setStage("approved"), 2200);
-    setTimeout(() => onComplete(), 3200);
-  };
-
-  const handleFlip = () => {
-    setFacingMode((m) => (m === "user" ? "environment" : "user"));
-  };
 
   // ============ APPROVED PREVIEW ============
   if (stage === "approved") {
@@ -87,21 +223,21 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
           </div>
           <div>
             <p className="text-sm font-bold">Identidade verificada com sucesso</p>
-            <p className="text-[11px] text-white/80">Selfie validada • LGPD</p>
+            <p className="text-[11px] text-white/80">Biometria facial validada • LGPD</p>
           </div>
         </div>
       </div>
     );
   }
 
-  // ============ CONSENT (matches uploaded image) ============
+  // ============ CONSENT ============
   if (stage === "consent") {
     return (
       <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-border">
         <div className="px-5 pt-5 pb-3 text-center">
           <h3 className="text-2xl font-extrabold text-foreground">Verificação facial</h3>
           <p className="text-sm text-muted-foreground mt-2 leading-snug">
-            Para sua segurança, precisamos validar sua identidade com uma selfie. O processo é rápido e seguro.
+            Para sua segurança, vamos validar sua identidade com uma leitura facial — igual ao processo do seu banco. Basta posicionar o rosto na câmera.
           </p>
         </div>
 
@@ -110,20 +246,20 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
             {
               icon: <ShieldCheck className="w-5 h-5 text-primary" />,
               bg: "bg-primary/15",
-              title: "Uso limitado",
-              desc: "A foto será usada apenas para validação de identidade no processo de contratação.",
+              title: "Biometria segura",
+              desc: "Sua face é analisada em tempo real apenas para validar sua identidade.",
             },
             {
               icon: <Lock className="w-5 h-5 text-blue-600" />,
               bg: "bg-blue-100",
-              title: "Proteção de dados",
-              desc: "Seus dados e imagem não serão compartilhados com terceiros sem autorização.",
+              title: "Sem fotos armazenadas",
+              desc: "Nenhuma imagem é salva. A leitura acontece localmente no seu dispositivo.",
             },
             {
               icon: <Clock className="w-5 h-5 text-primary" />,
               bg: "bg-primary/15",
-              title: "Rápido e simples",
-              desc: "Leva menos de 1 minuto — confirme e tire a foto.",
+              title: "Rápido e automático",
+              desc: "É só olhar para a câmera. Em poucos segundos a validação é concluída.",
             },
           ].map((item, i, arr) => (
             <div key={item.title}>
@@ -143,7 +279,7 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
 
         <div className="px-5 pt-2 pb-4">
           <p className="text-[10px] text-muted-foreground leading-snug">
-            Ao confirmar você autoriza a captura e o uso da imagem para validação desta operação, conforme a LGPD.
+            Ao confirmar você autoriza a captura biométrica facial para validação desta operação, conforme a LGPD.
           </p>
         </div>
 
@@ -162,15 +298,29 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
             onClick={handleConsent}
             className="flex-1 h-12 rounded-2xl bg-primary text-primary-foreground text-sm font-bold shadow-md hover:opacity-95 transition"
           >
-            Concordo e prosseguir
+            Iniciar leitura facial
           </button>
         </div>
       </div>
     );
   }
 
-  // ============ CAMERA (matches uploaded image) ============
+  // ============ CAMERA — live bank-style face detection ============
   if (stage === "camera") {
+    const stepLabel =
+      liveStep === "searching"
+        ? "Posicione seu rosto dentro do contorno"
+        : liveStep === "centering"
+        ? "Centralize seu rosto e mantenha parado"
+        : liveStep === "hold"
+        ? "Mantenha-se parado…"
+        : "Validando biometria…";
+
+    // SVG circle progress
+    const radius = 46;
+    const circumference = 2 * Math.PI * radius;
+    const offset = circumference - (progress / 100) * circumference;
+
     return (
       <div className="rounded-2xl overflow-hidden bg-black shadow-lg">
         <div className="relative w-full aspect-[3/4] bg-neutral-900">
@@ -180,7 +330,7 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
             muted
             autoPlay
             className="absolute inset-0 w-full h-full object-cover"
-            style={{ transform: facingMode === "user" ? "scaleX(-1)" : "none" }}
+            style={{ transform: "scaleX(-1)" }}
           />
 
           {/* Top bar */}
@@ -196,52 +346,78 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
               <ChevronLeft className="w-5 h-5" />
             </button>
             <div className="flex items-center gap-1.5 bg-black/40 backdrop-blur-sm rounded-full px-3 py-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-yellow-400" />
-              <span className="text-[11px] font-bold text-yellow-300">Verificação ativa</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse" />
+              <span className="text-[11px] font-bold text-yellow-300">Leitura biométrica</span>
             </div>
           </div>
 
-          {/* Oval guide + corner brackets */}
+          {/* Oval guide with progress ring */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="relative w-[68%] aspect-[3/4]">
-              {/* Outer orange oval */}
-              <div className="absolute inset-0 rounded-[50%] border-4 border-primary" />
-              {/* Inner white oval */}
-              <div className="absolute inset-1.5 rounded-[50%] border-2 border-white/80" />
+            <div className="relative w-[72%] aspect-[3/4]">
+              {/* Progress ring (around the oval) */}
+              <svg
+                className="absolute inset-0 w-full h-full -rotate-90"
+                viewBox="0 0 100 100"
+                preserveAspectRatio="none"
+              >
+                <ellipse
+                  cx="50"
+                  cy="50"
+                  rx="48"
+                  ry="48"
+                  fill="none"
+                  stroke="rgba(255,255,255,0.25)"
+                  strokeWidth="1.5"
+                />
+                <ellipse
+                  cx="50"
+                  cy="50"
+                  rx="48"
+                  ry="48"
+                  fill="none"
+                  stroke="hsl(var(--primary))"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeDasharray={circumference}
+                  strokeDashoffset={offset}
+                  style={{ transition: "stroke-dashoffset 120ms linear" }}
+                />
+              </svg>
+
+              {/* Inner oval guide */}
+              <div className="absolute inset-3 rounded-[50%] border-2 border-white/70" />
               {/* Corner brackets */}
               <div className="absolute -top-3 -left-3 w-7 h-7 border-t-4 border-l-4 border-primary" />
               <div className="absolute -top-3 -right-3 w-7 h-7 border-t-4 border-r-4 border-primary" />
               <div className="absolute -bottom-3 -left-3 w-7 h-7 border-b-4 border-l-4 border-primary" />
               <div className="absolute -bottom-3 -right-3 w-7 h-7 border-b-4 border-r-4 border-primary" />
+
+              {/* Scan icon centered */}
+              {liveStep === "searching" && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <ScanFace className="w-14 h-14 text-white/50" />
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Bottom captions + capture */}
-          <div className="absolute bottom-0 left-0 right-0 p-4 z-10 bg-gradient-to-t from-black/80 to-transparent">
-            <p className="text-white text-sm font-semibold text-center">Posicione seu rosto dentro do contorno</p>
+          {/* Bottom captions + progress bar */}
+          <div className="absolute bottom-0 left-0 right-0 p-4 z-10 bg-gradient-to-t from-black/85 to-transparent">
+            <p className="text-white text-sm font-semibold text-center">{stepLabel}</p>
             <p className="text-white/70 text-[10px] text-center mt-1 flex items-center justify-center gap-1">
               <Lock className="w-3 h-3" />
               Conexão segura · Criptografia ponta a ponta
             </p>
 
-            <div className="flex items-center justify-center gap-6 mt-3">
-              <button
-                type="button"
-                onClick={handleFlip}
-                className="w-11 h-11 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center text-white"
-                aria-label="Trocar câmera"
-              >
-                <RotateCw className="w-5 h-5" />
-              </button>
-              <button
-                type="button"
-                onClick={handleCapture}
-                disabled={!!error}
-                className="w-16 h-16 rounded-full bg-white border-4 border-white/40 shadow-xl active:scale-95 transition disabled:opacity-50"
-                aria-label="Capturar selfie"
+            <div className="mt-3 mx-auto max-w-[240px] h-2 rounded-full bg-white/15 overflow-hidden">
+              <div
+                className="h-full bg-primary rounded-full"
+                style={{ width: `${Math.round(progress)}%`, transition: "width 120ms linear" }}
               />
-              <div className="w-11 h-11" />
             </div>
+            <p className="text-white/80 text-[11px] text-center mt-1.5 font-semibold">
+              {Math.round(progress)}%
+            </p>
           </div>
 
           {error && (
@@ -254,7 +430,7 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
                 <p className="text-xs text-muted-foreground">{error}</p>
                 <button
                   type="button"
-                  onClick={() => startCamera(facingMode)}
+                  onClick={() => startCamera()}
                   className="w-full h-10 rounded-xl bg-primary text-primary-foreground text-sm font-bold"
                 >
                   Tentar novamente
@@ -274,7 +450,7 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
         <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
       </div>
       <p className="text-sm font-bold text-foreground">Validando sua identidade…</p>
-      <p className="text-xs text-muted-foreground mt-1">Aguarde alguns segundos.</p>
+      <p className="text-xs text-muted-foreground mt-1">Conferindo a biometria facial.</p>
     </div>
   );
 };

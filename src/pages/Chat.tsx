@@ -2025,7 +2025,9 @@ const Chat = () => {
                   src={msg.videoSrc}
                   controls
                   playsInline
-                  preload="metadata"
+                  autoPlay
+                  muted
+                  preload="auto"
                   className="rounded-xl max-w-[260px] w-full bg-black"
                 />
               )}
