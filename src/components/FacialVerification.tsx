@@ -402,34 +402,37 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
           <div className="w-10" />
         </div>
 
-        {/* Single oval guide with thin progress arc */}
+        {/* Single vertical oval guide with thin progress arc */}
         <div className="relative flex-1 flex items-center justify-center px-8 pointer-events-none z-10">
-          <div className="relative w-full max-w-[260px] aspect-[3/4]">
+          <div className="relative w-full max-w-[280px] aspect-[3/4]">
             <svg
-              className="absolute inset-0 w-full h-full -rotate-90"
-              viewBox="0 0 100 100"
-              preserveAspectRatio="none"
+              className="absolute inset-0 w-full h-full"
+              viewBox="0 0 75 100"
+              preserveAspectRatio="xMidYMid meet"
             >
+              {/* Background vertical oval */}
               <ellipse
-                cx="50"
+                cx="37.5"
                 cy="50"
-                rx="48"
+                rx="36"
                 ry="48"
                 fill="none"
-                stroke="rgba(255,255,255,0.35)"
-                strokeWidth="0.8"
+                stroke="rgba(255,255,255,0.4)"
+                strokeWidth="0.6"
               />
+              {/* Progress oval — rotated -90deg so it starts at top */}
               <ellipse
-                cx="50"
+                cx="37.5"
                 cy="50"
-                rx="48"
+                rx="36"
                 ry="48"
                 fill="none"
                 stroke="hsl(var(--primary))"
-                strokeWidth="2"
+                strokeWidth="1.6"
                 strokeLinecap="round"
                 strokeDasharray={circumference}
                 strokeDashoffset={offset}
+                transform="rotate(-90 37.5 50)"
                 style={{ transition: "stroke-dashoffset 120ms linear" }}
               />
             </svg>
