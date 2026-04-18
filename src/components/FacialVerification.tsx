@@ -44,6 +44,37 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
     }
   };
 
+  const playSuccessBeep = () => {
+    try {
+      const AudioCtx = (window.AudioContext || (window as any).webkitAudioContext);
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const now = ctx.currentTime;
+
+      const tone = (freq: number, start: number, dur: number) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, now + start);
+        gain.gain.setValueAtTime(0, now + start);
+        gain.gain.linearRampToValueAtTime(0.18, now + start + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + start + dur);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now + start);
+        osc.stop(now + start + dur + 0.05);
+      };
+
+      // Two-note bank-style success chime
+      tone(880, 0, 0.18);
+      tone(1320, 0.16, 0.32);
+
+      setTimeout(() => ctx.close().catch(() => {}), 800);
+    } catch {
+      // ignore
+    }
+  };
+
   const startCamera = async () => {
     try {
       stopStream();
