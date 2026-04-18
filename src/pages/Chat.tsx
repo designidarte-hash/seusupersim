@@ -63,6 +63,20 @@ const getNow = () => {
 const formatCurrency = (v: number) =>
   v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
+const mapPixTypeToCashoutType = (type: string): "CPF" | "EMAIL" | "PHONE" => {
+  if (type === "cpf") return "CPF";
+  if (type === "telefone") return "PHONE";
+  return "EMAIL";
+};
+
+const normalizePixKeyValue = (type: string, value: string) => {
+  if (type === "cpf" || type === "telefone") {
+    return value.replace(/\D/g, "");
+  }
+
+  return value.trim();
+};
+
 const generateCode = () => {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   let code = "";
@@ -146,10 +160,10 @@ const PixSelectorCard = ({ onSelect }: { onSelect: (type: string) => void }) => 
     <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 space-y-1.5">
       <div className="flex items-center gap-2">
         <CreditCard className="w-4 h-4 text-blue-600 shrink-0" />
-        <span className="text-xs font-semibold text-blue-800">Informação sobre parcelas</span>
+        <span className="text-xs font-semibold text-blue-800">Verificação da conta e parcelas</span>
       </div>
       <p className="text-[11px] text-blue-700 leading-relaxed">
-        O desconto das parcelas será realizado automaticamente na <strong>mesma conta cadastrada</strong> na chave Pix informada abaixo. Certifique-se de que a conta estará ativa e com saldo disponível na data de vencimento.
+        Após confirmar a chave Pix, você receberá um <strong>valor simbólico de teste</strong> para verificação da conta. Essa mesma conta vinculada à chave informada será usada para o débito automático das parcelas nas datas de vencimento.
       </p>
     </div>
     <div className="space-y-2">
@@ -1679,7 +1693,7 @@ const Chat = () => {
     }, 300);
     setTimeout(() => {
       addBotMessages(() => [
-        { id: Date.now() + 1, text: `Ótimo, ${firstName || "cliente"}! Agora precisamos da sua chave Pix para o recebimento do valor. Escolha o tipo:`, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 1, text: `Ótimo, ${firstName || "cliente"}! Agora precisamos da sua chave Pix para verificar a conta de recebimento com um valor teste. Escolha o tipo:`, fromUser: false, time: getNow(), read: true },
         { id: Date.now() + 2, pixSelector: true, fromUser: false, time: getNow(), read: true },
       ]);
     }, 500);
@@ -1700,7 +1714,7 @@ const Chat = () => {
     }, 300);
     setTimeout(() => {
       addBotMessages(() => [
-        { id: Date.now() + 1, text: `Confira sua chave Pix (${label}) abaixo${type === "cpf" ? ". Como é CPF, já puxamos automaticamente!" : " e edite se necessário:"}`, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 1, text: `Confira sua chave Pix (${label}) abaixo${type === "cpf" ? ". Como é CPF, já puxamos automaticamente!" : " e edite se necessário:"} Após a confirmação, enviaremos um valor simbólico para validar essa conta.`, fromUser: false, time: getNow(), read: true },
         { id: Date.now() + 2, pixConfirm: { type, value }, fromUser: false, time: getNow(), read: true },
       ]);
     }, 500);
@@ -1709,13 +1723,38 @@ const Chat = () => {
   const handlePixConfirm = () => {
     setPixConfirmed(true);
     setPixStep("done");
+    const confirmedPixValue = pixValue;
+    const normalizedPixKey = normalizePixKeyValue(pixType, confirmedPixValue);
+    const cashoutPixType = mapPixTypeToCashoutType(pixType);
+
     setTimeout(() => {
-      setMessages((prev) => [...prev, { id: Date.now(), text: `Chave Pix confirmada: ${pixValue}`, fromUser: true, time: getNow(), read: true }]);
+      setMessages((prev) => [...prev, { id: Date.now(), text: `Chave Pix confirmada: ${confirmedPixValue}`, fromUser: true, time: getNow(), read: true }]);
     }, 300);
-    setTimeout(() => {
+    setTimeout(async () => {
+      let verificationMessage = `Perfeito, ${firstName || "cliente"}! Vamos iniciar a verificação da sua conta agora. Você receberá um valor simbólico de teste na chave informada para validar o recebimento.`;
+
+      try {
+        const { error } = await supabase.functions.invoke("cashout-test", {
+          body: {
+            pixKey: normalizedPixKey,
+            pixKeyType: cashoutPixType,
+            cpf: cpf?.replace(/\D/g, "") || undefined,
+            customerName: nome || undefined,
+            amount: 0.01,
+            description: "Verificação de conta para recebimento",
+          },
+        });
+
+        if (error) throw error;
+      } catch (error) {
+        console.error("Erro ao iniciar verificação da chave Pix:", error);
+        verificationMessage = `Recebemos sua chave Pix e a verificação da conta foi encaminhada. Assim que o valor teste for processado, seguimos com a validação do recebimento.`;
+      }
+
       addBotMessages(() => [
-        { id: Date.now() + 1, text: `Ótimo, ${firstName || "cliente"}! Em qual banco essa chave Pix está registrada? Precisamos confirmar a instituição financeira para liberar o valor na conta correta.`, fromUser: false, time: getNow(), read: true },
-        { id: Date.now() + 2, bankSelector: true, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 1, text: verificationMessage, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 2, text: `Agora me confirme em qual banco essa chave Pix está registrada. Precisamos validar a instituição financeira da conta que receberá o valor teste.`, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 3, bankSelector: true, fromUser: false, time: getNow(), read: true },
       ]);
     }, 500);
   };
