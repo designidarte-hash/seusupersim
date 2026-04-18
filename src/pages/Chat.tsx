@@ -8,6 +8,7 @@ import bcbLogo from "@/assets/bcb-logo.png";
 import { ArrowLeft, Send, Check, CheckCheck, Play, Pause, CreditCard, Smartphone, Mail, KeyRound, ShieldCheck, FileDown, Copy, QrCode, Loader2, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import FacialVerification from "@/components/FacialVerification";
 
 declare global {
   interface Window {
@@ -40,6 +41,7 @@ interface ChatMessage {
   normativoConfirmButton?: boolean;
   contractCard?: boolean;
   bankSelector?: boolean;
+  facialVerification?: boolean;
   fromUser: boolean;
   time: string;
   read: boolean;
@@ -1483,6 +1485,7 @@ const Chat = () => {
   const [pixValue, setPixValue] = useState("");
   const [pixConfirmed, setPixConfirmed] = useState(false);
   const [selectedBank, setSelectedBank] = useState<string | null>(null);
+  const [facialVerified, setFacialVerified] = useState(false);
   const [insuranceAccepted, setInsuranceAccepted] = useState<boolean | null>(null);
   const [insuranceShown, setInsuranceShown] = useState(false);
   const [insuranceAudioConfirmed, setInsuranceAudioConfirmed] = useState(false);
@@ -1674,13 +1677,30 @@ const Chat = () => {
     }, 300);
     setTimeout(() => {
       addBotMessages(() => [
-        { id: Date.now() + 1, text: `Perfeito! Banco ${bank} confirmado. Antes de prosseguir, precisamos formalizar seu empréstimo. Confira os dados do contrato abaixo e assine eletronicamente:`, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 1, text: `Perfeito! Banco ${bank} confirmado. Antes de assinar o contrato, precisamos validar sua identidade com uma selfie. É rápido e seguro:`, fromUser: false, time: getNow(), read: true },
+      ]).then(() => {
+        addBotMessages(() => [
+          { id: Date.now() + 2, facialVerification: true, fromUser: false, time: getNow(), read: true },
+        ]);
+      });
+    }, 600);
+  };
+
+  const handleFacialComplete = () => {
+    if (facialVerified) return;
+    setFacialVerified(true);
+    setTimeout(() => {
+      setMessages((prev) => [...prev, { id: Date.now(), text: "Verificação facial concluída ✅", fromUser: true, time: getNow(), read: true }]);
+    }, 300);
+    setTimeout(() => {
+      addBotMessages(() => [
+        { id: Date.now() + 1, text: `Identidade verificada com sucesso, ${firstName || "cliente"}! Agora vamos para a assinatura do contrato:`, fromUser: false, time: getNow(), read: true },
       ]).then(() => {
         addBotMessages(() => [
           { id: Date.now() + 2, contractCard: true, fromUser: false, time: getNow(), read: true },
         ]);
       });
-    }, 600);
+    }, 700);
   };
 
   const handleContractSign = () => {
@@ -2019,6 +2039,9 @@ const Chat = () => {
               )}
               {msg.bankSelector && (
                 <BankSelectorCard onSelect={handleBankSelect} selected={selectedBank} />
+              )}
+              {msg.facialVerification && (
+                <FacialVerification onComplete={handleFacialComplete} approved={facialVerified} />
               )}
               {msg.contractCard && (
                 <ContractCard
