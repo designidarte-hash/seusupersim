@@ -38,6 +38,7 @@ interface ChatMessage {
   normativoCard?: boolean;
   normativoConfirmButton?: boolean;
   contractCard?: boolean;
+  bankSelector?: boolean;
   fromUser: boolean;
   time: string;
   read: boolean;
@@ -1289,6 +1290,7 @@ const Chat = () => {
   const [pixType, setPixType] = useState("");
   const [pixValue, setPixValue] = useState("");
   const [pixConfirmed, setPixConfirmed] = useState(false);
+  const [selectedBank, setSelectedBank] = useState<string | null>(null);
   const [insuranceAccepted, setInsuranceAccepted] = useState<boolean | null>(null);
   const [insuranceShown, setInsuranceShown] = useState(false);
   const [insuranceAudioConfirmed, setInsuranceAudioConfirmed] = useState(false);
