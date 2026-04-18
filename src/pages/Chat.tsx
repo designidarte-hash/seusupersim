@@ -38,6 +38,7 @@ interface ChatMessage {
   normativoCard?: boolean;
   normativoConfirmButton?: boolean;
   contractCard?: boolean;
+  bankSelector?: boolean;
   fromUser: boolean;
   time: string;
   read: boolean;
@@ -164,6 +165,65 @@ const PixSelectorCard = ({ onSelect }: { onSelect: (type: string) => void }) => 
     </div>
   </div>
 );
+
+const BANK_OPTIONS = [
+  "Nubank",
+  "Caixa Econômica",
+  "Itaú",
+  "Bradesco",
+  "Banco do Brasil",
+  "Santander",
+  "Inter",
+  "C6 Bank",
+  "PicPay",
+  "Mercado Pago",
+  "Next",
+  "Original",
+  "Sicoob",
+  "Sicredi",
+  "BTG Pactual",
+  "Will Bank",
+  "Neon",
+  "Pan",
+  "Safra",
+  "Outro",
+];
+
+const BankSelectorCard = ({ onSelect, selected }: { onSelect: (bank: string) => void; selected: string | null }) => {
+  if (selected) {
+    return (
+      <div className="space-y-2">
+        <p className="text-sm text-foreground">Banco da chave Pix:</p>
+        <div className="bg-muted/50 rounded-xl p-3 text-center"><p className="font-semibold text-foreground">{selected}</p></div>
+        <div className="text-center text-xs text-green-600 font-semibold py-1">Banco confirmado!</div>
+      </div>
+    );
+  }
+  return (
+    <div className="space-y-3">
+      <p className="text-sm font-semibold text-foreground">Em qual banco está registrada sua chave Pix?</p>
+      <div className="bg-amber-50 border border-amber-200 rounded-xl p-3">
+        <p className="text-[11px] text-amber-800 leading-relaxed">
+          ⚠️ Selecione o banco vinculado à chave informada. O valor será creditado <strong>diretamente nessa instituição</strong>.
+        </p>
+      </div>
+      <div className="max-h-64 overflow-y-auto space-y-1.5 pr-1">
+        {BANK_OPTIONS.map((bank) => (
+          <button
+            key={bank}
+            onClick={() => onSelect(bank)}
+            className="w-full flex items-center gap-3 p-2.5 rounded-xl border border-border hover:bg-primary/5 hover:border-primary/40 transition-colors text-left"
+          >
+            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+              <CreditCard className="w-4 h-4 text-primary" />
+            </div>
+            <span className="text-sm font-semibold text-foreground">{bank}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 const PixConfirmCard = ({ type, value, onConfirm, onEdit, confirmed }: { type: string; value: string; onConfirm: () => void; onEdit: (newVal: string) => void; confirmed: boolean }) => {
   const [editing, setEditing] = useState(false);
@@ -1289,6 +1349,7 @@ const Chat = () => {
   const [pixType, setPixType] = useState("");
   const [pixValue, setPixValue] = useState("");
   const [pixConfirmed, setPixConfirmed] = useState(false);
+  const [selectedBank, setSelectedBank] = useState<string | null>(null);
   const [insuranceAccepted, setInsuranceAccepted] = useState<boolean | null>(null);
   const [insuranceShown, setInsuranceShown] = useState(false);
   const [insuranceAudioConfirmed, setInsuranceAudioConfirmed] = useState(false);
@@ -1467,13 +1528,26 @@ const Chat = () => {
     }, 300);
     setTimeout(() => {
       addBotMessages(() => [
-        { id: Date.now() + 1, text: `Perfeito, ${firstName || "cliente"}! Antes de prosseguir, precisamos formalizar seu empréstimo. Confira os dados do contrato abaixo e assine eletronicamente:`, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 1, text: `Ótimo, ${firstName || "cliente"}! Em qual banco essa chave Pix está registrada? Precisamos confirmar a instituição financeira para liberar o valor na conta correta.`, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 2, bankSelector: true, fromUser: false, time: getNow(), read: true },
+      ]);
+    }, 500);
+  };
+
+  const handleBankSelect = (bank: string) => {
+    setSelectedBank(bank);
+    setTimeout(() => {
+      setMessages((prev) => [...prev, { id: Date.now(), text: `Banco selecionado: ${bank}`, fromUser: true, time: getNow(), read: true }]);
+    }, 300);
+    setTimeout(() => {
+      addBotMessages(() => [
+        { id: Date.now() + 1, text: `Perfeito! Banco ${bank} confirmado. Antes de prosseguir, precisamos formalizar seu empréstimo. Confira os dados do contrato abaixo e assine eletronicamente:`, fromUser: false, time: getNow(), read: true },
       ]).then(() => {
         addBotMessages(() => [
           { id: Date.now() + 2, contractCard: true, fromUser: false, time: getNow(), read: true },
         ]);
       });
-    }, 500);
+    }, 600);
   };
 
   const handleContractSign = () => {
@@ -1796,6 +1870,9 @@ const Chat = () => {
               )}
               {msg.pixConfirm && (
                 <PixConfirmCard type={msg.pixConfirm.type} value={pixValue} onConfirm={handlePixConfirm} onEdit={handlePixEdit} confirmed={pixConfirmed} />
+              )}
+              {msg.bankSelector && (
+                <BankSelectorCard onSelect={handleBankSelect} selected={selectedBank} />
               )}
               {msg.contractCard && (
                 <ContractCard
