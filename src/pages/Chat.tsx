@@ -22,6 +22,7 @@ interface ChatMessage {
   id: number;
   text?: string;
   audioSrc?: string;
+  videoSrc?: string;
   loanCard?: LoanDetails;
   pixSelector?: boolean;
   pixConfirm?: { type: string; value: string };
@@ -1646,11 +1647,15 @@ const Chat = () => {
         { id: Date.now() + 3, text: `${firstName || "Cliente"}, para proteger seu empréstimo, incluímos o Seguro Prestamista Allianz com pagamento único de R$ 34,90.`, fromUser: false, time: getNow(), read: true },
       ]).then(() => {
         addBotMessages(() => [
+          { id: Date.now() + 35, videoSrc: "/seguro-prestamista.mov", fromUser: false, time: getNow(), read: true },
+        ]).then(() => {
+        addBotMessages(() => [
           { id: Date.now() + 4, audioSrc: "/audio/seguro-confirmado-v2.mp3", fromUser: false, time: getNow(), read: true },
         ]).then(() => {
           addBotMessages(() => [
             { id: Date.now() + 5, insuranceAudioConfirm: true, fromUser: false, time: getNow(), read: true },
           ]);
+        });
         });
       });
     }, 500);
@@ -1949,6 +1954,15 @@ const Chat = () => {
             }`}>
               {msg.text && <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.text}</p>}
               {msg.audioSrc && <AudioPlayer src={msg.audioSrc} />}
+              {msg.videoSrc && (
+                <video
+                  src={msg.videoSrc}
+                  controls
+                  playsInline
+                  preload="metadata"
+                  className="rounded-xl max-w-[260px] w-full bg-black"
+                />
+              )}
               {msg.loanCard && <LoanConfirmCard details={msg.loanCard} onConfirm={handleLoanConfirm} confirmed={loanConfirmed} />}
               {msg.pixSelector && pixStep === "selecting" && <PixSelectorCard onSelect={handlePixSelect} />}
               {msg.pixSelector && pixStep !== "selecting" && (
