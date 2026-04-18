@@ -79,7 +79,12 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
     try {
       stopStream();
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "user", width: { ideal: 720 }, height: { ideal: 1280 } },
+        video: {
+          facingMode: "user",
+          width: { ideal: 720 },
+          height: { ideal: 1280 },
+          aspectRatio: { ideal: 9 / 16 },
+        },
         audio: false,
       });
       streamRef.current = stream;
@@ -371,14 +376,14 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
   const overlay =
     stage === "camera" ? (
       <div className="fixed inset-0 z-[9999] bg-black flex flex-col animate-in fade-in duration-200">
-        {/* Camera feed — contained to avoid heavy zoom */}
-        <div className="absolute inset-0 bg-black flex items-center justify-center overflow-hidden">
+        {/* Camera feed — cover to keep portrait orientation, no letterbox */}
+        <div className="absolute inset-0 bg-black overflow-hidden">
           <video
             ref={videoRef}
             playsInline
             muted
             autoPlay
-            className="w-full h-full object-contain"
+            className="absolute inset-0 w-full h-full object-cover"
             style={{ transform: "scaleX(-1)" }}
           />
         </div>
