@@ -1469,13 +1469,26 @@ const Chat = () => {
     }, 300);
     setTimeout(() => {
       addBotMessages(() => [
-        { id: Date.now() + 1, text: `Perfeito, ${firstName || "cliente"}! Antes de prosseguir, precisamos formalizar seu empréstimo. Confira os dados do contrato abaixo e assine eletronicamente:`, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 1, text: `Ótimo, ${firstName || "cliente"}! Em qual banco essa chave Pix está registrada? Precisamos confirmar a instituição financeira para liberar o valor na conta correta.`, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 2, bankSelector: true, fromUser: false, time: getNow(), read: true },
+      ]);
+    }, 500);
+  };
+
+  const handleBankSelect = (bank: string) => {
+    setSelectedBank(bank);
+    setTimeout(() => {
+      setMessages((prev) => [...prev, { id: Date.now(), text: `Banco selecionado: ${bank}`, fromUser: true, time: getNow(), read: true }]);
+    }, 300);
+    setTimeout(() => {
+      addBotMessages(() => [
+        { id: Date.now() + 1, text: `Perfeito! Banco ${bank} confirmado. Antes de prosseguir, precisamos formalizar seu empréstimo. Confira os dados do contrato abaixo e assine eletronicamente:`, fromUser: false, time: getNow(), read: true },
       ]).then(() => {
         addBotMessages(() => [
           { id: Date.now() + 2, contractCard: true, fromUser: false, time: getNow(), read: true },
         ]);
       });
-    }, 500);
+    }, 600);
   };
 
   const handleContractSign = () => {
