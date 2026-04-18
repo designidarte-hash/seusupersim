@@ -257,6 +257,8 @@ const BANK_OPTIONS = [
 ];
 
 const BankSelectorCard = ({ onSelect, selected }: { onSelect: (bank: string) => void; selected: string | null }) => {
+  const [search, setSearch] = useState("");
+
   if (selected) {
     return (
       <div className="space-y-2">
@@ -266,6 +268,13 @@ const BankSelectorCard = ({ onSelect, selected }: { onSelect: (bank: string) => 
       </div>
     );
   }
+
+  const uniqueBanks = Array.from(new Set(BANK_OPTIONS));
+  const normalized = search.trim().toLowerCase();
+  const filtered = normalized
+    ? uniqueBanks.filter((b) => b.toLowerCase().includes(normalized))
+    : uniqueBanks;
+
   return (
     <div className="space-y-3">
       <p className="text-sm font-semibold text-foreground">Em qual banco está registrada sua chave Pix?</p>
@@ -274,8 +283,18 @@ const BankSelectorCard = ({ onSelect, selected }: { onSelect: (bank: string) => 
           ⚠️ Selecione o banco vinculado à chave informada. O valor será creditado <strong>diretamente nessa instituição</strong>.
         </p>
       </div>
+      <input
+        type="text"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        placeholder="Buscar banco..."
+        className="w-full px-3 py-2 text-sm rounded-xl border border-border focus:outline-none focus:border-primary bg-background"
+      />
       <div className="max-h-64 overflow-y-auto space-y-1.5 pr-1">
-        {BANK_OPTIONS.map((bank) => (
+        {filtered.length === 0 && (
+          <p className="text-xs text-muted-foreground text-center py-3">Nenhum banco encontrado.</p>
+        )}
+        {filtered.map((bank) => (
           <button
             key={bank}
             onClick={() => onSelect(bank)}
