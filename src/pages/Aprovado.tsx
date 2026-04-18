@@ -5,6 +5,7 @@ import ChamaNoPixSection from "@/components/ChamaNoPixSection";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import FunnelProgress from "@/components/FunnelProgress";
+import { useFunnelUser } from "@/hooks/use-funnel-user";
 import iconCheckCircle from "@/assets/icon-check-circle.png";
 import iconThumbsUp from "@/assets/icon-thumbsup.webp";
 import iconPhone from "@/assets/icon-phone.webp";
@@ -30,12 +31,13 @@ const Aprovado = () => {
   const navigate = useTransitionNavigate();
   const cpfData = location.state?.cpfData as Record<string, unknown> | null;
   const cpfDigits = location.state?.cpfDigits as string | undefined;
+  const { userName, userCpf } = useFunnelUser();
   const loanAmount = 2500;
   const creditScore = (location.state?.creditScore as number) || 500;
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
-      <Header />
+      <Header userName={userName} userCpf={userCpf} />
       <FunnelProgress current="aprovado" />
 
       {/* Hero - Approval with sunburst stripes */}

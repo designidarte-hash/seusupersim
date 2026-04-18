@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import FunnelProgress from "@/components/FunnelProgress";
+import { useFunnelUser } from "@/hooks/use-funnel-user";
 import bannerEmprestimo from "@/assets/banner-emprestimo-hd.webp";
 import { ShieldCheck, CheckCircle2, Search, FileCheck, BadgeDollarSign, Loader2, Lock } from "lucide-react";
 import logoSupersim from "@/assets/logo-supersim.png";
@@ -20,6 +21,7 @@ const AnaliseCredito = () => {
   const location = useLocation();
   const cpfData = location.state?.cpfData;
   const cpfDigits = location.state?.cpfDigits;
+  const { userName, userCpf } = useFunnelUser();
   const cadastro = location.state?.cadastro;
   const [currentStep, setCurrentStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
@@ -61,7 +63,7 @@ const AnaliseCredito = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
+      <Header userName={userName} userCpf={userCpf} />
       <FunnelProgress current="analise" />
 
       <div className="w-full">
