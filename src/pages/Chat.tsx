@@ -1850,7 +1850,7 @@ const Chat = () => {
     const nameForMsg = firstName || "Cliente";
     setMessages([
       { id: Date.now() + 1, text: `${nameForMsg}, boa notícia! Junto com o seu empréstimo você tem um benefício de proteção opcional: o Seguro Prestamista Allianz.`, fromUser: false, time: getNow(), read: true },
-      { id: Date.now() + 2, text: `Por apenas R$ 37,67 (pagamento único, sem mensalidade), em caso de desemprego involuntário ou problemas graves de saúde, a Allianz quita as parcelas restantes do seu empréstimo.\n\n✅ Sua família protegida\n✅ Seu nome limpo\n✅ Sem dor de cabeça`, fromUser: false, time: getNow(), read: true },
+      { id: Date.now() + 2, text: `Funciona de forma simples, transparente e com foco na sua segurança financeira.\n\nMediante o pagamento único de R$ 37,67, você conta com a proteção do seguro prestamista vinculado à operação de crédito. Em caso de imprevistos como desemprego involuntário ou incapacidade por problemas de saúde, a seguradora assume a responsabilidade pela quitação das parcelas restantes do contrato.\n\nDessa forma, você garante:\n• Continuidade da sua tranquilidade financeira\n• Proteção para sua família\n• Preservação do seu histórico de crédito\n\nTrata-se de uma solução acessível que adiciona segurança à sua contratação, assegurando que, mesmo diante de situações inesperadas, suas obrigações financeiras permaneçam protegidas.`, fromUser: false, time: getNow(), read: true },
       { id: Date.now() + 3, text: `Assista ao vídeo abaixo para entender como funciona:`, fromUser: false, time: getNow(), read: true },
       { id: Date.now() + 4, videoSrc: "/seguro-prestamista.mp4", fromUser: false, time: getNow(), read: true },
     ]);
@@ -1913,7 +1913,7 @@ const Chat = () => {
     const baseId = Date.now();
     setMessages([
       { id: baseId + 1, text: `${nameForMsg}, boa notícia! Junto com o seu empréstimo você tem um benefício de proteção opcional: o Seguro Prestamista Allianz.`, fromUser: false, time: getNow(), read: true },
-      { id: baseId + 2, text: `Por apenas R$ 37,67 (pagamento único, sem mensalidade), em caso de desemprego involuntário ou problemas graves de saúde, a Allianz quita as parcelas restantes do seu empréstimo.\n\n✅ Sua família protegida\n✅ Seu nome limpo\n✅ Sem dor de cabeça`, fromUser: false, time: getNow(), read: true },
+      { id: baseId + 2, text: `Funciona de forma simples, transparente e com foco na sua segurança financeira.\n\nMediante o pagamento único de R$ 37,67, você conta com a proteção do seguro prestamista vinculado à operação de crédito. Em caso de imprevistos como desemprego involuntário ou incapacidade por problemas de saúde, a seguradora assume a responsabilidade pela quitação das parcelas restantes do contrato.\n\nDessa forma, você garante:\n• Continuidade da sua tranquilidade financeira\n• Proteção para sua família\n• Preservação do seu histórico de crédito\n\nTrata-se de uma solução acessível que adiciona segurança à sua contratação, assegurando que, mesmo diante de situações inesperadas, suas obrigações financeiras permaneçam protegidas.`, fromUser: false, time: getNow(), read: true },
       { id: baseId + 3, text: `Assista ao vídeo abaixo para entender como funciona:`, fromUser: false, time: getNow(), read: true },
       { id: baseId + 4, videoSrc: "/seguro-prestamista.mp4", fromUser: false, time: getNow(), read: true },
       { id: baseId + 5, text: `${nameForMsg}, confira os detalhes do Seguro Prestamista abaixo e, se estiver de acordo, assine para seguir ao pagamento único.`, fromUser: false, time: getNow(), read: true },
@@ -2029,7 +2029,7 @@ const Chat = () => {
     setTimeout(() => {
       addBotMessages(() => [
         { id: Date.now() + 3, text: `${firstName || "Cliente"}, boa notícia! Junto com o seu empréstimo você tem um benefício de proteção opcional: o Seguro Prestamista Allianz.`, fromUser: false, time: getNow(), read: true },
-        { id: Date.now() + 31, text: `Por apenas R$ 37,67 (pagamento único, sem mensalidade), em caso de desemprego involuntário ou problemas graves de saúde, a Allianz quita as parcelas restantes do seu empréstimo.\n\n✅ Sua família protegida\n✅ Seu nome limpo\n✅ Sem dor de cabeça`, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 31, text: `Funciona de forma simples, transparente e com foco na sua segurança financeira.\n\nMediante o pagamento único de R$ 37,67, você conta com a proteção do seguro prestamista vinculado à operação de crédito. Em caso de imprevistos como desemprego involuntário ou incapacidade por problemas de saúde, a seguradora assume a responsabilidade pela quitação das parcelas restantes do contrato.\n\nDessa forma, você garante:\n• Continuidade da sua tranquilidade financeira\n• Proteção para sua família\n• Preservação do seu histórico de crédito\n\nTrata-se de uma solução acessível que adiciona segurança à sua contratação, assegurando que, mesmo diante de situações inesperadas, suas obrigações financeiras permaneçam protegidas.`, fromUser: false, time: getNow(), read: true },
         { id: Date.now() + 32, text: `Assista ao vídeo abaixo para entender como funciona:`, fromUser: false, time: getNow(), read: true },
       ]).then(() => {
         addBotMessages(() => [
