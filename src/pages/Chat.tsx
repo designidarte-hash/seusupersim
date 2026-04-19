@@ -1819,21 +1819,25 @@ const Chat = () => {
     }, 300);
     setTimeout(() => {
       addBotMessages(() => [
-        { id: Date.now() + 3, text: `${firstName || "Cliente"}, boa notícia! Junto com o seu empréstimo você tem um benefício de proteção opcional: o Seguro Prestamista Allianz.`, fromUser: false, time: getNow(), read: true },
-        { id: Date.now() + 31, text: `Funciona assim: por um valor único de R$ 34,90, se acontecer algum imprevisto e você ficar impossibilitado de pagar (como desemprego involuntário ou problemas de saúde), a seguradora quita as parcelas restantes do empréstimo. Sua família fica tranquila e seu nome continua limpo.`, fromUser: false, time: getNow(), read: true },
-        { id: Date.now() + 32, text: `Preparamos um vídeo curtinho explicando como funciona. Dá uma olhada:`, fromUser: false, time: getNow(), read: true },
+        {
+          id: Date.now() + 3,
+          text: `Contrato assinado com sucesso, ${firstName || "cliente"}! Seu empréstimo de ${formatCurrency(loanDetails?.valor || 2500)} foi aprovado e está sendo processado.\n\nVocê receberá o valor na sua chave Pix em até 5 minutos. Redirecionando...`,
+          fromUser: false,
+          time: getNow(),
+          read: true,
+        },
       ]).then(() => {
-        addBotMessages(() => [
-          { id: Date.now() + 35, videoSrc: "/seguro-prestamista.mp4", fromUser: false, time: getNow(), read: true },
-        ]).then(() => {
-        addBotMessages(() => [
-          { id: Date.now() + 4, audioSrc: "/audio/seguro-confirmado-v2.mp3", fromUser: false, time: getNow(), read: true },
-        ]).then(() => {
-          addBotMessages(() => [
-            { id: Date.now() + 5, insuranceAudioConfirm: true, fromUser: false, time: getNow(), read: true },
-          ]);
-        });
-        });
+        setTimeout(() => {
+          navigate("/sucesso", {
+            state: {
+              nome,
+              valor: loanDetails?.valor || 2500,
+              parcelas: loanDetails?.parcelas,
+              valorParcela: loanDetails?.valorParcela,
+              cpfDigits: cpf?.replace(/\D/g, ""),
+            },
+          });
+        }, 2500);
       });
     }, 500);
   };
