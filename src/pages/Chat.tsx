@@ -446,7 +446,7 @@ const InsuranceCard = ({ onAccept, accepted, nome, cpf, dataNascimento, valor, p
         <div className="flex items-center justify-between gap-3">
           <div>
             <p className="text-xs text-white/70">Pagamento único</p>
-            <p className="text-xl font-extrabold">R$ 34,90</p>
+            <p className="text-xl font-extrabold">R$ 37,67</p>
             <p className="text-[10px] text-white/70">Não é mensalidade</p>
           </div>
           <div className="text-right">
