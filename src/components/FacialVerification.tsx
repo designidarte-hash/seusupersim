@@ -225,7 +225,7 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
           inset: 0,
           width: "100%",
           height: "100%",
-          objectFit: "cover",
+          objectFit: "contain",
           objectPosition: "center center",
           transform: "scaleX(-1)",
           background: "#000",
