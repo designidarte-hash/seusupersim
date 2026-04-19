@@ -74,26 +74,46 @@ const generateCode = () => {
 
 const VideoPlayer = ({ src }: { src: string }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [muted, setMuted] = useState(true);
-  const [showOverlay, setShowOverlay] = useState(true);
+  const [started, setStarted] = useState(false);
+  const [muted, setMuted] = useState(false);
+  const [paused, setPaused] = useState(false);
 
-  const handleUnmute = () => {
+  const handleStart = () => {
     const v = videoRef.current;
     if (!v) return;
     v.muted = false;
     v.volume = 1;
     setMuted(false);
-    setShowOverlay(false);
-    // garante que está tocando depois do clique
+    setStarted(true);
+    setPaused(false);
     const p = v.play();
-    if (p && typeof p.catch === "function") p.catch(() => {});
+    if (p && typeof p.catch === "function") {
+      p.catch(() => {
+        // se o navegador bloquear áudio, tenta no mudo
+        v.muted = true;
+        setMuted(true);
+        v.play().catch(() => {});
+      });
+    }
   };
 
-  const handleMute = () => {
+  const togglePlay = () => {
     const v = videoRef.current;
     if (!v) return;
-    v.muted = true;
-    setMuted(true);
+    if (v.paused) {
+      v.play().catch(() => {});
+      setPaused(false);
+    } else {
+      v.pause();
+      setPaused(true);
+    }
+  };
+
+  const toggleMute = () => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.muted = !v.muted;
+    setMuted(v.muted);
   };
 
   return (
@@ -103,44 +123,52 @@ const VideoPlayer = ({ src }: { src: string }) => {
           ref={videoRef}
           src={src}
           playsInline
-          autoPlay
-          muted
           loop
-          preload="auto"
-          onClick={() => {
-            // toggle play/pause em qualquer clique no vídeo
-            const v = videoRef.current;
-            if (!v) return;
-            if (v.paused) v.play().catch(() => {});
-            else v.pause();
-          }}
+          preload="metadata"
+          onClick={started ? togglePlay : undefined}
+          onPause={() => setPaused(true)}
+          onPlay={() => setPaused(false)}
           className="w-full h-auto block bg-black cursor-pointer"
         />
 
-        {/* Overlay grande "Tocar com som" — desaparece no primeiro clique */}
-        {showOverlay && (
+        {/* Overlay grande "Assistir vídeo" — só aparece antes do primeiro play */}
+        {!started && (
           <button
             type="button"
-            onClick={handleUnmute}
-            aria-label="Tocar com som"
-            className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/40 hover:bg-black/50 transition group"
+            onClick={handleStart}
+            aria-label="Assistir vídeo"
+            className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/50 hover:bg-black/60 transition group"
           >
-            <div className="w-14 h-14 rounded-full bg-white/95 flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
-              <Volume2 className="w-7 h-7 text-black" fill="currentColor" />
+            <div className="w-16 h-16 rounded-full bg-white/95 flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
+              <Play className="w-8 h-8 text-black ml-1" fill="currentColor" />
             </div>
             <span className="text-white text-xs font-bold uppercase tracking-wide drop-shadow">
-              Tocar com som
+              Assistir vídeo
             </span>
           </button>
         )}
 
-        {/* Botão pequeno de mute/unmute no canto após interação */}
-        {!showOverlay && (
+        {/* Indicador de pause centralizado */}
+        {started && paused && (
           <button
             type="button"
-            onClick={muted ? handleUnmute : handleMute}
+            onClick={togglePlay}
+            aria-label="Continuar"
+            className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/40 transition"
+          >
+            <div className="w-14 h-14 rounded-full bg-white/95 flex items-center justify-center shadow-xl">
+              <Play className="w-7 h-7 text-black ml-1" fill="currentColor" />
+            </div>
+          </button>
+        )}
+
+        {/* Botão pequeno de mute/unmute no canto após início */}
+        {started && (
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); toggleMute(); }}
             aria-label={muted ? "Ativar som" : "Desativar som"}
-            className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-black/60 hover:bg-black/80 flex items-center justify-center transition"
+            className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-black/60 hover:bg-black/80 flex items-center justify-center transition z-10"
           >
             {muted ? (
               <VolumeX className="w-4 h-4 text-white" />
