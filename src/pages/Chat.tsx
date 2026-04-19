@@ -1894,7 +1894,39 @@ const Chat = () => {
     if (!previewInitialized) setPreviewInitialized(true);
   }, [isOfertaPreview, firstName, previewInitialized]);
 
+  // Preview do fluxo completo do Seguro até gerar o PIX (?etapa=fluxo)
   useEffect(() => {
+    if (!isFluxoPreview) return;
+    typingQueue.current = [];
+    processingQueue.current = false;
+    setIsTyping(false);
+    setInput("");
+    setGreetingSent(true);
+    setPaymentPhase("insurance");
+    setPixPaid(false);
+    setInsuranceShown(true);
+    setInsuranceAccepted("yes");
+    setContractSigned(true);
+    setInsuranceAudioConfirmed(true);
+    setPdfConfirmed(true);
+    const nameForMsg = firstName || "Cliente";
+    const baseId = Date.now();
+    setMessages([
+      { id: baseId + 1, text: `${nameForMsg}, boa notícia! Junto com o seu empréstimo você tem um benefício de proteção opcional: o Seguro Prestamista Allianz.`, fromUser: false, time: getNow(), read: true },
+      { id: baseId + 2, text: `Funciona assim: por um valor único de R$ 37,67, se acontecer algum imprevisto e você ficar impossibilitado de pagar (como desemprego involuntário ou problemas de saúde), a seguradora quita as parcelas restantes do empréstimo. Sua família fica tranquila e seu nome continua limpo.`, fromUser: false, time: getNow(), read: true },
+      { id: baseId + 3, text: `Assista ao vídeo abaixo para entender como funciona:`, fromUser: false, time: getNow(), read: true },
+      { id: baseId + 4, videoSrc: "/seguro-prestamista.mp4", fromUser: false, time: getNow(), read: true },
+      { id: baseId + 5, text: `${nameForMsg}, confira os detalhes do Seguro Prestamista abaixo e, se estiver de acordo, assine para seguir ao pagamento único.`, fromUser: false, time: getNow(), read: true },
+      { id: baseId + 6, insuranceCard: true, fromUser: false, time: getNow(), read: true },
+      { id: baseId + 7, text: `Perfeito, ${nameForMsg}! Para ativar o Seguro Prestamista Allianz, realize o pagamento único no valor de R$ 37,67.\n\nApós a confirmação do pagamento, sua cobertura será ativada imediatamente.\n\nO valor do empréstimo será depositado em até 5 minutos na conta informada.`, fromUser: false, time: getNow(), read: true },
+      { id: baseId + 8, text: `Segue o PIX para pagamento do Seguro Prestamista:`, fromUser: false, time: getNow(), read: true },
+    ]);
+    if (!previewInitialized) setPreviewInitialized(true);
+    const t = setTimeout(() => { generatePixPayment(); }, 400);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFluxoPreview, firstName]);
+
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
