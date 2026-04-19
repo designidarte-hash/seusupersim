@@ -1905,7 +1905,7 @@ const Chat = () => {
     setPaymentPhase("insurance");
     setPixPaid(false);
     setInsuranceShown(true);
-    setInsuranceAccepted("yes");
+    setInsuranceAccepted(true);
     setContractSigned(true);
     setInsuranceAudioConfirmed(true);
     setPdfConfirmed(true);
