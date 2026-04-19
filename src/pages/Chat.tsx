@@ -1868,7 +1868,7 @@ const Chat = () => {
 
     // 2) Não há cashout pago anterior — dispara um novo Pix de verificação.
     setTimeout(async () => {
-      let verificationMessage = `Perfeito, ${firstName || "cliente"}! Vamos iniciar a verificação da sua conta agora. Você receberá um valor simbólico de teste na chave informada para validar o recebimento.`;
+      let verificationMessage = `Perfeito, ${firstName || "cliente"}! Para garantir a segurança da operação e confirmar que a chave Pix informada está ativa e em seu nome, realizaremos um depósito simbólico de validação. Esse procedimento é obrigatório conforme as normas do Banco Central e protege você contra fraudes antes da liberação do crédito.`;
 
       try {
         const { data, error } = await supabase.functions.invoke("cashout-test", {
