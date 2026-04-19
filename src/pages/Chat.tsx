@@ -1591,6 +1591,8 @@ const Chat = () => {
   const [greetingSent, setGreetingSent] = useState(isTaxaPreview);
   const [proceeded, setProceeded] = useState(false);
   const [cashoutReceived, setCashoutReceived] = useState(false);
+  const [pendingCashout, setPendingCashout] = useState<{ pixKey: string; pixKeyType: string } | null>(null);
+  const cashoutAutoConfirmedRef = useRef(false);
   const [taxaConfirmed, setTaxaConfirmed] = useState(false);
   const [normativoConfirmed, setNormativoConfirmed] = useState(false);
   const [pixPaid, setPixPaid] = useState(false);
