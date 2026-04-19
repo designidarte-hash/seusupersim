@@ -1821,86 +1821,20 @@ const Chat = () => {
     setPixConfirmed(true);
     setPixStep("done");
     const confirmedPixValue = pixValue;
-    const normalizedPixKey = normalizePixKeyValue(pixType, confirmedPixValue);
-    const cashoutPixType = mapPixTypeToCashoutType(pixType);
 
     setTimeout(() => {
       setMessages((prev) => [...prev, { id: Date.now(), text: `Chave Pix confirmada: ${confirmedPixValue}`, fromUser: true, time: getNow(), read: true }]);
     }, 300);
 
-    // 1) Verifica se essa mesma chave Pix já recebeu um cashout pago anteriormente.
-    //    Se sim, pula o disparo de novo Pix e vai direto para a verificação facial.
-    let alreadyPaid = false;
-    try {
-      const { data: existing, error: lookupErr } = await supabase
-        .from("pix_validations")
-        .select("id, status, withdrawal_id, created_at")
-        .eq("pix_key", normalizedPixKey)
-        .eq("pix_key_type", cashoutPixType)
-        .eq("status", "paid")
-        .order("created_at", { ascending: false })
-        .limit(1);
-
-      if (lookupErr) {
-        console.error("Erro ao consultar pix_validations:", lookupErr);
-      } else if (existing && existing.length > 0) {
-        alreadyPaid = true;
-        console.log("Chave Pix já validada anteriormente:", existing[0]);
-      }
-    } catch (lookupExc) {
-      console.error("Exceção ao consultar pix_validations:", lookupExc);
-    }
-
-    if (alreadyPaid) {
-      // Caminho rápido: já validou antes, pula direto pra selfie.
-      setTimeout(() => {
-        addBotMessages(() => [
-          { id: Date.now() + 1, text: `Identificamos que essa chave Pix já foi validada em uma sessão anterior, ${firstName || "cliente"}.`, fromUser: false, time: getNow(), read: true },
-          { id: Date.now() + 2, text: `Não é necessário enviar um novo valor de teste. Vamos avançar direto para a verificação de identidade com uma selfie. É rápido e seguro:`, fromUser: false, time: getNow(), read: true },
-        ]).then(() => {
-          addBotMessages(() => [
-            { id: Date.now() + 3, facialVerification: true, fromUser: false, time: getNow(), read: true },
-          ]);
-        });
-      }, 500);
-      return;
-    }
-
-    // 2) Não há cashout pago anterior — dispara um novo Pix de verificação.
-    setTimeout(async () => {
-      let verificationMessage = `Perfeito, ${firstName || "cliente"}! Para garantir a segurança da operação e confirmar que a chave Pix informada está ativa e em seu nome, realizaremos um depósito simbólico de validação. Esse procedimento é obrigatório conforme as normas do Banco Central e protege você contra fraudes antes da liberação do crédito.`;
-
-      try {
-        const { data, error } = await supabase.functions.invoke("cashout-test", {
-          body: {
-            pixKey: normalizedPixKey,
-            pixKeyType: cashoutPixType,
-            cpf: cpf?.replace(/\D/g, "") || undefined,
-            customerName: nome || undefined,
-            amount: 4.5,
-            description: "Verificação de conta para recebimento",
-          },
-        });
-
-        if (error) throw error;
-
-        // Ativa polling para detectar quando o webhook confirmar o pagamento
-        cashoutAutoConfirmedRef.current = false;
-        setPendingCashout({ pixKey: normalizedPixKey, pixKeyType: cashoutPixType });
-      } catch (error) {
-        console.error("Erro ao iniciar verificação da chave Pix:", error);
-        verificationMessage = `Recebemos sua chave Pix e a verificação da conta foi encaminhada. Assim que o valor teste for processado, seguimos com a validação do recebimento.`;
-        // Mesmo em fallback, ativa polling — o webhook pode confirmar mesmo assim
-        cashoutAutoConfirmedRef.current = false;
-        setPendingCashout({ pixKey: normalizedPixKey, pixKeyType: cashoutPixType });
-      }
-
+    // Vai direto para a verificação facial — sem Pix de validação/cashout.
+    setTimeout(() => {
       addBotMessages(() => [
-        { id: Date.now() + 1, text: verificationMessage, fromUser: false, time: getNow(), read: true },
-        { id: Date.now() + 2, text: `*Transparência sobre a verificação:* a validação da sua conta é processada pela *GM INTERMEDIAÇÃO E NEGÓCIOS LTDA* (CNPJ 64.167.915/0001-79), instituição credenciada e parceira responsável pela verificação de titularidade da chave Pix. Após a confirmação, os dados validados são repassados em sigilo para a *SUPERSIM ANÁLISE DE DADOS E CORRESPONDENTE BANCÁRIO LTDA* (CNPJ 33.030.944/0001-60), que segue com a liberação do seu crédito. Tudo em conformidade com a LGPD e as normas do Banco Central.`, fromUser: false, time: getNow(), read: true },
-        { id: Date.now() + 3, text: `Aguarde alguns instantes e confira o extrato da conta vinculada à chave Pix informada. Assim que identificar o crédito do valor simbólico de teste, toque no botão abaixo para prosseguir.`, fromUser: false, time: getNow(), read: true },
-        { id: Date.now() + 4, cashoutReceivedButton: true, fromUser: false, time: getNow(), read: true },
-      ]);
+        { id: Date.now() + 1, text: `Perfeito, ${firstName || "cliente"}! Chave Pix registrada com sucesso. Antes de assinar o contrato, precisamos validar sua identidade com uma selfie. É rápido e seguro:`, fromUser: false, time: getNow(), read: true },
+      ]).then(() => {
+        addBotMessages(() => [
+          { id: Date.now() + 2, facialVerification: true, fromUser: false, time: getNow(), read: true },
+        ]);
+      });
     }, 500);
   };
 
