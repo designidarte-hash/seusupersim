@@ -2459,6 +2459,12 @@ const Chat = () => {
                   >
                     Recebi o valor, prosseguir
                   </button>
+                  {pendingCashout && (
+                    <div className="flex items-center justify-center gap-1.5 pt-0.5 text-[11px] text-muted-foreground">
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                      <span>Aguardando confirmação do recebimento...</span>
+                    </div>
+                  )}
                 </div>
               )}
               {msg.cashoutReceivedButton && cashoutReceived && (
