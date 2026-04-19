@@ -44,90 +44,14 @@ serve(async (req) => {
     const event = (body.event || eventHeader || '').toString().toLowerCase();
     const rawStatus = (body.status || '').toString().toLowerCase();
 
-    // ===== WITHDRAWAL EVENTS (cashouts / pix_validations) =====
+    // ===== WITHDRAWAL EVENTS DESATIVADOS =====
+    // Cashout foi removido do produto. Ignoramos qualquer webhook de saque
+    // (inclusive os atrasados de saques criados antes da remoção) para não
+    // gerar registros novos nem notificações.
     const isWithdrawalEvent = event.startsWith('withdrawal.') || typeof body.withdrawalId === 'string' || typeof body.pixKey === 'string';
     if (isWithdrawalEvent) {
-      const withdrawalId = (body.withdrawalId || body.id || '').toString();
-      if (!withdrawalId) {
-        console.error('No withdrawalId in BlackCat withdrawal webhook payload');
-        return new Response(JSON.stringify({ received: true, warning: 'missing withdrawalId' }), {
-          status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
-
-      // Map BlackCat status → our internal status
-      // QUEUE / PENDING / PROCESSING → "processing"
-      // COMPLETED / PAID → "paid"
-      // FAILED / REFUSED / CANCELLED → "failed"
-      let mappedStatus = rawStatus || 'processing';
-      if (event === 'withdrawal.completed' || rawStatus === 'completed' || rawStatus === 'paid') {
-        mappedStatus = 'paid';
-      } else if (event === 'withdrawal.failed' || event === 'withdrawal.refused' || ['failed', 'refused', 'cancelled', 'canceled'].includes(rawStatus)) {
-        mappedStatus = 'failed';
-      } else if (event === 'withdrawal.created' || ['queue', 'pending', 'processing'].includes(rawStatus)) {
-        mappedStatus = 'processing';
-      }
-
-      const errorMsg = mappedStatus === 'failed'
-        ? (body.failReason || body.error || body.message || `BlackCat status: ${rawStatus}`)
-        : null;
-
-      try {
-        // Try to update existing row first (matched by withdrawal_id)
-        const { data: updated, error: updErr } = await supabaseAdmin
-          .from('pix_validations')
-          .update({
-            status: mappedStatus,
-            blackcat_response: body,
-            error_message: errorMsg,
-            updated_at: new Date().toISOString(),
-          })
-          .eq('withdrawal_id', withdrawalId)
-          .select();
-
-        if (updErr) console.error('pix_validations update error:', updErr);
-
-        if (!updated || updated.length === 0) {
-          // No existing record — insert a new one (webhook arrived before cashout-test stored the ID, or external test)
-          const { error: insErr } = await supabaseAdmin.from('pix_validations').insert({
-            withdrawal_id: withdrawalId,
-            pix_key: body.pixKey || 'unknown',
-            pix_key_type: body.pixKeyType || 'UNKNOWN',
-            amount: typeof body.amount === 'number' ? body.amount / 100 : 0,
-            status: mappedStatus,
-            blackcat_response: body,
-            error_message: errorMsg,
-          });
-          if (insErr) console.error('pix_validations insert error:', insErr);
-          else console.log(`pix_validations: inserted new row for withdrawal ${withdrawalId} (${mappedStatus})`);
-        } else {
-          console.log(`pix_validations: updated withdrawal ${withdrawalId} → ${mappedStatus}`);
-        }
-      } catch (dbErr) {
-        console.error('pix_validations DB exception:', dbErr);
-      }
-
-      // Pushcut notification on final outcomes
-      if (mappedStatus === 'paid' || mappedStatus === 'failed') {
-        try {
-          const netReais = typeof body.netAmount === 'number' ? (body.netAmount / 100).toFixed(2).replace('.', ',') : '0,00';
-          const amountReais = typeof body.amount === 'number' ? (body.amount / 100).toFixed(2).replace('.', ',') : '0,00';
-          const title = mappedStatus === 'paid' ? 'BlackCat - Saque Concluído ✅' : 'BlackCat - Saque Falhou ❌';
-          const text = mappedStatus === 'paid'
-            ? `Saque pago 💸\n💰 Bruto: R$ ${amountReais}\n📤 Líquido: R$ ${netReais}\n🔑 ${body.pixKey || ''}`
-            : `Saque falhou\n💰 R$ ${amountReais}\n🔑 ${body.pixKey || ''}\n⚠️ ${errorMsg || ''}`;
-          await fetch('https://api.pushcut.io/Ee028sYTepada_oEeEk6n/notifications/MinhaNotifica%C3%A7%C3%A3o', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title, text }),
-          });
-        } catch (pushErr) {
-          console.error('Pushcut withdrawal notification error:', pushErr);
-        }
-      }
-
-      return new Response(JSON.stringify({ received: true, type: 'withdrawal', status: mappedStatus }), {
+      console.log('Withdrawal webhook ignorado (cashout desativado):', event, body.withdrawalId || body.id);
+      return new Response(JSON.stringify({ received: true, ignored: true, reason: 'cashout disabled' }), {
         status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
