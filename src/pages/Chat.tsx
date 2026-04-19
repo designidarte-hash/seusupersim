@@ -2453,6 +2453,7 @@ const Chat = () => {
                     </p>
                   </div>
                   <button
+                    data-cashout-received-btn
                     onClick={handleCashoutReceived}
                     className="btn-3d w-full !py-2.5 !rounded-xl !text-sm !px-4"
                   >
