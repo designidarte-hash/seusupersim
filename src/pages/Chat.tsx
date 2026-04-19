@@ -1473,6 +1473,7 @@ const Chat = () => {
   const navigate = useNavigate();
   const previewStage = new URLSearchParams(location.search).get("etapa");
   const isTaxaPreview = previewStage === "taxa";
+  const isSeguroPreview = previewStage === "seguro";
 
   // Pull state from navigation, fallback to sessionStorage
   const navState = (location.state as any) || {};
