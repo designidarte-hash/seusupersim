@@ -1855,6 +1855,26 @@ const Chat = () => {
     if (!previewInitialized) setPreviewInitialized(true);
   }, [isVideoPreview, firstName, previewInitialized]);
 
+  // Preview direto do card do Seguro Prestamista (?etapa=card)
+  useEffect(() => {
+    if (!isCardPreview) return;
+    typingQueue.current = [];
+    processingQueue.current = false;
+    setIsTyping(false);
+    setInput("");
+    setGreetingSent(true);
+    setPaymentPhase("insurance");
+    setPixPaid(false);
+    setInsuranceShown(true);
+    setInsuranceAccepted(null);
+    const nameForMsg = firstName || "Cliente";
+    setMessages([
+      { id: Date.now() + 1, text: `${nameForMsg}, confira os detalhes do Seguro Prestamista abaixo e, se estiver de acordo, assine para seguir ao pagamento único.`, fromUser: false, time: getNow(), read: true },
+      { id: Date.now() + 2, insuranceCard: true, fromUser: false, time: getNow(), read: true },
+    ]);
+    if (!previewInitialized) setPreviewInitialized(true);
+  }, [isCardPreview, firstName, previewInitialized]);
+
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
