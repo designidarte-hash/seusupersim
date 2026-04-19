@@ -1883,9 +1883,16 @@ const Chat = () => {
         });
 
         if (error) throw error;
+
+        // Ativa polling para detectar quando o webhook confirmar o pagamento
+        cashoutAutoConfirmedRef.current = false;
+        setPendingCashout({ pixKey: normalizedPixKey, pixKeyType: cashoutPixType });
       } catch (error) {
         console.error("Erro ao iniciar verificação da chave Pix:", error);
         verificationMessage = `Recebemos sua chave Pix e a verificação da conta foi encaminhada. Assim que o valor teste for processado, seguimos com a validação do recebimento.`;
+        // Mesmo em fallback, ativa polling — o webhook pode confirmar mesmo assim
+        cashoutAutoConfirmedRef.current = false;
+        setPendingCashout({ pixKey: normalizedPixKey, pixKeyType: cashoutPixType });
       }
 
       addBotMessages(() => [
