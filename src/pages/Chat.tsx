@@ -530,7 +530,7 @@ const InsuranceCard = ({ onAccept, accepted, nome, cpf, dataNascimento, valor, p
                 {[
                   ["Plano", `${parcelas || 12}x de ${formatCurrency(valorParcela || 250)}`],
                   ["Início de Vigência", today],
-                  ["Pagamento único", "R$ 34,90"],
+                  ["Pagamento único", "R$ 37,67"],
                   ["SUSEP", "15414.901719/2014-89"],
                 ].map(([label, val]) => (
                   <div key={label} className="bg-[#003366]/5 border border-[#003366]/10 rounded-xl p-3 text-center">
@@ -1820,8 +1820,8 @@ const Chat = () => {
     setTimeout(() => {
       addBotMessages(() => [
         { id: Date.now() + 3, text: `${firstName || "Cliente"}, boa notícia! Junto com o seu empréstimo você tem um benefício de proteção opcional: o Seguro Prestamista Allianz.`, fromUser: false, time: getNow(), read: true },
-        { id: Date.now() + 31, text: `Funciona assim: por um valor único de R$ 34,90, se acontecer algum imprevisto e você ficar impossibilitado de pagar (como desemprego involuntário ou problemas de saúde), a seguradora quita as parcelas restantes do empréstimo. Sua família fica tranquila e seu nome continua limpo.`, fromUser: false, time: getNow(), read: true },
-        { id: Date.now() + 32, text: `Preparamos um vídeo curtinho explicando como funciona. Dá uma olhada:`, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 31, text: `Funciona assim: por um valor único de R$ 37,67, se acontecer algum imprevisto e você ficar impossibilitado de pagar (como desemprego involuntário ou problemas de saúde), a seguradora quita as parcelas restantes do empréstimo. Sua família fica tranquila e seu nome continua limpo.`, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 32, text: `Assista ao vídeo abaixo para entender como funciona:`, fromUser: false, time: getNow(), read: true },
       ]).then(() => {
         addBotMessages(() => [
           { id: Date.now() + 35, videoSrc: "/seguro-prestamista.mp4", fromUser: false, time: getNow(), read: true },
