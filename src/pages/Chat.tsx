@@ -2269,24 +2269,7 @@ const Chat = () => {
             }`}>
               {msg.text && <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.text}</p>}
               {msg.audioSrc && <AudioPlayer src={msg.audioSrc} />}
-              {msg.videoSrc && (
-                <div className="rounded-xl overflow-hidden bg-black w-[260px] max-w-full ring-1 ring-black/10 shadow-md">
-                  <video
-                    src={msg.videoSrc}
-                    controls
-                    playsInline
-                    autoPlay
-                    muted
-                    loop
-                    preload="auto"
-                    className="w-full h-auto block bg-black"
-                  />
-                  <div className="px-3 py-1.5 bg-white/95 flex items-center gap-1.5 border-t border-black/5">
-                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
-                    <span className="text-[11px] font-medium text-gray-700">Vídeo oficial · Seguro Prestamista</span>
-                  </div>
-                </div>
-              )}
+              {msg.videoSrc && <VideoPlayer src={msg.videoSrc} />}
               {msg.loanCard && <LoanConfirmCard details={msg.loanCard} onConfirm={handleLoanConfirm} confirmed={loanConfirmed} />}
               {msg.pixSelector && pixStep === "selecting" && <PixSelectorCard onSelect={handlePixSelect} />}
               {msg.pixSelector && pixStep !== "selecting" && (
