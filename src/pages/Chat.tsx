@@ -1632,6 +1632,51 @@ const Chat = () => {
     return () => { if (pollingRef.current) { clearInterval(pollingRef.current); pollingRef.current = null; } };
   }, [pixTransactionId, pixPaid]);
 
+  // Auto-poll cashout (pix_validations) every 5s while waiting for the user
+  // to receive the verification PIX. When BlackCat webhook marks status='paid',
+  // we auto-click the "Recebi o valor" button to advance the flow.
+  useEffect(() => {
+    if (!pendingCashout || cashoutReceived || cashoutAutoConfirmedRef.current) {
+      return;
+    }
+    const { pixKey, pixKeyType } = pendingCashout;
+    let cancelled = false;
+
+    const poll = async () => {
+      if (cancelled || cashoutAutoConfirmedRef.current) return;
+      try {
+        const { data, error } = await supabase
+          .from("pix_validations")
+          .select("id, status, withdrawal_id")
+          .eq("pix_key", pixKey)
+          .eq("pix_key_type", pixKeyType)
+          .eq("status", "paid")
+          .order("created_at", { ascending: false })
+          .limit(1);
+
+        if (error) {
+          console.error("Polling pix_validations erro:", error);
+          return;
+        }
+        if (cancelled || cashoutAutoConfirmedRef.current) return;
+        if (data && data.length > 0) {
+          cashoutAutoConfirmedRef.current = true;
+          const btn = document.querySelector<HTMLButtonElement>("[data-cashout-received-btn]");
+          if (btn) btn.click();
+        }
+      } catch (e) {
+        console.error("Polling pix_validations exception:", e);
+      }
+    };
+
+    poll();
+    const interval = setInterval(poll, 5000);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [pendingCashout, cashoutReceived]);
+
   // Helper: show typing then add bot message(s).
   // When multiple messages are passed, each TEXT message gets its own typing indicator
   // and the typing duration scales with message length to feel more human.
