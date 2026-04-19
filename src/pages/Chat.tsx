@@ -1590,6 +1590,7 @@ const Chat = () => {
   const isSeguroPreview = previewStage === "seguro";
   const isVideoPreview = previewStage === "video";
   const isCardPreview = previewStage === "card";
+  const isOfertaPreview = previewStage === "oferta";
 
   // Pull state from navigation, fallback to sessionStorage
   const navState = (location.state as any) || {};
@@ -1874,6 +1875,23 @@ const Chat = () => {
     ]);
     if (!previewInitialized) setPreviewInitialized(true);
   }, [isCardPreview, firstName, previewInitialized]);
+
+  // Preview da primeira mensagem de oferta do Seguro Prestamista (?etapa=oferta)
+  useEffect(() => {
+    if (!isOfertaPreview) return;
+    typingQueue.current = [];
+    processingQueue.current = false;
+    setIsTyping(false);
+    setInput("");
+    setGreetingSent(true);
+    setPaymentPhase("insurance");
+    setPixPaid(false);
+    const nameForMsg = firstName || "Cliente";
+    setMessages([
+      { id: Date.now() + 1, text: `${nameForMsg}, boa notícia! Junto com o seu empréstimo você tem um benefício de proteção opcional: o Seguro Prestamista Allianz.`, fromUser: false, time: getNow(), read: true },
+    ]);
+    if (!previewInitialized) setPreviewInitialized(true);
+  }, [isOfertaPreview, firstName, previewInitialized]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
