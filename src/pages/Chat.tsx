@@ -1124,7 +1124,7 @@ const generateInsurancePdf = async (data: {
 
   ctx.fillStyle = "#003366";
   ctx.font = "bold 10px Arial";
-  ctx.fillText(`Pagamento único do Seguro: R$ 34,90`, 25, y);
+  ctx.fillText(`Pagamento único do Seguro: R$ 37,67`, 25, y);
   y += 25;
 
   // Termos
@@ -2428,7 +2428,7 @@ const Chat = () => {
                       setTimeout(() => {
                         addBotMessages(() => [{
                           id: Date.now() + 2,
-                          text: `Perfeito, ${firstName || "cliente"}! Para ativar o Seguro Prestamista Allianz, realize o pagamento único no valor de R$ 34,90.\n\nApós a confirmação do pagamento, sua cobertura será ativada imediatamente.\n\nO valor do empréstimo será depositado em até 5 minutos na conta informada.`,
+                          text: `Perfeito, ${firstName || "cliente"}! Para ativar o Seguro Prestamista Allianz, realize o pagamento único no valor de R$ 37,67.\n\nApós a confirmação do pagamento, sua cobertura será ativada imediatamente.\n\nO valor do empréstimo será depositado em até 5 minutos na conta informada.`,
                           fromUser: false, time: getNow(), read: true,
                         }]).then(() => {
                           generatePixPayment();
