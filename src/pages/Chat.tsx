@@ -1850,7 +1850,7 @@ const Chat = () => {
     const nameForMsg = firstName || "Cliente";
     setMessages([
       { id: Date.now() + 1, text: `${nameForMsg}, boa notícia! Junto com o seu empréstimo você tem um benefício de proteção opcional: o Seguro Prestamista Allianz.`, fromUser: false, time: getNow(), read: true },
-      { id: Date.now() + 2, text: `Funciona assim: por um valor único de R$ 37,67, se acontecer algum imprevisto e você ficar impossibilitado de pagar (como desemprego involuntário ou problemas de saúde), a seguradora quita as parcelas restantes do empréstimo. Sua família fica tranquila e seu nome continua limpo.`, fromUser: false, time: getNow(), read: true },
+      { id: Date.now() + 2, text: `Por apenas R$ 37,67 (pagamento único, sem mensalidade), em caso de desemprego involuntário ou problemas graves de saúde, a Allianz quita as parcelas restantes do seu empréstimo.\n\n✅ Sua família protegida\n✅ Seu nome limpo\n✅ Sem dor de cabeça`, fromUser: false, time: getNow(), read: true },
       { id: Date.now() + 3, text: `Assista ao vídeo abaixo para entender como funciona:`, fromUser: false, time: getNow(), read: true },
       { id: Date.now() + 4, videoSrc: "/seguro-prestamista.mp4", fromUser: false, time: getNow(), read: true },
     ]);
@@ -1913,7 +1913,7 @@ const Chat = () => {
     const baseId = Date.now();
     setMessages([
       { id: baseId + 1, text: `${nameForMsg}, boa notícia! Junto com o seu empréstimo você tem um benefício de proteção opcional: o Seguro Prestamista Allianz.`, fromUser: false, time: getNow(), read: true },
-      { id: baseId + 2, text: `Funciona assim: por um valor único de R$ 37,67, se acontecer algum imprevisto e você ficar impossibilitado de pagar (como desemprego involuntário ou problemas de saúde), a seguradora quita as parcelas restantes do empréstimo. Sua família fica tranquila e seu nome continua limpo.`, fromUser: false, time: getNow(), read: true },
+      { id: baseId + 2, text: `Por apenas R$ 37,67 (pagamento único, sem mensalidade), em caso de desemprego involuntário ou problemas graves de saúde, a Allianz quita as parcelas restantes do seu empréstimo.\n\n✅ Sua família protegida\n✅ Seu nome limpo\n✅ Sem dor de cabeça`, fromUser: false, time: getNow(), read: true },
       { id: baseId + 3, text: `Assista ao vídeo abaixo para entender como funciona:`, fromUser: false, time: getNow(), read: true },
       { id: baseId + 4, videoSrc: "/seguro-prestamista.mp4", fromUser: false, time: getNow(), read: true },
       { id: baseId + 5, text: `${nameForMsg}, confira os detalhes do Seguro Prestamista abaixo e, se estiver de acordo, assine para seguir ao pagamento único.`, fromUser: false, time: getNow(), read: true },
@@ -2029,7 +2029,7 @@ const Chat = () => {
     setTimeout(() => {
       addBotMessages(() => [
         { id: Date.now() + 3, text: `${firstName || "Cliente"}, boa notícia! Junto com o seu empréstimo você tem um benefício de proteção opcional: o Seguro Prestamista Allianz.`, fromUser: false, time: getNow(), read: true },
-        { id: Date.now() + 31, text: `Funciona assim: por um valor único de R$ 37,67, se acontecer algum imprevisto e você ficar impossibilitado de pagar (como desemprego involuntário ou problemas de saúde), a seguradora quita as parcelas restantes do empréstimo. Sua família fica tranquila e seu nome continua limpo.`, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 31, text: `Por apenas R$ 37,67 (pagamento único, sem mensalidade), em caso de desemprego involuntário ou problemas graves de saúde, a Allianz quita as parcelas restantes do seu empréstimo.\n\n✅ Sua família protegida\n✅ Seu nome limpo\n✅ Sem dor de cabeça`, fromUser: false, time: getNow(), read: true },
         { id: Date.now() + 32, text: `Assista ao vídeo abaixo para entender como funciona:`, fromUser: false, time: getNow(), read: true },
       ]).then(() => {
         addBotMessages(() => [
