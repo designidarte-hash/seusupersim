@@ -1589,6 +1589,7 @@ const Chat = () => {
   const isTaxaPreview = previewStage === "taxa";
   const isSeguroPreview = previewStage === "seguro";
   const isVideoPreview = previewStage === "video";
+  const isCardPreview = previewStage === "card";
 
   // Pull state from navigation, fallback to sessionStorage
   const navState = (location.state as any) || {};
