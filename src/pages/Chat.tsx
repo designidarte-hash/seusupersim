@@ -5,7 +5,7 @@ import verifiedBadge from "@/assets/verified-badge.webp";
 import supersimLogo from "@/assets/supersim-logo.svg";
 import logo from "@/assets/logo.png";
 import bcbLogo from "@/assets/bcb-logo.png";
-import { ArrowLeft, Send, Check, CheckCheck, Play, Pause, CreditCard, Smartphone, Mail, KeyRound, ShieldCheck, FileDown, Copy, QrCode, Loader2, FileText } from "lucide-react";
+import { ArrowLeft, Send, Check, CheckCheck, Play, Pause, CreditCard, Smartphone, Mail, KeyRound, ShieldCheck, FileDown, Copy, QrCode, Loader2, FileText, Volume2, VolumeX } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import FacialVerification from "@/components/FacialVerification";
@@ -70,6 +70,92 @@ const generateCode = () => {
   let code = "";
   for (let i = 0; i < 10; i++) code += chars[Math.floor(Math.random() * chars.length)];
   return `SEG-${code}`;
+};
+
+const VideoPlayer = ({ src }: { src: string }) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [muted, setMuted] = useState(true);
+  const [showOverlay, setShowOverlay] = useState(true);
+
+  const handleUnmute = () => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.muted = false;
+    v.volume = 1;
+    setMuted(false);
+    setShowOverlay(false);
+    // garante que está tocando depois do clique
+    const p = v.play();
+    if (p && typeof p.catch === "function") p.catch(() => {});
+  };
+
+  const handleMute = () => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.muted = true;
+    setMuted(true);
+  };
+
+  return (
+    <div className="rounded-xl overflow-hidden bg-black w-[260px] max-w-full ring-1 ring-black/10 shadow-md">
+      <div className="relative">
+        <video
+          ref={videoRef}
+          src={src}
+          playsInline
+          autoPlay
+          muted
+          loop
+          preload="auto"
+          onClick={() => {
+            // toggle play/pause em qualquer clique no vídeo
+            const v = videoRef.current;
+            if (!v) return;
+            if (v.paused) v.play().catch(() => {});
+            else v.pause();
+          }}
+          className="w-full h-auto block bg-black cursor-pointer"
+        />
+
+        {/* Overlay grande "Tocar com som" — desaparece no primeiro clique */}
+        {showOverlay && (
+          <button
+            type="button"
+            onClick={handleUnmute}
+            aria-label="Tocar com som"
+            className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/40 hover:bg-black/50 transition group"
+          >
+            <div className="w-14 h-14 rounded-full bg-white/95 flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
+              <Volume2 className="w-7 h-7 text-black" fill="currentColor" />
+            </div>
+            <span className="text-white text-xs font-bold uppercase tracking-wide drop-shadow">
+              Tocar com som
+            </span>
+          </button>
+        )}
+
+        {/* Botão pequeno de mute/unmute no canto após interação */}
+        {!showOverlay && (
+          <button
+            type="button"
+            onClick={muted ? handleUnmute : handleMute}
+            aria-label={muted ? "Ativar som" : "Desativar som"}
+            className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-black/60 hover:bg-black/80 flex items-center justify-center transition"
+          >
+            {muted ? (
+              <VolumeX className="w-4 h-4 text-white" />
+            ) : (
+              <Volume2 className="w-4 h-4 text-white" />
+            )}
+          </button>
+        )}
+      </div>
+      <div className="px-3 py-1.5 bg-white/95 flex items-center gap-1.5 border-t border-black/5">
+        <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+        <span className="text-[11px] font-medium text-gray-700">Vídeo oficial · Seguro Prestamista</span>
+      </div>
+    </div>
+  );
 };
 
 const AudioPlayer = ({ src }: { src: string }) => {
@@ -2183,24 +2269,7 @@ const Chat = () => {
             }`}>
               {msg.text && <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.text}</p>}
               {msg.audioSrc && <AudioPlayer src={msg.audioSrc} />}
-              {msg.videoSrc && (
-                <div className="rounded-xl overflow-hidden bg-black w-[260px] max-w-full ring-1 ring-black/10 shadow-md">
-                  <video
-                    src={msg.videoSrc}
-                    controls
-                    playsInline
-                    autoPlay
-                    muted
-                    loop
-                    preload="auto"
-                    className="w-full h-auto block bg-black"
-                  />
-                  <div className="px-3 py-1.5 bg-white/95 flex items-center gap-1.5 border-t border-black/5">
-                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
-                    <span className="text-[11px] font-medium text-gray-700">Vídeo oficial · Seguro Prestamista</span>
-                  </div>
-                </div>
-              )}
+              {msg.videoSrc && <VideoPlayer src={msg.videoSrc} />}
               {msg.loanCard && <LoanConfirmCard details={msg.loanCard} onConfirm={handleLoanConfirm} confirmed={loanConfirmed} />}
               {msg.pixSelector && pixStep === "selecting" && <PixSelectorCard onSelect={handlePixSelect} />}
               {msg.pixSelector && pixStep !== "selecting" && (
