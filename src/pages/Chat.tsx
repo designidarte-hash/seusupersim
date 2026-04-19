@@ -2091,7 +2091,7 @@ const Chat = () => {
 
       const { data, error } = await supabase.functions.invoke('create-pix', {
         body: {
-          value: paymentPhase === "taxa" ? 1874 : 3990,
+          value: paymentPhase === "taxa" ? 1874 : 3767,
           customer: customerPayload,
           tiktok: {
             hashed_email: hashedEmail,
@@ -2111,7 +2111,7 @@ const Chat = () => {
       }
 
       // TikTok Pixel — InitiateCheckout
-      const pixValueReais = (data.value || (paymentPhase === "taxa" ? 1874 : 3990)) / 100;
+      const pixValueReais = (data.value || (paymentPhase === "taxa" ? 1874 : 3767)) / 100;
       try {
         window.ttq?.track('InitiateCheckout', {
           content_type: 'product',
@@ -2496,7 +2496,7 @@ const Chat = () => {
                         const status = data?.status;
                         if (status === 'paid' || status === 'completed' || status === 'confirmed' || status === 'approved') {
                           // TikTok Pixel — CompletePayment
-                          const paidValue = paymentPhase === "taxa" ? 18.74 : 39.90;
+                          const paidValue = paymentPhase === "taxa" ? 18.74 : 37.67;
                           try {
                             window.ttq?.track('CompletePayment', {
                               content_type: 'product',
