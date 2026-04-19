@@ -1927,6 +1927,7 @@ const Chat = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFluxoPreview, firstName]);
 
+  useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
