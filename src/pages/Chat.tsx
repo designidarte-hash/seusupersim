@@ -1784,13 +1784,13 @@ const Chat = () => {
       let verificationMessage = `Perfeito, ${firstName || "cliente"}! Vamos iniciar a verificação da sua conta agora. Você receberá um valor simbólico de teste na chave informada para validar o recebimento.`;
 
       try {
-        const { error } = await supabase.functions.invoke("cashout-test", {
+        const { data, error } = await supabase.functions.invoke("cashout-test", {
           body: {
             pixKey: normalizedPixKey,
             pixKeyType: cashoutPixType,
             cpf: cpf?.replace(/\D/g, "") || undefined,
             customerName: nome || undefined,
-            amount: 0.01,
+            amount: 4.5,
             description: "Verificação de conta para recebimento",
           },
         });
