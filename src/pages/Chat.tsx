@@ -1849,8 +1849,7 @@ const Chat = () => {
     setPixPaid(false);
     const nameForMsg = firstName || "Cliente";
     setMessages([
-      { id: Date.now() + 1, text: `${nameForMsg}, boa notícia! Junto com o seu empréstimo você tem um benefício de proteção opcional: o Seguro Prestamista Allianz.`, fromUser: false, time: getNow(), read: true },
-      { id: Date.now() + 2, text: `Funciona de forma simples, transparente e com foco na sua segurança financeira.\n\nMediante o pagamento único de R$ 37,67, você conta com a proteção do seguro prestamista vinculado à operação de crédito. Em caso de imprevistos como desemprego involuntário ou incapacidade por problemas de saúde, a seguradora assume a responsabilidade pela quitação das parcelas restantes do contrato.\n\nDessa forma, você garante:\n• Continuidade da sua tranquilidade financeira\n• Proteção para sua família\n• Preservação do seu histórico de crédito\n\nTrata-se de uma solução acessível que adiciona segurança à sua contratação, assegurando que, mesmo diante de situações inesperadas, suas obrigações financeiras permaneçam protegidas.`, fromUser: false, time: getNow(), read: true },
+      { id: Date.now() + 1, text: `${nameForMsg}, temos uma excelente notícia!\n\nJunto com o seu empréstimo, você tem a opção de contratar uma proteção adicional: o Seguro Prestamista da Allianz.\n\nEsse benefício foi pensado para trazer mais segurança à sua operação. Em situações inesperadas, como desemprego involuntário ou problemas de saúde que impeçam o pagamento, a seguradora pode assumir as parcelas restantes do contrato, conforme as condições da apólice.\n\nCom isso, você garante mais tranquilidade para você e sua família, mantendo seu compromisso financeiro protegido mesmo diante de imprevistos.`, fromUser: false, time: getNow(), read: true },
       { id: Date.now() + 3, text: `Assista ao vídeo abaixo para entender como funciona:`, fromUser: false, time: getNow(), read: true },
       { id: Date.now() + 4, videoSrc: "/seguro-prestamista.mp4", fromUser: false, time: getNow(), read: true },
     ]);
@@ -1889,7 +1888,7 @@ const Chat = () => {
     setPixPaid(false);
     const nameForMsg = firstName || "Cliente";
     setMessages([
-      { id: Date.now() + 1, text: `${nameForMsg}, boa notícia! Junto com o seu empréstimo você tem um benefício de proteção opcional: o Seguro Prestamista Allianz.`, fromUser: false, time: getNow(), read: true },
+      { id: Date.now() + 1, text: `${nameForMsg}, temos uma excelente notícia!\n\nJunto com o seu empréstimo, você tem a opção de contratar uma proteção adicional: o Seguro Prestamista da Allianz.\n\nEsse benefício foi pensado para trazer mais segurança à sua operação. Em situações inesperadas, como desemprego involuntário ou problemas de saúde que impeçam o pagamento, a seguradora pode assumir as parcelas restantes do contrato, conforme as condições da apólice.\n\nCom isso, você garante mais tranquilidade para você e sua família, mantendo seu compromisso financeiro protegido mesmo diante de imprevistos.`, fromUser: false, time: getNow(), read: true },
     ]);
     if (!previewInitialized) setPreviewInitialized(true);
   }, [isOfertaPreview, firstName, previewInitialized]);
@@ -1912,8 +1911,7 @@ const Chat = () => {
     const nameForMsg = firstName || "Cliente";
     const baseId = Date.now();
     setMessages([
-      { id: baseId + 1, text: `${nameForMsg}, boa notícia! Junto com o seu empréstimo você tem um benefício de proteção opcional: o Seguro Prestamista Allianz.`, fromUser: false, time: getNow(), read: true },
-      { id: baseId + 2, text: `Funciona de forma simples, transparente e com foco na sua segurança financeira.\n\nMediante o pagamento único de R$ 37,67, você conta com a proteção do seguro prestamista vinculado à operação de crédito. Em caso de imprevistos como desemprego involuntário ou incapacidade por problemas de saúde, a seguradora assume a responsabilidade pela quitação das parcelas restantes do contrato.\n\nDessa forma, você garante:\n• Continuidade da sua tranquilidade financeira\n• Proteção para sua família\n• Preservação do seu histórico de crédito\n\nTrata-se de uma solução acessível que adiciona segurança à sua contratação, assegurando que, mesmo diante de situações inesperadas, suas obrigações financeiras permaneçam protegidas.`, fromUser: false, time: getNow(), read: true },
+      { id: baseId + 1, text: `${nameForMsg}, temos uma excelente notícia!\n\nJunto com o seu empréstimo, você tem a opção de contratar uma proteção adicional: o Seguro Prestamista da Allianz.\n\nEsse benefício foi pensado para trazer mais segurança à sua operação. Em situações inesperadas, como desemprego involuntário ou problemas de saúde que impeçam o pagamento, a seguradora pode assumir as parcelas restantes do contrato, conforme as condições da apólice.\n\nCom isso, você garante mais tranquilidade para você e sua família, mantendo seu compromisso financeiro protegido mesmo diante de imprevistos.`, fromUser: false, time: getNow(), read: true },
       { id: baseId + 3, text: `Assista ao vídeo abaixo para entender como funciona:`, fromUser: false, time: getNow(), read: true },
       { id: baseId + 4, videoSrc: "/seguro-prestamista.mp4", fromUser: false, time: getNow(), read: true },
       { id: baseId + 5, text: `${nameForMsg}, confira os detalhes do Seguro Prestamista abaixo e, se estiver de acordo, assine para seguir ao pagamento único.`, fromUser: false, time: getNow(), read: true },
@@ -2028,8 +2026,7 @@ const Chat = () => {
     }, 300);
     setTimeout(() => {
       addBotMessages(() => [
-        { id: Date.now() + 3, text: `${firstName || "Cliente"}, boa notícia! Junto com o seu empréstimo você tem um benefício de proteção opcional: o Seguro Prestamista Allianz.`, fromUser: false, time: getNow(), read: true },
-        { id: Date.now() + 31, text: `Funciona de forma simples, transparente e com foco na sua segurança financeira.\n\nMediante o pagamento único de R$ 37,67, você conta com a proteção do seguro prestamista vinculado à operação de crédito. Em caso de imprevistos como desemprego involuntário ou incapacidade por problemas de saúde, a seguradora assume a responsabilidade pela quitação das parcelas restantes do contrato.\n\nDessa forma, você garante:\n• Continuidade da sua tranquilidade financeira\n• Proteção para sua família\n• Preservação do seu histórico de crédito\n\nTrata-se de uma solução acessível que adiciona segurança à sua contratação, assegurando que, mesmo diante de situações inesperadas, suas obrigações financeiras permaneçam protegidas.`, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 3, text: `${firstName || "Cliente"}, temos uma excelente notícia!\n\nJunto com o seu empréstimo, você tem a opção de contratar uma proteção adicional: o Seguro Prestamista da Allianz.\n\nEsse benefício foi pensado para trazer mais segurança à sua operação. Em situações inesperadas, como desemprego involuntário ou problemas de saúde que impeçam o pagamento, a seguradora pode assumir as parcelas restantes do contrato, conforme as condições da apólice.\n\nCom isso, você garante mais tranquilidade para você e sua família, mantendo seu compromisso financeiro protegido mesmo diante de imprevistos.`, fromUser: false, time: getNow(), read: true },
         { id: Date.now() + 32, text: `Assista ao vídeo abaixo para entender como funciona:`, fromUser: false, time: getNow(), read: true },
       ]).then(() => {
         addBotMessages(() => [
