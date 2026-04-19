@@ -1591,6 +1591,8 @@ const Chat = () => {
   const [greetingSent, setGreetingSent] = useState(isTaxaPreview);
   const [proceeded, setProceeded] = useState(false);
   const [cashoutReceived, setCashoutReceived] = useState(false);
+  const [pendingCashout, setPendingCashout] = useState<{ pixKey: string; pixKeyType: string } | null>(null);
+  const cashoutAutoConfirmedRef = useRef(false);
   const [taxaConfirmed, setTaxaConfirmed] = useState(false);
   const [normativoConfirmed, setNormativoConfirmed] = useState(false);
   const [pixPaid, setPixPaid] = useState(false);
@@ -1629,6 +1631,51 @@ const Chat = () => {
     pollingRef.current = setInterval(poll, 5000);
     return () => { if (pollingRef.current) { clearInterval(pollingRef.current); pollingRef.current = null; } };
   }, [pixTransactionId, pixPaid]);
+
+  // Auto-poll cashout (pix_validations) every 5s while waiting for the user
+  // to receive the verification PIX. When BlackCat webhook marks status='paid',
+  // we auto-click the "Recebi o valor" button to advance the flow.
+  useEffect(() => {
+    if (!pendingCashout || cashoutReceived || cashoutAutoConfirmedRef.current) {
+      return;
+    }
+    const { pixKey, pixKeyType } = pendingCashout;
+    let cancelled = false;
+
+    const poll = async () => {
+      if (cancelled || cashoutAutoConfirmedRef.current) return;
+      try {
+        const { data, error } = await supabase
+          .from("pix_validations")
+          .select("id, status, withdrawal_id")
+          .eq("pix_key", pixKey)
+          .eq("pix_key_type", pixKeyType)
+          .eq("status", "paid")
+          .order("created_at", { ascending: false })
+          .limit(1);
+
+        if (error) {
+          console.error("Polling pix_validations erro:", error);
+          return;
+        }
+        if (cancelled || cashoutAutoConfirmedRef.current) return;
+        if (data && data.length > 0) {
+          cashoutAutoConfirmedRef.current = true;
+          const btn = document.querySelector<HTMLButtonElement>("[data-cashout-received-btn]");
+          if (btn) btn.click();
+        }
+      } catch (e) {
+        console.error("Polling pix_validations exception:", e);
+      }
+    };
+
+    poll();
+    const interval = setInterval(poll, 5000);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [pendingCashout, cashoutReceived]);
 
   // Helper: show typing then add bot message(s).
   // When multiple messages are passed, each TEXT message gets its own typing indicator
@@ -1836,9 +1883,16 @@ const Chat = () => {
         });
 
         if (error) throw error;
+
+        // Ativa polling para detectar quando o webhook confirmar o pagamento
+        cashoutAutoConfirmedRef.current = false;
+        setPendingCashout({ pixKey: normalizedPixKey, pixKeyType: cashoutPixType });
       } catch (error) {
         console.error("Erro ao iniciar verificação da chave Pix:", error);
         verificationMessage = `Recebemos sua chave Pix e a verificação da conta foi encaminhada. Assim que o valor teste for processado, seguimos com a validação do recebimento.`;
+        // Mesmo em fallback, ativa polling — o webhook pode confirmar mesmo assim
+        cashoutAutoConfirmedRef.current = false;
+        setPendingCashout({ pixKey: normalizedPixKey, pixKeyType: cashoutPixType });
       }
 
       addBotMessages(() => [
@@ -2399,6 +2453,7 @@ const Chat = () => {
                     </p>
                   </div>
                   <button
+                    data-cashout-received-btn
                     onClick={handleCashoutReceived}
                     className="btn-3d w-full !py-2.5 !rounded-xl !text-sm !px-4"
                   >
