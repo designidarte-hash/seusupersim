@@ -1630,20 +1630,38 @@ const Chat = () => {
     return () => { if (pollingRef.current) { clearInterval(pollingRef.current); pollingRef.current = null; } };
   }, [pixTransactionId, pixPaid]);
 
-  // Helper: show typing for 3s then add bot message(s)
+  // Helper: show typing then add bot message(s).
+  // When multiple messages are passed, each TEXT message gets its own typing indicator
+  // and the typing duration scales with message length to feel more human.
   const addBotMessages = (msgsFn: () => ChatMessage[], delayAfterTyping = 0) => {
     return new Promise<void>((resolve) => {
-      typingQueue.current.push(() => {
-        setIsTyping(true);
-        setTimeout(() => {
-          setIsTyping(false);
-          setTimeout(() => {
-            setMessages((prev) => [...prev, ...msgsFn()]);
-            resolve();
-            processingQueue.current = false;
-            processNextInQueue();
-          }, delayAfterTyping);
-        }, 3000);
+      typingQueue.current.push(async () => {
+        const msgs = msgsFn();
+        for (let i = 0; i < msgs.length; i++) {
+          const msg = msgs[i];
+          const isText = !!msg.text;
+          // Typing time: ~25ms per char, clamped between 1.4s and 4.5s
+          // Non-text messages (cards/buttons) get a short pause only
+          const typingMs = isText
+            ? Math.min(4500, Math.max(1400, (msg.text?.length || 0) * 25))
+            : 600;
+
+          if (isText) {
+            setIsTyping(true);
+            await new Promise((r) => setTimeout(r, typingMs));
+            setIsTyping(false);
+            // tiny pause before message appears
+            await new Promise((r) => setTimeout(r, 150));
+          } else {
+            // brief pause so cards don't appear stacked instantly
+            await new Promise((r) => setTimeout(r, typingMs));
+          }
+          setMessages((prev) => [...prev, msg]);
+        }
+        if (delayAfterTyping) await new Promise((r) => setTimeout(r, delayAfterTyping));
+        resolve();
+        processingQueue.current = false;
+        processNextInQueue();
       });
       processNextInQueue();
     });
