@@ -2169,13 +2169,13 @@ const Chat = () => {
                     playsInline
                     autoPlay
                     muted
+                    loop
                     preload="auto"
-                    poster="/placeholder.svg"
-                    className="w-full h-auto block"
+                    className="w-full h-auto block bg-black"
                   />
                   <div className="px-3 py-1.5 bg-white/95 flex items-center gap-1.5 border-t border-black/5">
                     <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
-                    <span className="text-[11px] font-medium text-gray-700">Vídeo oficial · Banco Central</span>
+                    <span className="text-[11px] font-medium text-gray-700">Vídeo oficial · Seguro Prestamista</span>
                   </div>
                 </div>
               )}
