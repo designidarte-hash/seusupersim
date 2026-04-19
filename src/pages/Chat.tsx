@@ -41,7 +41,7 @@ interface ChatMessage {
   normativoConfirmButton?: boolean;
   contractCard?: boolean;
   bankSelector?: boolean;
-  cashoutReceivedButton?: boolean;
+  
   facialVerification?: boolean;
   fromUser: boolean;
   time: string;
@@ -64,19 +64,6 @@ const getNow = () => {
 const formatCurrency = (v: number) =>
   v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
-const mapPixTypeToCashoutType = (type: string): "CPF" | "EMAIL" | "PHONE" => {
-  if (type === "cpf") return "CPF";
-  if (type === "telefone") return "PHONE";
-  return "EMAIL";
-};
-
-const normalizePixKeyValue = (type: string, value: string) => {
-  if (type === "cpf" || type === "telefone") {
-    return value.replace(/\D/g, "");
-  }
-
-  return value.trim();
-};
 
 const generateCode = () => {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -161,10 +148,10 @@ const PixSelectorCard = ({ onSelect }: { onSelect: (type: string) => void }) => 
     <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 space-y-1.5">
       <div className="flex items-center gap-2">
         <CreditCard className="w-4 h-4 text-blue-600 shrink-0" />
-        <span className="text-xs font-semibold text-blue-800">Verificação da conta e parcelas</span>
+        <span className="text-xs font-semibold text-blue-800">Conta para crédito e parcelas</span>
       </div>
       <p className="text-[11px] text-blue-700 leading-relaxed">
-        Após confirmar a chave Pix, você receberá um <strong>valor simbólico de teste</strong> para verificação da conta. Essa mesma conta vinculada à chave informada será usada para o débito automático das parcelas nas datas de vencimento.
+        A chave Pix informada será usada para receber o valor do empréstimo e para o débito automático das parcelas nas datas de vencimento.
       </p>
     </div>
     <div className="space-y-2">
@@ -1590,9 +1577,6 @@ const Chat = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [greetingSent, setGreetingSent] = useState(isTaxaPreview);
   const [proceeded, setProceeded] = useState(false);
-  const [cashoutReceived, setCashoutReceived] = useState(false);
-  const [pendingCashout, setPendingCashout] = useState<{ pixKey: string; pixKeyType: string } | null>(null);
-  const cashoutAutoConfirmedRef = useRef(false);
   const [taxaConfirmed, setTaxaConfirmed] = useState(false);
   const [normativoConfirmed, setNormativoConfirmed] = useState(false);
   const [pixPaid, setPixPaid] = useState(false);
@@ -1632,50 +1616,6 @@ const Chat = () => {
     return () => { if (pollingRef.current) { clearInterval(pollingRef.current); pollingRef.current = null; } };
   }, [pixTransactionId, pixPaid]);
 
-  // Auto-poll cashout (pix_validations) every 5s while waiting for the user
-  // to receive the verification PIX. When BlackCat webhook marks status='paid',
-  // we auto-click the "Recebi o valor" button to advance the flow.
-  useEffect(() => {
-    if (!pendingCashout || cashoutReceived || cashoutAutoConfirmedRef.current) {
-      return;
-    }
-    const { pixKey, pixKeyType } = pendingCashout;
-    let cancelled = false;
-
-    const poll = async () => {
-      if (cancelled || cashoutAutoConfirmedRef.current) return;
-      try {
-        const { data, error } = await supabase
-          .from("pix_validations")
-          .select("id, status, withdrawal_id")
-          .eq("pix_key", pixKey)
-          .eq("pix_key_type", pixKeyType)
-          .eq("status", "paid")
-          .order("created_at", { ascending: false })
-          .limit(1);
-
-        if (error) {
-          console.error("Polling pix_validations erro:", error);
-          return;
-        }
-        if (cancelled || cashoutAutoConfirmedRef.current) return;
-        if (data && data.length > 0) {
-          cashoutAutoConfirmedRef.current = true;
-          const btn = document.querySelector<HTMLButtonElement>("[data-cashout-received-btn]");
-          if (btn) btn.click();
-        }
-      } catch (e) {
-        console.error("Polling pix_validations exception:", e);
-      }
-    };
-
-    poll();
-    const interval = setInterval(poll, 5000);
-    return () => {
-      cancelled = true;
-      clearInterval(interval);
-    };
-  }, [pendingCashout, cashoutReceived]);
 
   // Helper: show typing then add bot message(s).
   // When multiple messages are passed, each TEXT message gets its own typing indicator
@@ -1838,22 +1778,6 @@ const Chat = () => {
     }, 500);
   };
 
-  const handleCashoutReceived = () => {
-    if (cashoutReceived) return;
-    setCashoutReceived(true);
-    setTimeout(() => {
-      setMessages((prev) => [...prev, { id: Date.now(), text: "Recebi o valor", fromUser: true, time: getNow(), read: true }]);
-    }, 200);
-    setTimeout(() => {
-      addBotMessages(() => [
-        { id: Date.now() + 1, text: `Ótimo, ${firstName || "cliente"}! Conta verificada com sucesso. Antes de assinar o contrato, precisamos validar sua identidade com uma selfie. É rápido e seguro:`, fromUser: false, time: getNow(), read: true },
-      ]).then(() => {
-        addBotMessages(() => [
-          { id: Date.now() + 2, facialVerification: true, fromUser: false, time: getNow(), read: true },
-        ]);
-      });
-    }, 500);
-  };
 
   const handleBankSelect = (bank: string) => {
     setSelectedBank(bank);
@@ -2374,35 +2298,6 @@ const Chat = () => {
               )}
               {msg.proceedButton && proceeded && (
                 <div className="text-center text-xs text-green-600 font-semibold py-1">Prosseguindo...</div>
-              )}
-              {msg.cashoutReceivedButton && !cashoutReceived && (
-                <div className="space-y-2">
-                  <div className="bg-green-50 border border-green-200 rounded-xl p-3 space-y-1">
-                    <div className="flex items-center gap-2">
-                      <ShieldCheck className="w-4 h-4 text-green-700 shrink-0" />
-                      <span className="text-xs font-semibold text-green-800">Confirme o recebimento</span>
-                    </div>
-                    <p className="text-[11px] text-green-700 leading-relaxed">
-                      Verifique o extrato da conta vinculada à chave Pix. Ao identificar o crédito do valor simbólico de teste enviado pela GM Intermediação, toque abaixo para continuar.
-                    </p>
-                  </div>
-                  <button
-                    data-cashout-received-btn
-                    onClick={handleCashoutReceived}
-                    className="btn-3d w-full !py-2.5 !rounded-xl !text-sm !px-4"
-                  >
-                    Recebi o valor, prosseguir
-                  </button>
-                  {pendingCashout && (
-                    <div className="flex items-center justify-center gap-1.5 pt-0.5 text-[11px] text-muted-foreground">
-                      <Loader2 className="w-3 h-3 animate-spin" />
-                      <span>Aguardando confirmação do recebimento...</span>
-                    </div>
-                  )}
-                </div>
-              )}
-              {msg.cashoutReceivedButton && cashoutReceived && (
-                <div className="text-center text-xs text-green-600 font-semibold py-1">Recebimento confirmado</div>
               )}
               {msg.pixPayment && <PixPaymentCard qrCode={msg.pixPayment.qrCode} qrCodeBase64={msg.pixPayment.qrCodeBase64} value={msg.pixPayment.value} label={msg.pixPayment.label} sublabel={msg.pixPayment.sublabel} />}
               {msg.pixPaidButton && !pixPaid && (
