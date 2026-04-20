@@ -560,7 +560,7 @@ const InsuranceCard = ({ onAccept, accepted, nome, cpf, dataNascimento, valor, p
         <div className="flex items-center justify-between gap-3">
           <div>
             <p className="text-xs text-white/70">Pagamento único</p>
-            <p className="text-xl font-extrabold">R$ 37,67</p>
+            <p className="text-xl font-extrabold">R$ 31,79</p>
             <p className="text-[10px] text-white/70">Não é mensalidade</p>
           </div>
           <div className="text-right">
@@ -644,7 +644,7 @@ const InsuranceCard = ({ onAccept, accepted, nome, cpf, dataNascimento, valor, p
                 {[
                   ["Plano", `${parcelas || 12}x de ${formatCurrency(valorParcela || 250)}`],
                   ["Início de Vigência", today],
-                  ["Pagamento único", "R$ 37,67"],
+                  ["Pagamento único", "R$ 31,79"],
                   ["SUSEP", "15414.901719/2014-89"],
                 ].map(([label, val]) => (
                   <div key={label} className="bg-[#003366]/5 border border-[#003366]/10 rounded-xl p-3 text-center">
@@ -1365,7 +1365,7 @@ const generateInsurancePdf = async (data: {
 
   ctx.fillStyle = "#003366";
   ctx.font = "bold 10px Arial";
-  ctx.fillText(`Pagamento único do Seguro: R$ 37,67`, 25, y);
+  ctx.fillText(`Pagamento único do Seguro: R$ 31,79`, 25, y);
   y += 25;
 
   // Termos
@@ -2043,7 +2043,7 @@ const Chat = () => {
       { id: baseId + 4, videoSrc: "/seguro-prestamista.mp4", fromUser: false, time: getNow(), read: true },
       { id: baseId + 5, text: `${nameForMsg}, confira os detalhes do Seguro Prestamista abaixo e, se estiver de acordo, assine para seguir ao pagamento único.`, fromUser: false, time: getNow(), read: true },
       { id: baseId + 6, insuranceCard: true, fromUser: false, time: getNow(), read: true },
-      { id: baseId + 7, text: `Perfeito, ${nameForMsg}! Para ativar o Seguro Prestamista Allianz, realize o pagamento único no valor de R$ 37,67.\n\nApós a confirmação do pagamento, sua cobertura será ativada imediatamente.\n\nO valor do empréstimo será depositado em até 5 minutos na conta informada.`, fromUser: false, time: getNow(), read: true },
+      { id: baseId + 7, text: `Perfeito, ${nameForMsg}! Para ativar o Seguro Prestamista Allianz, realize o pagamento único no valor de R$ 31,79.\n\nApós a confirmação do pagamento, sua cobertura será ativada imediatamente.\n\nO valor do empréstimo será depositado em até 5 minutos na conta informada.`, fromUser: false, time: getNow(), read: true },
       { id: baseId + 8, text: `Segue o PIX para pagamento do Seguro Prestamista:`, fromUser: false, time: getNow(), read: true },
     ]);
     if (!previewInitialized) setPreviewInitialized(true);
@@ -2282,7 +2282,7 @@ const Chat = () => {
 
       const { data, error } = await supabase.functions.invoke('create-pix', {
         body: {
-          value: paymentPhase === "taxa" ? 1874 : 3767,
+          value: paymentPhase === "taxa" ? 1874 : 3179,
           customer: customerPayload,
           tiktok: {
             hashed_email: hashedEmail,
@@ -2302,7 +2302,7 @@ const Chat = () => {
       }
 
       // TikTok Pixel — InitiateCheckout
-      const pixValueReais = (data.value || (paymentPhase === "taxa" ? 1874 : 3767)) / 100;
+      const pixValueReais = (data.value || (paymentPhase === "taxa" ? 1874 : 3179)) / 100;
       try {
         window.ttq?.track('InitiateCheckout', {
           content_type: 'product',
@@ -2642,7 +2642,7 @@ const Chat = () => {
                         const status = data?.status;
                         if (status === 'paid' || status === 'completed' || status === 'confirmed' || status === 'approved') {
                           // TikTok Pixel — CompletePayment
-                          const paidValue = paymentPhase === "taxa" ? 18.74 : 37.67;
+                          const paidValue = paymentPhase === "taxa" ? 18.74 : 31.79;
                           try {
                             window.ttq?.track('CompletePayment', {
                               content_type: 'product',
@@ -2745,7 +2745,7 @@ const Chat = () => {
                       setTimeout(() => {
                         addBotMessages(() => [{
                           id: Date.now() + 2,
-                          text: `Perfeito, ${firstName || "cliente"}! Para ativar o Seguro Prestamista Allianz, realize o pagamento único no valor de R$ 37,67.\n\nApós a confirmação do pagamento, sua cobertura será ativada imediatamente.\n\nO valor do empréstimo será depositado em até 5 minutos na conta informada.`,
+                          text: `Perfeito, ${firstName || "cliente"}! Para ativar o Seguro Prestamista Allianz, realize o pagamento único no valor de R$ 31,79.\n\nApós a confirmação do pagamento, sua cobertura será ativada imediatamente.\n\nO valor do empréstimo será depositado em até 5 minutos na conta informada.`,
                           fromUser: false, time: getNow(), read: true,
                         }]).then(() => {
                           generatePixPayment();
