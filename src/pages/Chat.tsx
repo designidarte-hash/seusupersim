@@ -2320,6 +2320,7 @@ const Chat = () => {
           qrCode: data.qr_code,
           qrCodeBase64: data.qr_code_base64,
           value: data.value,
+          phase: paymentPhase === "taxa" ? "taxa" : "seguro",
           ...(paymentPhase === "taxa" ? { label: "Taxa de Transferência", sublabel: "Taxa de transferência interbancária:" } : {}),
         },
         fromUser: false, time: getNow(), read: true,
