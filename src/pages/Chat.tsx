@@ -32,7 +32,7 @@ interface ChatMessage {
   insurancePdf?: string;
   insuranceInfoPdf?: boolean;
   manualConfirmButton?: boolean;
-  pixPayment?: { qrCode: string; qrCodeBase64: string; value: number; label?: string; sublabel?: string };
+  pixPayment?: { qrCode: string; qrCodeBase64: string; value: number; label?: string; sublabel?: string; phase?: "seguro" | "taxa" };
   pdfConfirmButton?: boolean;
   proceedButton?: boolean;
   pixPaidButton?: boolean;
@@ -744,8 +744,59 @@ const InsuranceInfoPdfCard = () => (
   </div>
 );
 
-const PixPaymentCard = ({ qrCode, qrCodeBase64, value, label, sublabel }: { qrCode: string; qrCodeBase64: string; value: number; label?: string; sublabel?: string }) => {
+const SOCIAL_PROOFS_PIX = [
+  { nome: "João S.", cidade: "São Paulo/SP", valor: "R$ 5.000", tempo: "há 2 minutos" },
+  { nome: "Maria F.", cidade: "Rio de Janeiro/RJ", valor: "R$ 3.500", tempo: "há 4 minutos" },
+  { nome: "Pedro L.", cidade: "Belo Horizonte/MG", valor: "R$ 2.500", tempo: "há 6 minutos" },
+  { nome: "Ana C.", cidade: "Porto Alegre/RS", valor: "R$ 8.000", tempo: "há 8 minutos" },
+  { nome: "Lucas M.", cidade: "Curitiba/PR", valor: "R$ 4.200", tempo: "agora mesmo" },
+  { nome: "Carla R.", cidade: "Salvador/BA", valor: "R$ 1.800", tempo: "há 1 minuto" },
+  { nome: "Felipe O.", cidade: "Recife/PE", valor: "R$ 6.500", tempo: "há 3 minutos" },
+];
+
+const formatPixTime = (totalSec: number) => {
+  const m = Math.floor(totalSec / 60).toString().padStart(2, "0");
+  const s = (totalSec % 60).toString().padStart(2, "0");
+  return `${m}:${s}`;
+};
+
+const PixPaymentCard = ({ qrCode, qrCodeBase64, value, label, sublabel, phase = "seguro" }: { qrCode: string; qrCodeBase64: string; value: number; label?: string; sublabel?: string; phase?: "seguro" | "taxa" }) => {
   const [copied, setCopied] = useState(false);
+  const [secondsLeft, setSecondsLeft] = useState(15 * 60);
+  const [proofIndex, setProofIndex] = useState(0);
+  const [proofVisible, setProofVisible] = useState(false);
+
+  // Timer regressivo
+  useEffect(() => {
+    if (secondsLeft <= 0) return;
+    const id = setInterval(() => setSecondsLeft((s) => Math.max(0, s - 1)), 1000);
+    return () => clearInterval(id);
+  }, [secondsLeft]);
+
+  // Rotação prova social: aparece, fica 5s, esconde, próximo após 12s
+  useEffect(() => {
+    const showTimeout = setTimeout(() => setProofVisible(true), 2000);
+    return () => clearTimeout(showTimeout);
+  }, []);
+
+  useEffect(() => {
+    if (!proofVisible) return;
+    const hideTimer = setTimeout(() => setProofVisible(false), 5000);
+    return () => clearTimeout(hideTimer);
+  }, [proofVisible, proofIndex]);
+
+  useEffect(() => {
+    if (proofVisible) return;
+    const nextTimer = setTimeout(() => {
+      setProofIndex((i) => (i + 1) % SOCIAL_PROOFS_PIX.length);
+      setProofVisible(true);
+    }, 12000);
+    return () => clearTimeout(nextTimer);
+  }, [proofVisible]);
+
+  const isUrgent = secondsLeft < 5 * 60;
+  const proof = SOCIAL_PROOFS_PIX[proofIndex];
+  const isSeguro = phase === "seguro";
 
   const handleCopy = () => {
     navigator.clipboard.writeText(qrCode).then(() => {
@@ -761,11 +812,76 @@ const PixPaymentCard = ({ qrCode, qrCodeBase64, value, label, sublabel }: { qrCo
         <QrCode className="w-5 h-5 text-primary" />
         <span className="text-sm font-semibold text-foreground">{label || "Seguro Prestamista - Allianz"}</span>
       </div>
+
+      {/* TIMER + BARRA 95% */}
+      <div className={`rounded-xl px-3 py-2.5 border transition-colors ${isUrgent ? "bg-red-50 border-red-200" : "bg-amber-50 border-amber-200"}`}>
+        <div className="flex items-center justify-between mb-1.5">
+          <div className="flex items-center gap-1.5">
+            <svg className={`w-3.5 h-3.5 ${isUrgent ? "text-red-600 animate-pulse" : "text-amber-600"}`} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span className={`text-[11px] font-semibold ${isUrgent ? "text-red-700" : "text-amber-800"}`}>Sua proposta expira em</span>
+          </div>
+          <span className={`text-sm font-black tabular-nums ${isUrgent ? "text-red-600 animate-pulse" : "text-amber-700"}`}>{formatPixTime(secondsLeft)}</span>
+        </div>
+        <div className="space-y-1">
+          <div className="flex items-center justify-between text-[10px] font-semibold">
+            <span className={isUrgent ? "text-red-700" : "text-amber-800"}>Liberação do crédito</span>
+            <span className={isUrgent ? "text-red-700" : "text-amber-800"}>95% concluído</span>
+          </div>
+          <div className="h-1.5 w-full bg-white rounded-full overflow-hidden border border-black/5">
+            <div className="h-full bg-gradient-to-r from-primary via-[hsl(30,95%,50%)] to-[hsl(30,95%,45%)] relative" style={{ width: "95%" }}>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-[shimmer_2s_infinite]" />
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="bg-muted/50 rounded-xl p-3 space-y-2 text-center">
         <p className="text-xs text-muted-foreground">{sublabel || "Pagamento único do Seguro Prestamista:"}</p>
         <p className="text-2xl font-bold text-primary">{formatCurrency(value / 100)}</p>
         <p className="text-[10px] text-muted-foreground">Valor único • Não é mensalidade</p>
       </div>
+
+      {/* SELOS DE CONFIANÇA */}
+      <div className="rounded-xl border border-emerald-200 bg-emerald-50/50 p-2.5 space-y-2">
+        {isSeguro ? (
+          // Seguro: só Allianz, em destaque
+          <div className="bg-white rounded-lg p-2.5 flex items-center justify-center gap-3 border border-gray-100 shadow-sm">
+            <img src="/images/allianz-logo.png" alt="Allianz Seguros" className="h-7 w-auto" />
+            <div className="h-7 w-px bg-gray-200" />
+            <div className="text-left">
+              <p className="text-[10px] font-black text-[#003781] leading-tight">Seguradora oficial</p>
+              <p className="text-[9px] text-gray-500 font-semibold">SUSEP 15414.901719/2014-89</p>
+            </div>
+          </div>
+        ) : (
+          // Taxa: Allianz + BACEN + SSL
+          <div className="grid grid-cols-3 gap-2">
+            <div className="bg-white rounded-lg p-2 flex flex-col items-center justify-center text-center border border-gray-100 shadow-sm">
+              <img src="/images/allianz-logo.png" alt="Allianz" className="h-4 w-auto" />
+              <p className="text-[8px] text-gray-500 mt-1 font-semibold">Seguradora</p>
+            </div>
+            <div className="bg-white rounded-lg p-2 flex flex-col items-center justify-center text-center border border-gray-100 shadow-sm">
+              <div className="text-[10px] font-black text-[#0a4d7c] tracking-tight leading-tight">BACEN</div>
+              <p className="text-[8px] text-gray-500 mt-0.5 font-semibold">Regulado</p>
+            </div>
+            <div className="bg-white rounded-lg p-2 flex flex-col items-center justify-center text-center border border-gray-100 shadow-sm">
+              <svg className="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+              <div className="text-[10px] font-black text-emerald-700 mt-0.5">SSL 256</div>
+              <p className="text-[8px] text-gray-500 mt-0.5 font-semibold">Criptografia</p>
+            </div>
+          </div>
+        )}
+
+        {/* Garantia de reembolso */}
+        <div className="flex items-start gap-2 bg-white rounded-lg p-2.5 border border-emerald-200">
+          <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+          <div>
+            <p className="text-xs font-bold text-emerald-800 leading-tight">Garantia de reembolso em 10 minutos</p>
+            <p className="text-[10px] text-gray-600 mt-0.5">Se o crédito não for depositado, devolvemos 100% do valor pago.</p>
+          </div>
+        </div>
+      </div>
+
       {qrCodeBase64 && (
         <div className="flex justify-center">
           <img
@@ -783,21 +899,32 @@ const PixPaymentCard = ({ qrCode, qrCodeBase64, value, label, sublabel }: { qrCo
         <button
           onClick={handleCopy}
           className={`btn-3d w-full !py-2.5 !rounded-xl !text-sm flex items-center justify-center gap-2 ${
-            copied
-              ? "!bg-green-600 !border-b-green-800"
-              : ""
+            copied ? "!bg-green-600 !border-b-green-800" : ""
           }`}
         >
-          {copied ? (
-            <><Check className="w-4 h-4" /> Copiado!</>
-          ) : (
-            <><Copy className="w-4 h-4" /> Copiar código PIX</>
-          )}
+          {copied ? (<><Check className="w-4 h-4" /> Copiado!</>) : (<><Copy className="w-4 h-4" /> Copiar código PIX</>)}
         </button>
       </div>
       <p className="text-[10px] text-muted-foreground text-center">
         O QR Code tem validade limitada. Efetue o pagamento o mais rápido possível.
       </p>
+
+      {/* POP-UP PROVA SOCIAL */}
+      <div className={`transition-all duration-500 ${proofVisible ? "opacity-100 translate-y-0 max-h-24" : "opacity-0 translate-y-2 max-h-0 overflow-hidden"}`}>
+        <div className="bg-white rounded-xl shadow-lg border border-emerald-100 p-2.5 flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shrink-0">
+            <Check className="w-4 h-4 text-white" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-[11px] font-bold text-gray-800 truncate">{proof.nome} · {proof.cidade}</p>
+            <p className="text-[11px] text-emerald-700 font-semibold">Recebeu {proof.valor} {proof.tempo}</p>
+          </div>
+          <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shrink-0" />
+        </div>
+      </div>
+
+      {/* Shimmer keyframe (escopo local via tag) */}
+      <style>{`@keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }`}</style>
     </div>
   );
 };
