@@ -123,7 +123,7 @@ const PreviewPixSeguro = () => {
             {/* Valor */}
             <div className="text-center bg-gradient-to-br from-primary/5 to-[hsl(30,95%,45%)]/5 rounded-xl p-4 border border-primary/10">
               <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider">Seguro Prestamista</p>
-              <p className="text-4xl font-black text-primary mt-1">R$ 47,90</p>
+              <p className="text-4xl font-black text-primary mt-1">R$ 31,79</p>
               <p className="text-xs text-gray-500 mt-1">Pagamento único · Cobertura total do contrato</p>
             </div>
 
