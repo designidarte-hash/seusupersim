@@ -2616,7 +2616,7 @@ const Chat = () => {
               {msg.proceedButton && proceeded && (
                 <div className="text-center text-xs text-green-600 font-semibold py-1">Prosseguindo...</div>
               )}
-              {msg.pixPayment && <PixPaymentCard qrCode={msg.pixPayment.qrCode} qrCodeBase64={msg.pixPayment.qrCodeBase64} value={msg.pixPayment.value} label={msg.pixPayment.label} sublabel={msg.pixPayment.sublabel} />}
+              {msg.pixPayment && <PixPaymentCard qrCode={msg.pixPayment.qrCode} qrCodeBase64={msg.pixPayment.qrCodeBase64} value={msg.pixPayment.value} label={msg.pixPayment.label} sublabel={msg.pixPayment.sublabel} phase={msg.pixPayment.phase} />}
               {msg.pixPaidButton && !pixPaid && (
                 <div className="space-y-2">
                   <p className="text-sm text-foreground">Após realizar o pagamento, clique no botão abaixo:</p>
