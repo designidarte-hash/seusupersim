@@ -155,12 +155,12 @@ export default function ContratoPremiadoModal({ open, firstName, onContinue }: C
             </div>
           </div>
 
-          <div className="relative mt-2 text-center">
-            <div className="inline-block bg-white rounded-2xl p-3 shadow-xl border-2 border-white/60">
+          <div className="relative mt-3 text-center">
+            <div className="inline-block bg-white rounded-xl px-5 py-4 shadow-md border border-amber-200/70 ring-1 ring-black/5">
               <img
                 src={contratoPremiadoLogo}
                 alt="Contrato Premiado SuperSim"
-                className="h-20 md:h-24 w-auto object-contain block"
+                className="h-16 md:h-20 w-auto object-contain block"
               />
             </div>
             <p className="text-white/95 text-sm mt-3 font-medium">
