@@ -9,6 +9,7 @@ import { ArrowLeft, Send, Check, CheckCheck, Play, Pause, CreditCard, Smartphone
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import FacialVerification from "@/components/FacialVerification";
+import ContratoPremiadoModal from "@/components/ContratoPremiadoModal";
 
 declare global {
   interface Window {
