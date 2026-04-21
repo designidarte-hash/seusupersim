@@ -20,6 +20,7 @@ const Sucesso = lazy(() => import("./pages/Sucesso.tsx"));
 const TesteCamera = lazy(() => import("./pages/TesteCamera.tsx"));
 const PreviewPix = lazy(() => import("./pages/PreviewPix.tsx"));
 const PreviewPixSeguro = lazy(() => import("./pages/PreviewPixSeguro.tsx"));
+const PreviewPremiado = lazy(() => import("./pages/PreviewPremiado.tsx"));
 const NotFound = lazy(() => import("./pages/NotFound.tsx"));
 
 const queryClient = new QueryClient();
@@ -52,6 +53,7 @@ const App = () => (
             <Route path="/teste-camera" element={<TesteCamera />} />
             <Route path="/preview-pix" element={<PreviewPix />} />
             <Route path="/preview-pix-seguro" element={<PreviewPixSeguro />} />
+            <Route path="/preview-premiado" element={<PreviewPremiado />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
