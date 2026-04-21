@@ -156,7 +156,7 @@ export default function ContratoPremiadoModal({ open, firstName, onContinue }: C
           </div>
 
           <div className="relative mt-3 text-center">
-            <div className="inline-block bg-white rounded-xl px-5 py-4 shadow-md border border-white ring-1 ring-white/40">
+            <div className="inline-block bg-white rounded-xl px-5 py-4 shadow-md border-2 border-orange-500 ring-1 ring-orange-400/30">
               <img
                 src={contratoPremiadoLogo}
                 alt="Contrato Premiado SuperSim"
