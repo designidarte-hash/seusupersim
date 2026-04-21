@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { Trophy, Sparkles, Gift, ShieldCheck, X, Ticket, CalendarDays, CheckCircle2 } from "lucide-react";
+import { Sparkles, Gift, ShieldCheck, X, Ticket, CalendarDays, CheckCircle2 } from "lucide-react";
+import contratoPremiadoLogo from "@/assets/contrato-premiado-logo.png";
 
 interface ContratoPremiadoModalProps {
   open: boolean;
