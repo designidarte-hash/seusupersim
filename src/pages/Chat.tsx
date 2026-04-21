@@ -1818,6 +1818,7 @@ const Chat = () => {
   const [insuranceAccepted, setInsuranceAccepted] = useState<boolean | null>(null);
   const [insuranceShown, setInsuranceShown] = useState(false);
   const [insuranceAudioConfirmed, setInsuranceAudioConfirmed] = useState(false);
+  const [showPremiadoModal, setShowPremiadoModal] = useState(false);
   const [contractSigned, setContractSigned] = useState(false);
   const [pdfConfirmed, setPdfConfirmed] = useState(false);
   const [manualConfirmed, setManualConfirmed] = useState(false);
