@@ -156,13 +156,11 @@ export default function ContratoPremiadoModal({ open, firstName, onContinue }: C
           </div>
 
           <div className="relative mt-3 text-center">
-            <div className="inline-block bg-white rounded-xl px-5 py-4 shadow-md border-2 border-orange-500 ring-1 ring-orange-400/30">
-              <img
-                src={contratoPremiadoLogo}
-                alt="Contrato Premiado SuperSim"
-                className="h-16 md:h-20 w-auto object-contain block"
-              />
-            </div>
+            <img
+              src={contratoPremiadoLogo}
+              alt="Contrato Premiado SuperSim"
+              className="h-20 md:h-24 w-auto object-contain block mx-auto drop-shadow-lg"
+            />
             <p className="text-white/95 text-sm mt-3 font-medium">
               {firstName ? `${firstName}, seu contrato concorre!` : "Seu contrato concorre!"}
             </p>
