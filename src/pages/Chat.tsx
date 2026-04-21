@@ -2833,6 +2833,12 @@ const Chat = () => {
           <Send className="w-4 h-4" />
         </button>
       </div>
+
+      <ContratoPremiadoModal
+        open={showPremiadoModal}
+        firstName={firstName}
+        onContinue={handlePremiadoContinue}
+      />
     </div>
   );
 };
