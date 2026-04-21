@@ -24,6 +24,22 @@ const nextMonthLabel = (): string => {
   return month.charAt(0).toUpperCase() + month.slice(1);
 };
 
+// Lista de ganhadores fictícios para o marquee de prova social
+const WINNERS = [
+  { name: "Maria Silva", city: "Recife - PE", month: "Mar/2025", prize: "R$ 1.000" },
+  { name: "João Pereira", city: "São Paulo - SP", month: "Fev/2025", prize: "R$ 1.000" },
+  { name: "Ana Lima", city: "Salvador - BA", month: "Jan/2025", prize: "R$ 1.000" },
+  { name: "Carlos Mendes", city: "Belo Horizonte - MG", month: "Dez/2024", prize: "R$ 1.000" },
+  { name: "Fernanda Souza", city: "Curitiba - PR", month: "Nov/2024", prize: "R$ 1.000" },
+  { name: "Ricardo Alves", city: "Fortaleza - CE", month: "Out/2024", prize: "R$ 1.000" },
+  { name: "Juliana Costa", city: "Porto Alegre - RS", month: "Set/2024", prize: "R$ 1.000" },
+  { name: "Pedro Henrique", city: "Manaus - AM", month: "Ago/2024", prize: "R$ 1.000" },
+  { name: "Camila Rocha", city: "Goiânia - GO", month: "Jul/2024", prize: "R$ 1.000" },
+  { name: "Lucas Martins", city: "Natal - RN", month: "Jun/2024", prize: "R$ 1.000" },
+  { name: "Patrícia Gomes", city: "Belém - PA", month: "Mai/2024", prize: "R$ 1.000" },
+  { name: "Rafael Oliveira", city: "Florianópolis - SC", month: "Abr/2024", prize: "R$ 1.000" },
+];
+
 // Lightweight confetti using DOM
 const fireConfetti = (container: HTMLElement) => {
   const colors = ["#F97316", "#FBBF24", "#10B981", "#3B82F6", "#EF4444", "#A855F7"];
