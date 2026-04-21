@@ -149,8 +149,8 @@ export default function ContratoPremiadoModal({ open, firstName, onContinue }: C
           <div className="relative flex items-start justify-between">
             <div className="flex items-center gap-2">
               <div className="bg-white/25 backdrop-blur-sm rounded-full px-3 py-1 flex items-center gap-1.5 border border-white/30">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span className="text-[10px] font-bold uppercase tracking-wider">Exclusivo SuperSim</span>
+                <ShieldCheck className="w-3.5 h-3.5" />
+                <span className="text-[10px] font-bold uppercase tracking-wider">Sorteio autorizado SECAP/ME</span>
               </div>
             </div>
           </div>
