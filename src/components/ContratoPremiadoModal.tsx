@@ -154,6 +154,13 @@ export default function ContratoPremiadoModal({ open, firstName, onContinue }: C
           50% { box-shadow: 0 0 0 16px rgba(251, 191, 36, 0), 0 0 60px rgba(249, 115, 22, 0.6); }
         }
         .number-glow { animation: number-glow 2s ease-out infinite; }
+        @keyframes winners-scroll {
+          0% { transform: translateY(0); }
+          100% { transform: translateY(-50%); }
+        }
+        .winners-marquee {
+          animation: winners-scroll 30s linear infinite;
+        }
       `}</style>
 
       <div className="relative w-full h-full md:h-auto md:max-h-[92vh] md:max-w-md md:rounded-3xl bg-white overflow-hidden flex flex-col animate-scale-in shadow-2xl">
