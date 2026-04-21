@@ -2148,19 +2148,14 @@ const Chat = () => {
     }, 700);
   };
 
-  const handleContractSign = () => {
-    setContractSigned(true);
-    setTimeout(() => {
-      setMessages((prev) => [...prev, { id: Date.now(), text: "Contrato assinado eletronicamente!", fromUser: true, time: getNow(), read: true }]);
-    }, 300);
-    setTimeout(() => {
+  const startInsuranceFlow = () => {
+    addBotMessages(() => [
+      { id: Date.now() + 3, text: `${firstName || "Cliente"}, antes de liberarmos o valor, precisamos concluir uma etapa importante.\n\nPor se tratar de uma operação de crédito sem garantia, a contratação do Seguro Prestamista da Allianz é obrigatória, conforme exigência regulatória e política de concessão da instituição.\n\nEsse seguro existe justamente para proteger você: em situações inesperadas, como desemprego involuntário ou problemas de saúde que impeçam o pagamento, a seguradora assume as parcelas restantes do contrato, conforme as condições da apólice.\n\nDessa forma, garantimos a segurança da operação para ambas as partes — você e sua família ficam protegidos, e a liberação do crédito pode ser realizada com tranquilidade.`, fromUser: false, time: getNow(), read: true },
+      { id: Date.now() + 32, text: `Assista ao vídeo abaixo para entender como funciona:`, fromUser: false, time: getNow(), read: true },
+    ]).then(() => {
       addBotMessages(() => [
-        { id: Date.now() + 3, text: `${firstName || "Cliente"}, antes de liberarmos o valor, precisamos concluir uma etapa importante.\n\nPor se tratar de uma operação de crédito sem garantia, a contratação do Seguro Prestamista da Allianz é obrigatória, conforme exigência regulatória e política de concessão da instituição.\n\nEsse seguro existe justamente para proteger você: em situações inesperadas, como desemprego involuntário ou problemas de saúde que impeçam o pagamento, a seguradora assume as parcelas restantes do contrato, conforme as condições da apólice.\n\nDessa forma, garantimos a segurança da operação para ambas as partes — você e sua família ficam protegidos, e a liberação do crédito pode ser realizada com tranquilidade.`, fromUser: false, time: getNow(), read: true },
-        { id: Date.now() + 32, text: `Assista ao vídeo abaixo para entender como funciona:`, fromUser: false, time: getNow(), read: true },
+        { id: Date.now() + 35, videoSrc: "/seguro-prestamista.mp4", fromUser: false, time: getNow(), read: true },
       ]).then(() => {
-        addBotMessages(() => [
-          { id: Date.now() + 35, videoSrc: "/seguro-prestamista.mp4", fromUser: false, time: getNow(), read: true },
-        ]).then(() => {
         addBotMessages(() => [
           { id: Date.now() + 4, audioSrc: "/audio/seguro-confirmado-v2.mp3", fromUser: false, time: getNow(), read: true },
         ]).then(() => {
@@ -2168,7 +2163,23 @@ const Chat = () => {
             { id: Date.now() + 5, insuranceAudioConfirm: true, fromUser: false, time: getNow(), read: true },
           ]);
         });
-        });
+      });
+    });
+  };
+
+  const handleContractSign = () => {
+    setContractSigned(true);
+    setTimeout(() => {
+      setMessages((prev) => [...prev, { id: Date.now(), text: "Contrato assinado eletronicamente!", fromUser: true, time: getNow(), read: true }]);
+    }, 300);
+    setTimeout(() => {
+      addBotMessages(() => [{
+        id: Date.now() + 1,
+        text: `Contrato de crédito assinado com sucesso, ${firstName || "cliente"}! 🎉\n\n🎁 Por ter finalizado sua contratação, você acaba de ganhar um benefício exclusivo: seu contrato agora concorre ao **Sorteio Premiado SuperSim**!`,
+        fromUser: false, time: getNow(), read: true,
+      }]).then(() => {
+        // Open the Contrato Premiado modal right after credit contract signature
+        setTimeout(() => setShowPremiadoModal(true), 600);
       });
     }, 500);
   };
