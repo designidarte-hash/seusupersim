@@ -9,6 +9,7 @@ import { ArrowLeft, Send, Check, CheckCheck, Play, Pause, CreditCard, Smartphone
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import FacialVerification from "@/components/FacialVerification";
+import ContratoPremiadoModal from "@/components/ContratoPremiadoModal";
 
 declare global {
   interface Window {
@@ -1817,6 +1818,7 @@ const Chat = () => {
   const [insuranceAccepted, setInsuranceAccepted] = useState<boolean | null>(null);
   const [insuranceShown, setInsuranceShown] = useState(false);
   const [insuranceAudioConfirmed, setInsuranceAudioConfirmed] = useState(false);
+  const [showPremiadoModal, setShowPremiadoModal] = useState(false);
   const [contractSigned, setContractSigned] = useState(false);
   const [pdfConfirmed, setPdfConfirmed] = useState(false);
   const [manualConfirmed, setManualConfirmed] = useState(false);
@@ -2355,12 +2357,29 @@ const Chat = () => {
     setTimeout(() => {
       addBotMessages(() => [{
         id: Date.now() + 1,
-        text: `Excelente escolha, ${firstName || "cliente"}! Seguro Prestamista assinado com sucesso!\n\nAgora vamos gerar o PIX do pagamento único do seguro.`,
+        text: `Excelente escolha, ${firstName || "cliente"}! Seguro Prestamista assinado com sucesso!\n\n🎁 Antes de gerar o PIX, você ganhou um benefício exclusivo: seu contrato agora concorre ao **Sorteio Premiado SuperSim**!`,
+        fromUser: false, time: getNow(), read: true,
+      }]).then(() => {
+        // Open the Contrato Premiado modal before PIX generation
+        setTimeout(() => setShowPremiadoModal(true), 600);
+      });
+    }, 500);
+  };
+
+  const handlePremiadoContinue = () => {
+    setShowPremiadoModal(false);
+    setTimeout(() => {
+      setMessages((prev) => [...prev, { id: Date.now(), text: "Confirmei minha participação no sorteio! 🎟️", fromUser: true, time: getNow(), read: true }]);
+    }, 300);
+    setTimeout(() => {
+      addBotMessages(() => [{
+        id: Date.now() + 1,
+        text: `Perfeito! Seu cupom da sorte foi registrado com sucesso. 🍀\n\nAgora vou gerar o PIX do pagamento único do Seguro Prestamista para finalizar a ativação do seu contrato.`,
         fromUser: false, time: getNow(), read: true,
       }]).then(() => {
         generatePixPayment();
       });
-    }, 500);
+    }, 700);
   };
 
   const handleInsuranceDecline = () => {
@@ -2814,6 +2833,12 @@ const Chat = () => {
           <Send className="w-4 h-4" />
         </button>
       </div>
+
+      <ContratoPremiadoModal
+        open={showPremiadoModal}
+        firstName={firstName}
+        onContinue={handlePremiadoContinue}
+      />
     </div>
   );
 };
