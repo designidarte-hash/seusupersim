@@ -207,43 +207,48 @@ export default function ContratoPremiadoModal({ open, firstName, onContinue }: C
                 ))}
               </div>
 
-              {/* Ganhadores recentes */}
-              <div className="bg-white border border-gray-200 rounded-2xl p-4">
+              {/* Ganhadores recentes — auto scroll */}
+              <div className="bg-white border border-gray-200 rounded-2xl p-4 overflow-hidden">
                 <div className="flex items-center gap-2 mb-3">
                   <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
                     <Trophy className="w-3.5 h-3.5 text-white" />
                   </div>
-                  <div>
+                  <div className="flex-1">
                     <p className="text-xs font-bold text-gray-900 leading-tight">Ganhadores recentes</p>
-                    <p className="text-[10px] text-gray-500 leading-tight">Últimos meses</p>
+                    <p className="text-[10px] text-gray-500 leading-tight">Sorteios mensais via Pix</p>
+                  </div>
+                  <div className="flex items-center gap-1 bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-[9px] font-bold uppercase">Ao vivo</span>
                   </div>
                 </div>
-                <div className="space-y-2">
-                  {[
-                    { name: "Maria S.", city: "Recife - PE", month: "Mar/2025", prize: "R$ 1.000" },
-                    { name: "João P.", city: "São Paulo - SP", month: "Fev/2025", prize: "R$ 1.000" },
-                    { name: "Ana L.", city: "Salvador - BA", month: "Jan/2025", prize: "R$ 1.000" },
-                    { name: "Carlos M.", city: "Belo Horizonte - MG", month: "Dez/2024", prize: "R$ 1.000" },
-                  ].map((w, i) => (
-                    <div key={i} className="flex items-center justify-between gap-2 bg-gray-50 rounded-lg px-2.5 py-2 border border-gray-100">
-                      <div className="flex items-center gap-2 min-w-0 flex-1">
-                        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-orange-400 to-amber-500 text-white text-[10px] font-bold flex items-center justify-center shrink-0">
-                          {w.name.charAt(0)}
+
+                <div className="relative h-[180px] overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,black_15%,black_85%,transparent)]">
+                  <div className="winners-marquee space-y-2">
+                    {[
+                      ...WINNERS,
+                      ...WINNERS, // duplicado para loop infinito
+                    ].map((w, i) => (
+                      <div key={i} className="flex items-center justify-between gap-2 bg-gray-50 rounded-lg px-2.5 py-2 border border-gray-100">
+                        <div className="flex items-center gap-2 min-w-0 flex-1">
+                          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-orange-400 to-amber-500 text-white text-[10px] font-bold flex items-center justify-center shrink-0">
+                            {w.name.charAt(0)}
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-xs font-semibold text-gray-900 truncate leading-tight">{w.name}</p>
+                            <p className="text-[10px] text-gray-500 flex items-center gap-0.5 truncate leading-tight">
+                              <MapPin className="w-2.5 h-2.5 shrink-0" />
+                              {w.city}
+                            </p>
+                          </div>
                         </div>
-                        <div className="min-w-0">
-                          <p className="text-xs font-semibold text-gray-900 truncate leading-tight">{w.name}</p>
-                          <p className="text-[10px] text-gray-500 flex items-center gap-0.5 truncate leading-tight">
-                            <MapPin className="w-2.5 h-2.5 shrink-0" />
-                            {w.city}
-                          </p>
+                        <div className="text-right shrink-0">
+                          <p className="text-[11px] font-bold text-emerald-600 leading-tight">{w.prize}</p>
+                          <p className="text-[9px] text-gray-500 leading-tight">{w.month}</p>
                         </div>
                       </div>
-                      <div className="text-right shrink-0">
-                        <p className="text-[11px] font-bold text-emerald-600 leading-tight">{w.prize}</p>
-                        <p className="text-[9px] text-gray-500 leading-tight">{w.month}</p>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
 
