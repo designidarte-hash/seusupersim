@@ -105,6 +105,15 @@ const LoanForm = () => {
         } catch {}
       }
 
+      // Meta Pixel — Lead
+      try {
+        (window as any).fbq?.('track', 'Lead', {
+          content_name: 'Consulta CPF',
+          content_category: 'Emprestimo',
+          currency: 'BRL',
+        });
+      } catch (e) { console.error('Meta Lead error:', e); }
+
       toast({ title: "Consulta realizada com sucesso!" });
       navigate("/resultado", { cpfData: result, cpfDigits: cpfDigits });
     } catch {

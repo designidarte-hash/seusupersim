@@ -168,6 +168,82 @@ serve(async (req) => {
       } catch (ttErr) {
         console.error('TikTok Events API error:', ttErr);
       }
+
+      // Meta Conversions API — Server-side Purchase with Advanced Matching
+      try {
+        const FB_ACCESS_TOKEN = Deno.env.get('FACEBOOK_ACCESS_TOKEN');
+        if (FB_ACCESS_TOKEN) {
+          const FB_PIXEL_ID = '4427821890875120';
+          const valueInReaisNum = valueCents ? valueCents / 100 : 0;
+
+          // Re-load Advanced Matching data (in case TikTok block above didn't run / token missing)
+          let amData: {
+            hashed_email?: string | null;
+            hashed_phone?: string | null;
+            hashed_external_id?: string | null;
+            content_id?: string | null;
+            user_agent?: string | null;
+            ip_address?: string | null;
+          } = {};
+          try {
+            const { data: pixRow } = await supabaseAdmin
+              .from('pix_payments')
+              .select('hashed_email, hashed_phone, hashed_external_id, content_id, user_agent, ip_address')
+              .eq('transaction_id', transactionHash)
+              .maybeSingle();
+            if (pixRow) amData = pixRow;
+          } catch (lookupErr) {
+            console.error('Failed to load Advanced Matching data for Meta:', lookupErr);
+          }
+
+          const isSeguro = valueInReaisNum >= 30;
+          const contentId = amData.content_id || (isSeguro ? 'seguro_prestamista' : 'taxa_transferencia');
+          const contentName = contentId === 'seguro_prestamista' ? 'Seguro Prestamista' : 'Taxa de Transferência';
+
+          const userData: Record<string, unknown> = {};
+          if (amData.hashed_email) userData.em = [amData.hashed_email];
+          if (amData.hashed_phone) userData.ph = [amData.hashed_phone];
+          if (amData.hashed_external_id) userData.external_id = [amData.hashed_external_id];
+          const clientUa = amData.user_agent || req.headers.get('user-agent') || '';
+          const clientIp = amData.ip_address || req.headers.get('x-forwarded-for')?.split(',')[0].trim() || req.headers.get('cf-connecting-ip') || '';
+          if (clientUa) userData.client_user_agent = clientUa;
+          if (clientIp) userData.client_ip_address = clientIp;
+
+          const fbPayload = {
+            data: [{
+              event_name: 'Purchase',
+              event_time: Math.floor(Date.now() / 1000),
+              event_id: `${transactionHash}_purchase`,
+              action_source: 'website',
+              user_data: userData,
+              custom_data: {
+                currency: 'BRL',
+                value: valueInReaisNum,
+                content_type: 'product',
+                content_ids: [contentId],
+                content_name: contentName,
+                num_items: 1,
+              },
+            }],
+          };
+
+          const fbRes = await fetch(
+            `https://graph.facebook.com/v19.0/${FB_PIXEL_ID}/events?access_token=${encodeURIComponent(FB_ACCESS_TOKEN)}`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(fbPayload),
+            }
+          );
+
+          const fbData = await fbRes.json();
+          console.log('Meta CAPI Purchase response:', JSON.stringify(fbData));
+        } else {
+          console.warn('FACEBOOK_ACCESS_TOKEN not configured, skipping Meta CAPI');
+        }
+      } catch (fbErr) {
+        console.error('Meta CAPI error:', fbErr);
+      }
     }
 
     return new Response(JSON.stringify({ received: true }), {

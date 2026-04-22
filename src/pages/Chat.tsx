@@ -2417,6 +2417,18 @@ const Chat = () => {
         });
       } catch (e) { console.error('TikTok InitiateCheckout error:', e); }
 
+      // Meta Pixel — InitiateCheckout
+      try {
+        (window as any).fbq?.('track', 'InitiateCheckout', {
+          content_type: 'product',
+          content_ids: [contentId],
+          content_name: contentName,
+          num_items: 1,
+          value: pixValueReais,
+          currency: 'BRL',
+        }, { eventID: `${data.id}_initiatecheckout` });
+      } catch (e) { console.error('Meta InitiateCheckout error:', e); }
+
       const pixPaymentExtra: { phase: PaymentPhaseId; label?: string; sublabel?: string } = {
         phase: paymentPhase,
         ...(phaseConfig.cardLabel ? { label: phaseConfig.cardLabel } : {}),
@@ -2781,6 +2793,18 @@ const Chat = () => {
                               event_id: `${pixTransactionId}_completepayment`,
                             });
                           } catch (e) { console.error('TikTok CompletePayment error:', e); }
+
+                          // Meta Pixel — Purchase
+                          try {
+                            (window as any).fbq?.('track', 'Purchase', {
+                              content_type: 'product',
+                              content_ids: [paidContentId],
+                              content_name: paidContentName,
+                              num_items: 1,
+                              value: paidValue,
+                              currency: 'BRL',
+                            }, { eventID: `${pixTransactionId}_purchase` });
+                          } catch (e) { console.error('Meta Purchase error:', e); }
 
                           if (paymentPhase === "insurance") {
                             // Insurance paid — continue to manual flow
