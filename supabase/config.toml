@@ -1,6 +1,6 @@
 project_id = "nadtnzjiinjcpftbiauk"
 
-[functions.blackcat-webhook]
+[functions.sigmapay-webhook]
 verify_jwt = false
 
 [functions.cashout-test]

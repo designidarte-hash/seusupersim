@@ -6,13 +6,15 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+const SIGMAPAY_BASE_URL = 'https://api.sigmapay.com.br/api/public/v1';
+
 const paidStatuses = new Set(['paid', 'completed', 'confirmed', 'approved']);
 
 const normalizeStatus = (status?: string | null): string => {
   if (typeof status !== 'string') return 'created';
   const s = status.toLowerCase();
-  // BlackCat statuses: PENDING, PAID, CANCELLED, REFUNDED
-  if (s === 'pending') return 'created';
+  // SigmaPay statuses: waiting_payment, paid, cancelled, refused, refunded, chargeback
+  if (s === 'waiting_payment' || s === 'pending') return 'created';
   return s;
 };
 
@@ -32,8 +34,7 @@ serve(async (req) => {
 
   try {
     const body = await req.json();
-    // BlackCat IDs are case-sensitive (e.g. TXN-...) — preserve original case for upstream calls,
-    // but match local records on lowercase since we store them normalized.
+    // SigmaPay uses lowercase hashes (e.g. tqjmwf0x8b)
     const rawId = typeof body.transactionId === 'string' ? body.transactionId : '';
     if (!rawId) {
       return new Response(JSON.stringify({ error: 'transactionId is required' }), {
@@ -64,51 +65,43 @@ serve(async (req) => {
       });
     }
 
-    const BLACKCAT_API_KEY = Deno.env.get('BLACKCAT_API_KEY');
+    const SIGMAPAY_API_TOKEN = Deno.env.get('SIGMAPAY_API_TOKEN');
 
-    if (BLACKCAT_API_KEY) {
-      // Try original case first, fallback to upper if not found
-      const tryIds = [rawId, rawId.toUpperCase()];
-      let providerData: Record<string, any> | null = null;
+    if (SIGMAPAY_API_TOKEN) {
+      const res = await fetch(`${SIGMAPAY_BASE_URL}/transactions/${encodeURIComponent(transactionIdLower)}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${SIGMAPAY_API_TOKEN}`,
+          'Accept': 'application/json',
+        },
+      });
 
-      for (const id of tryIds) {
-        const res = await fetch(`https://api.blackcatpay.com.br/api/sales/${encodeURIComponent(id)}/status`, {
-          method: 'GET',
-          headers: {
-            'X-API-Key': BLACKCAT_API_KEY,
-            'Accept': 'application/json',
-          },
-        });
-        if (res.ok) {
-          const json = await res.json();
-          if (json?.success && json?.data) {
-            providerData = json.data;
-            break;
-          }
-        } else if (res.status !== 404) {
-          console.error('BlackCat status lookup failed:', res.status, await res.text());
+      if (res.ok) {
+        const providerData = await res.json();
+        if (providerData?.hash) {
+          const syncedPayment = {
+            transaction_id: transactionIdLower,
+            status: normalizeStatus(providerData.payment_status ?? localPayment?.status),
+            end_to_end_id: providerData.transaction ?? localPayment?.end_to_end_id ?? null,
+            value: parseValue(providerData.amount) ?? localPayment?.value ?? null,
+            updated_at: new Date().toISOString(),
+          };
+
+          const { error: upsertError } = await supabaseAdmin
+            .from('pix_payments')
+            .upsert(syncedPayment, { onConflict: 'transaction_id' });
+
+          if (upsertError) console.error('DB sync error:', upsertError);
+
+          return new Response(JSON.stringify({ ...localPayment, ...syncedPayment }), {
+            status: 200,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
         }
-      }
-
-      if (providerData) {
-        const syncedPayment = {
-          transaction_id: transactionIdLower,
-          status: normalizeStatus(providerData.status ?? localPayment?.status),
-          end_to_end_id: providerData.endToEndId ?? localPayment?.end_to_end_id ?? null,
-          value: parseValue(providerData.amount) ?? localPayment?.value ?? null,
-          updated_at: new Date().toISOString(),
-        };
-
-        const { error: upsertError } = await supabaseAdmin
-          .from('pix_payments')
-          .upsert(syncedPayment, { onConflict: 'transaction_id' });
-
-        if (upsertError) console.error('DB sync error:', upsertError);
-
-        return new Response(JSON.stringify({ ...localPayment, ...syncedPayment }), {
-          status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
+      } else if (res.status !== 404) {
+        console.error('SigmaPay status lookup failed:', res.status, await res.text());
+      } else {
+        await res.text();
       }
     }
 
