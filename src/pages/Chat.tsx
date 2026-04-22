@@ -883,7 +883,7 @@ const PixPaymentCard = ({ qrCode, qrCodeBase64, value, label, sublabel, phase = 
 
   const isUrgent = secondsLeft < 5 * 60;
   const proof = SOCIAL_PROOFS_PIX[proofIndex];
-  const isSeguro = phase === "seguro";
+  const isSeguro = phase === "insurance";
 
   const handleCopy = () => {
     navigator.clipboard.writeText(qrCode).then(() => {
