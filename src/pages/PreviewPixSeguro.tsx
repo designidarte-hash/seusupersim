@@ -113,8 +113,14 @@ const PreviewPixSeguro = () => {
 
       <div className="p-4 space-y-4 max-w-md mx-auto">
         {/* Mensagem do bot */}
-        <div className="bg-white rounded-2xl rounded-tl-sm shadow-sm p-3 max-w-[85%]">
-          <p className="text-sm text-foreground">Segue o PIX para pagamento do Seguro Prestamista:</p>
+        <div className="bg-white rounded-2xl rounded-tl-sm shadow-sm p-3 max-w-[85%] space-y-2">
+          <p className="text-sm text-foreground font-semibold">✅ Seu contrato está pronto!</p>
+          <p className="text-sm text-foreground">
+            Falta só ativar o <strong>Seguro Prestamista (R$ 31,79)</strong> — exigência da Allianz pra liberar o seu crédito. É pagamento único e cobre 100% das parcelas em caso de imprevisto.
+          </p>
+          <p className="text-sm text-foreground">
+            Assim que o PIX cair, eu libero seu contrato e o dinheiro entra na fila pra cair na sua conta. ⏳
+          </p>
         </div>
 
         {/* Card PIX */}
