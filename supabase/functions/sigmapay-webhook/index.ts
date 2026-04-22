@@ -6,23 +6,16 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-webhook-event, x-webhook-source',
 };
 
-const paidEvents = new Set(['transaction.paid']);
-const failedEvents = new Set(['transaction.failed']);
-
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const eventHeader = req.headers.get('x-webhook-event') || '';
-    const sourceHeader = req.headers.get('x-webhook-source') || '';
-
     let body: Record<string, any> = {};
     try {
       const rawText = await req.text();
-      console.log('BlackCat webhook raw payload:', rawText);
-      console.log('Headers — event:', eventHeader, '| source:', sourceHeader);
+      console.log('SigmaPay webhook raw payload:', rawText);
       if (rawText && rawText.trim().length > 0) {
         try {
           body = JSON.parse(rawText);
@@ -34,63 +27,50 @@ serve(async (req) => {
       console.error('Failed to parse webhook body:', parseErr);
     }
 
-    console.log('BlackCat webhook parsed body:', JSON.stringify(body));
+    console.log('SigmaPay webhook parsed body:', JSON.stringify(body));
 
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
-    const event = (body.event || eventHeader || '').toString().toLowerCase();
-    const rawStatus = (body.status || '').toString().toLowerCase();
+    // SigmaPay sends hash as identifier and payment_status (paid, cancelled, refused, etc.)
+    const transactionHash = typeof body.hash === 'string'
+      ? body.hash.toLowerCase()
+      : (typeof body.transaction === 'string' ? body.transaction.toLowerCase() : null);
 
-    // ===== WITHDRAWAL EVENTS DESATIVADOS =====
-    // Cashout foi removido do produto. Ignoramos qualquer webhook de saque
-    // (inclusive os atrasados de saques criados antes da remoção) para não
-    // gerar registros novos nem notificações.
-    const isWithdrawalEvent = event.startsWith('withdrawal.') || typeof body.withdrawalId === 'string' || typeof body.pixKey === 'string';
-    if (isWithdrawalEvent) {
-      console.log('Withdrawal webhook ignorado (cashout desativado):', event, body.withdrawalId || body.id);
-      return new Response(JSON.stringify({ received: true, ignored: true, reason: 'cashout disabled' }), {
+    const rawStatus = (body.payment_status || body.status || '').toString().toLowerCase();
+
+    if (!transactionHash) {
+      console.error('No transaction hash in SigmaPay webhook payload');
+      return new Response(JSON.stringify({ received: true, warning: 'missing transaction hash' }), {
         status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    // ===== TRANSACTION EVENTS (vendas PIX) =====
-    const transactionId = typeof body.transactionId === 'string' ? body.transactionId.toLowerCase() : null;
-
-    if (!transactionId) {
-      console.error('No transaction ID in BlackCat webhook payload');
-      return new Response(JSON.stringify({ received: true, warning: 'missing transactionId' }), {
-        status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    // Determine final status to store
+    // Normalize status
     let normalizedStatus = rawStatus;
-    if (paidEvents.has(event) || rawStatus === 'paid') normalizedStatus = 'paid';
-    else if (failedEvents.has(event) || rawStatus === 'cancelled' || rawStatus === 'refunded') {
-      normalizedStatus = rawStatus || 'cancelled';
-    } else if (rawStatus === 'pending') {
+    if (rawStatus === 'waiting_payment' || rawStatus === 'pending') {
       normalizedStatus = 'created';
+    } else if (rawStatus === 'refused') {
+      normalizedStatus = 'cancelled';
     }
 
     const valueCents = typeof body.amount === 'number' ? body.amount : Number(body.amount) || null;
 
     try {
       const { error } = await supabaseAdmin.from('pix_payments').upsert({
-        transaction_id: transactionId,
+        transaction_id: transactionHash,
         status: normalizedStatus || 'paid',
         payer_name: body.customer?.name || null,
-        end_to_end_id: body.endToEndId || null,
+        end_to_end_id: body.transaction || null,
         value: valueCents,
         updated_at: new Date().toISOString(),
       }, { onConflict: 'transaction_id' });
 
       if (error) console.error('DB upsert error:', error);
-      else console.log(`Payment ${transactionId} updated to status: ${normalizedStatus}`);
+      else console.log(`Payment ${transactionHash} updated to status: ${normalizedStatus}`);
     } catch (dbErr) {
       console.error('DB upsert exception:', dbErr);
     }
@@ -103,7 +83,7 @@ serve(async (req) => {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            title: 'BlackCat - Venda Paga',
+            title: 'SigmaPay - Venda Paga',
             text: `Venda Aprovada 🤑\n💰 Valor: R$ ${valueInReais}`,
           }),
         });
@@ -131,7 +111,7 @@ serve(async (req) => {
             const { data: pixRow } = await supabaseAdmin
               .from('pix_payments')
               .select('hashed_email, hashed_phone, hashed_external_id, content_id, user_agent, ip_address')
-              .eq('transaction_id', transactionId)
+              .eq('transaction_id', transactionHash)
               .maybeSingle();
             if (pixRow) amData = pixRow;
           } catch (lookupErr) {
@@ -146,7 +126,7 @@ serve(async (req) => {
           const tiktokPayload = {
             pixel_code: pixelCode,
             event: 'CompletePayment',
-            event_id: `${transactionId}_completepayment`,
+            event_id: `${transactionHash}_completepayment`,
             event_time: Math.floor(Date.now() / 1000),
             context: {
               user_agent: amData.user_agent || req.headers.get('user-agent') || '',
@@ -195,7 +175,7 @@ serve(async (req) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    console.error('BlackCat webhook error:', error);
+    console.error('SigmaPay webhook error:', error);
     return new Response(JSON.stringify({ received: true, error: (error as Error)?.message || 'Internal error' }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

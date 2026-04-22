@@ -6,6 +6,8 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+const SIGMAPAY_BASE_URL = 'https://api.sigmapay.com.br/api/public/v1';
+
 const onlyDigits = (v: unknown) => (typeof v === 'string' ? v.replace(/\D/g, '') : '');
 
 // Generate a valid random CPF (with correct check digits)
@@ -43,9 +45,12 @@ serve(async (req) => {
   }
 
   try {
-    const BLACKCAT_API_KEY = Deno.env.get('BLACKCAT_API_KEY');
-    if (!BLACKCAT_API_KEY) {
-      return new Response(JSON.stringify({ error: 'BLACKCAT_API_KEY not configured' }), {
+    const SIGMAPAY_API_TOKEN = Deno.env.get('SIGMAPAY_API_TOKEN');
+    const SIGMAPAY_OFFER_HASH = Deno.env.get('SIGMAPAY_OFFER_HASH');
+    const SIGMAPAY_PRODUCT_HASH = Deno.env.get('SIGMAPAY_PRODUCT_HASH');
+
+    if (!SIGMAPAY_API_TOKEN || !SIGMAPAY_OFFER_HASH || !SIGMAPAY_PRODUCT_HASH) {
+      return new Response(JSON.stringify({ error: 'SigmaPay credentials not fully configured' }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -62,11 +67,7 @@ serve(async (req) => {
       });
     }
 
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const postbackUrl = `${supabaseUrl}/functions/v1/blackcat-webhook`;
-
     // Build customer using real client data; fall back to RANDOM valid data per transaction
-    // (improves BlackCat anti-fraud / approval rates when the funnel state is missing).
     const realCpf = onlyDigits(customer?.document);
     const cpfDigits = realCpf.length === 11 ? realCpf : generateRandomCPF();
 
@@ -88,59 +89,65 @@ serve(async (req) => {
 
     const itemTitle = value > 2000 ? 'Seguro Prestamista' : 'Taxa de Transferência';
 
+    // SigmaPay payload format
     const payload = {
+      api_token: SIGMAPAY_API_TOKEN,
+      offer_hash: SIGMAPAY_OFFER_HASH,
+      payment_method: 'pix',
+      installments: 1,
       amount: value,
-      currency: 'BRL',
-      paymentMethod: 'pix',
-      items: [
-        {
-          title: itemTitle,
-          unitPrice: value,
-          quantity: 1,
-          tangible: false,
-        },
-      ],
       customer: {
         name: customerName,
         email: customerEmail,
-        phone: phoneDigits,
-        document: {
-          number: cpfDigits,
-          type: 'cpf',
+        phone_number: phoneDigits,
+        document: cpfDigits,
+        street_name: 'Rua Principal',
+        number: '100',
+        complement: '',
+        neighborhood: 'Centro',
+        city: 'Sao Paulo',
+        state: 'SP',
+        zip_code: '01000000',
+      },
+      cart: [
+        {
+          product_hash: SIGMAPAY_PRODUCT_HASH,
+          title: itemTitle,
+          price: value,
+          quantity: 1,
+          operation_type: 1,
+          tangible: false,
         },
-      },
-      pix: {
-        expiresInDays: 1,
-      },
-      postbackUrl,
-      externalRef: `supersim-${Date.now()}`,
+      ],
     };
 
-    const response = await fetch('https://api.blackcatpay.com.br/api/sales/create-sale', {
+    const response = await fetch(`${SIGMAPAY_BASE_URL}/transactions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-API-Key': BLACKCAT_API_KEY,
+        'Authorization': `Bearer ${SIGMAPAY_API_TOKEN}`,
+        'Accept': 'application/json',
       },
       body: JSON.stringify(payload),
     });
 
     const json = await response.json();
 
-    if (!response.ok || !json?.success) {
-      console.error('BlackCat error:', JSON.stringify(json));
+    if (!response.ok || !json?.hash) {
+      console.error('SigmaPay error:', JSON.stringify(json));
       return new Response(JSON.stringify({
-        error: json?.message || json?.error || `BlackCat API error [${response.status}]`,
+        error: json?.message || json?.error || `SigmaPay API error [${response.status}]`,
+        details: json?.errors || null,
       }), {
         status: response.status,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    const data = json.data || {};
-    const transactionId = String(data.transactionId || '').toLowerCase();
-    const qrCode = data.paymentData?.copyPaste || data.paymentData?.qrCode || '';
-    const qrCodeBase64 = data.paymentData?.qrCodeBase64 || '';
+    // SigmaPay returns hash as the unique identifier
+    const transactionHash = String(json.hash || '').toLowerCase();
+    const qrCode = json.pix?.pix_qr_code || '';
+    const qrCodeBase64 = json.pix?.qr_code_base64 || '';
 
     // Persist initial record
     const supabaseAdmin = createClient(
@@ -154,7 +161,7 @@ serve(async (req) => {
       || '';
 
     await supabaseAdmin.from('pix_payments').upsert({
-      transaction_id: transactionId,
+      transaction_id: transactionHash,
       status: 'created',
       value: value,
       hashed_email: tiktok?.hashed_email || null,
@@ -178,7 +185,7 @@ serve(async (req) => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          title: 'BlackCat - PIX Gerado',
+          title: 'SigmaPay - PIX Gerado',
           text: `PIX Gerado com sucesso\n💰 Valor: R$ ${valueInReais}`,
         }),
       });
@@ -188,12 +195,12 @@ serve(async (req) => {
 
     // Return shape compatible with the existing frontend
     return new Response(JSON.stringify({
-      id: transactionId,
+      id: transactionHash,
       qr_code: qrCode,
       qr_code_base64: qrCodeBase64,
       value: value,
       status: 'created',
-      raw: data,
+      raw: json,
     }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
