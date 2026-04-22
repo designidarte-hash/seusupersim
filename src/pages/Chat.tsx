@@ -2868,38 +2868,6 @@ const Chat = () => {
                             }
                           }
                         } else {
-                            // Insurance paid — continue to manual
-                            setPixPaid(true);
-                            setTimeout(() => {
-                              setMessages((prev) => [...prev, { id: Date.now(), text: "Já paguei", fromUser: true, time: getNow(), read: true }]);
-                            }, 300);
-                            setTimeout(() => {
-                              addBotMessages(() => [{
-                                id: Date.now() + 10,
-                                text: `Pagamento do Seguro Prestamista confirmado com sucesso!`,
-                                fromUser: false, time: getNow(), read: true,
-                              }]).then(() => {
-                                addBotMessages(() => [{
-                                  id: Date.now() + 11,
-                                  text: `Segue o manual completo do seu Seguro Prestamista. Nele você encontra todas as informações sobre coberturas, como acionar e utilizar:`,
-                                  fromUser: false, time: getNow(), read: true,
-                                }]).then(() => {
-                                  addBotMessages(() => [{
-                                    id: Date.now() + 12,
-                                    insuranceInfoPdf: true,
-                                    fromUser: false, time: getNow(), read: true,
-                                  }]).then(() => {
-                                    addBotMessages(() => [{
-                                      id: Date.now() + 13,
-                                      manualConfirmButton: true,
-                                      fromUser: false, time: getNow(), read: true,
-                                    }]);
-                                  });
-                                });
-                              });
-                            }, 500);
-                          }
-                        } else {
                           toast.error("Pagamento ainda não confirmado. Aguarde a confirmação ou tente novamente.");
                         }
                       } catch (err) {
