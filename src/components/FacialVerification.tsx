@@ -45,8 +45,9 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
         audio: false,
         video: {
           facingMode: "user",
-          width: { ideal: 1080 },
-          height: { ideal: 1920 },
+          width: { ideal: 720 },
+          height: { ideal: 1280 },
+          aspectRatio: { ideal: 9 / 16 },
         },
       });
 
@@ -225,7 +226,7 @@ const FacialVerification = ({ onComplete, onCancel, approved }: FacialVerificati
           inset: 0,
           width: "100%",
           height: "100%",
-          objectFit: "contain",
+          objectFit: "cover",
           objectPosition: "center center",
           transform: "scaleX(-1)",
           background: "#000",
