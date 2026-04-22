@@ -361,7 +361,7 @@ export default function ContratoPremiadoModal({ open, firstName, onContinue }: C
               className="w-full py-3.5 rounded-xl premiado-shimmer text-white font-bold text-sm shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40 transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
             >
               <Ticket className="w-4 h-4" />
-              Quero participar do sorteio
+              Gerar meu número da sorte grátis
             </button>
           )}
           {stage === "spinning" && (

