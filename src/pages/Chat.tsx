@@ -119,7 +119,7 @@ interface ChatMessage {
   insurancePdf?: string;
   insuranceInfoPdf?: boolean;
   manualConfirmButton?: boolean;
-  pixPayment?: { qrCode: string; qrCodeBase64: string; value: number; label?: string; sublabel?: string; phase?: "seguro" | "taxa" | "iof" };
+  pixPayment?: { qrCode: string; qrCodeBase64: string; value: number; label?: string; sublabel?: string; phase?: PaymentPhaseId };
   pdfConfirmButton?: boolean;
   proceedButton?: boolean;
   pixPaidButton?: boolean;
@@ -847,7 +847,7 @@ const formatPixTime = (totalSec: number) => {
   return `${m}:${s}`;
 };
 
-const PixPaymentCard = ({ qrCode, qrCodeBase64, value, label, sublabel, phase = "seguro" }: { qrCode: string; qrCodeBase64: string; value: number; label?: string; sublabel?: string; phase?: "seguro" | "taxa" | "iof" }) => {
+const PixPaymentCard = ({ qrCode, qrCodeBase64, value, label, sublabel, phase = "insurance" }: { qrCode: string; qrCodeBase64: string; value: number; label?: string; sublabel?: string; phase?: PaymentPhaseId }) => {
   const [copied, setCopied] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState(15 * 60);
   const [proofIndex, setProofIndex] = useState(0);
@@ -1916,7 +1916,7 @@ const Chat = () => {
   const [pixPaid, setPixPaid] = useState(false);
   const [taxaPaid, setTaxaPaid] = useState(false);
   const [iofPaid, setIofPaid] = useState(false);
-  const [paymentPhase, setPaymentPhase] = useState<"insurance" | "taxa" | "iof">(isTaxaPreview ? "taxa" : "insurance");
+  const [paymentPhase, setPaymentPhase] = useState<PaymentPhaseId>(isTaxaPreview ? "taxa" : "insurance");
   const [pixTransactionId, setPixTransactionId] = useState<string | null>(null);
   const [checkingPayment, setCheckingPayment] = useState(false);
   const [previewInitialized, setPreviewInitialized] = useState(isTaxaPreview);
