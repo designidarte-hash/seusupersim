@@ -79,11 +79,13 @@ serve(async (req) => {
       if (res.ok) {
         const providerData = await res.json();
         if (providerData?.hash) {
+          const newStatus = normalizeStatus(providerData.payment_status ?? localPayment?.status);
+          const syncedValue = parseValue(providerData.amount) ?? localPayment?.value ?? null;
           const syncedPayment = {
             transaction_id: transactionIdLower,
-            status: normalizeStatus(providerData.payment_status ?? localPayment?.status),
+            status: newStatus,
             end_to_end_id: providerData.transaction ?? localPayment?.end_to_end_id ?? null,
-            value: parseValue(providerData.amount) ?? localPayment?.value ?? null,
+            value: syncedValue,
             updated_at: new Date().toISOString(),
           };
 
@@ -92,6 +94,23 @@ serve(async (req) => {
             .upsert(syncedPayment, { onConflict: 'transaction_id' });
 
           if (upsertError) console.error('DB sync error:', upsertError);
+
+          // Pushcut notification on first transition to "paid" (when webhook didn't fire)
+          if (paidStatuses.has(newStatus) && !paidStatuses.has(localStatus)) {
+            try {
+              const valueInReais = syncedValue ? (syncedValue / 100).toFixed(2).replace('.', ',') : '0,00';
+              await fetch('https://api.pushcut.io/Ee028sYTepada_oEeEk6n/notifications/MinhaNotifica%C3%A7%C3%A3o', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  title: 'SigmaPay - Venda Paga',
+                  text: `Venda Aprovada 🤑\n💰 Valor: R$ ${valueInReais}`,
+                }),
+              });
+            } catch (pushErr) {
+              console.error('Pushcut notification error:', pushErr);
+            }
+          }
 
           return new Response(JSON.stringify({ ...localPayment, ...syncedPayment }), {
             status: 200,
