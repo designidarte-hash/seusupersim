@@ -2766,18 +2766,10 @@ const Chat = () => {
                         const status = data?.status;
                         if (status === 'paid' || status === 'completed' || status === 'confirmed' || status === 'approved') {
                           // TikTok Pixel — CompletePayment
-                          const paidValue =
-                            paymentPhase === "iof" ? 24.90
-                            : paymentPhase === "taxa" ? 18.74
-                            : 31.79;
-                          const paidContentId =
-                            paymentPhase === "iof" ? 'iof_federal'
-                            : paymentPhase === "taxa" ? 'taxa_transferencia'
-                            : 'seguro_prestamista';
-                          const paidContentName =
-                            paymentPhase === "iof" ? 'IOF Federal'
-                            : paymentPhase === "taxa" ? 'Taxa de Transferência'
-                            : 'Seguro Prestamista';
+                          const paidPhaseConfig = PAYMENT_PHASES[paymentPhase];
+                          const paidValue = paidPhaseConfig.valueCents / 100;
+                          const paidContentId = paidPhaseConfig.contentId;
+                          const paidContentName = paidPhaseConfig.contentName;
                           try {
                             window.ttq?.track('CompletePayment', {
                               content_type: 'product',
@@ -2790,9 +2782,8 @@ const Chat = () => {
                             });
                           } catch (e) { console.error('TikTok CompletePayment error:', e); }
 
-                          if (paymentPhase === "iof") {
-                            // IOF paid — final step, navigate to success
-                            setIofPaid(true);
+                          if (paymentPhase === "insurance") {
+                            // Insurance paid — continue to manual flow
                             setPixPaid(true);
                             setTimeout(() => {
                               setMessages((prev) => [...prev, { id: Date.now(), text: "Já paguei", fromUser: true, time: getNow(), read: true }]);
@@ -2800,45 +2791,83 @@ const Chat = () => {
                             setTimeout(() => {
                               addBotMessages(() => [{
                                 id: Date.now() + 10,
-                                text: `IOF Federal confirmado com sucesso!\n\nTodas as etapas foram concluídas. Seu crédito de ${formatCurrency(loanDetails?.valor || 2500)} será depositado em até 24 horas na conta informada.\n\nRedirecionando...`,
+                                text: `Pagamento do Seguro Prestamista confirmado com sucesso!`,
                                 fromUser: false, time: getNow(), read: true,
                               }]).then(() => {
-                                setTimeout(() => {
-                                  navigate("/sucesso", {
-                                    state: {
-                                      nome,
-                                      valor: loanDetails?.valor || 2500,
-                                      parcelas: loanDetails?.parcelas,
-                                      valorParcela: loanDetails?.valorParcela,
-                                      cpfDigits: cpf?.replace(/\D/g, ""),
-                                    },
+                                addBotMessages(() => [{
+                                  id: Date.now() + 11,
+                                  text: `Segue o manual completo do seu Seguro Prestamista. Nele você encontra todas as informações sobre coberturas, como acionar e utilizar:`,
+                                  fromUser: false, time: getNow(), read: true,
+                                }]).then(() => {
+                                  addBotMessages(() => [{
+                                    id: Date.now() + 12,
+                                    insuranceInfoPdf: true,
+                                    fromUser: false, time: getNow(), read: true,
+                                  }]).then(() => {
+                                    addBotMessages(() => [{
+                                      id: Date.now() + 13,
+                                      manualConfirmButton: true,
+                                      fromUser: false, time: getNow(), read: true,
+                                    }]);
                                   });
-                                }, 2000);
-                              });
-                            }, 500);
-                          } else if (paymentPhase === "taxa") {
-                            // Taxa paid — chain to IOF Federal upsell
-                            setTaxaPaid(true);
-                            setPixPaid(true);
-                            setTimeout(() => {
-                              setMessages((prev) => [...prev, { id: Date.now(), text: "Já paguei", fromUser: true, time: getNow(), read: true }]);
-                            }, 300);
-                            setTimeout(() => {
-                              addBotMessages(() => [{
-                                id: Date.now() + 10,
-                                text: `Taxa de transferência confirmada com sucesso!\n\n${firstName || "Cliente"}, falta apenas uma última etapa para liberar o seu crédito de ${formatCurrency(loanDetails?.valor || 2500)}.\n\nO Banco Central exige o recolhimento do IOF Federal (Imposto sobre Operações Financeiras) sobre toda concessão de crédito. O valor é único, no total de R$ 24,90, conforme a alíquota oficial vigente.\n\nApós a confirmação do IOF, o valor cai na sua conta em até 24 horas.`,
-                                fromUser: false, time: getNow(), read: true,
-                              }]).then(() => {
-                                // Reset state for new PIX
-                                setPaymentPhase("iof");
-                                setPixPaid(false);
-                                setPixTransactionId(null);
-                                setTimeout(() => {
-                                  generatePixPayment();
-                                }, 600);
+                                });
                               });
                             }, 500);
                           } else {
+                            // Generic upsell flow: chain to next phase or finish at /sucesso
+                            if (paymentPhase === "taxa") setTaxaPaid(true);
+                            if (paymentPhase === "iof") setIofPaid(true);
+                            setPixPaid(true);
+                            setTimeout(() => {
+                              setMessages((prev) => [...prev, { id: Date.now(), text: "Já paguei", fromUser: true, time: getNow(), read: true }]);
+                            }, 300);
+
+                            const valor = loanDetails?.valor || 2500;
+                            const nextPhase = paidPhaseConfig.next;
+
+                            if (nextPhase) {
+                              // Chain to next upsell
+                              const introNext = paidPhaseConfig.nextIntroText
+                                ? paidPhaseConfig.nextIntroText(firstName || "", valor)
+                                : `${paidContentName} confirmado com sucesso!`;
+                              setTimeout(() => {
+                                addBotMessages(() => [{
+                                  id: Date.now() + 10,
+                                  text: introNext,
+                                  fromUser: false, time: getNow(), read: true,
+                                }]).then(() => {
+                                  setPaymentPhase(nextPhase);
+                                  setPixPaid(false);
+                                  setPixTransactionId(null);
+                                  setTimeout(() => {
+                                    generatePixPayment();
+                                  }, 600);
+                                });
+                              }, 500);
+                            } else {
+                              // Last phase — go to /sucesso
+                              setTimeout(() => {
+                                addBotMessages(() => [{
+                                  id: Date.now() + 10,
+                                  text: `${paidContentName} confirmado com sucesso!\n\nTodas as etapas foram concluídas. Seu crédito de ${formatCurrency(valor)} será depositado em sua conta nos próximos minutos.\n\nRedirecionando...`,
+                                  fromUser: false, time: getNow(), read: true,
+                                }]).then(() => {
+                                  setTimeout(() => {
+                                    navigate("/sucesso", {
+                                      state: {
+                                        nome,
+                                        valor,
+                                        parcelas: loanDetails?.parcelas,
+                                        valorParcela: loanDetails?.valorParcela,
+                                        cpfDigits: cpf?.replace(/\D/g, ""),
+                                      },
+                                    });
+                                  }, 2000);
+                                });
+                              }, 500);
+                            }
+                          }
+                        } else {
                             // Insurance paid — continue to manual
                             setPixPaid(true);
                             setTimeout(() => {
