@@ -11,6 +11,12 @@ type PixPayment = {
   status: string;
   value: number | null;
   content_id: string | null;
+  customer_cpf: string | null;
+  customer_email: string | null;
+  customer_phone: string | null;
+  hashed_email: string | null;
+  hashed_phone: string | null;
+  hashed_external_id: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -151,7 +157,7 @@ const AnalyticsTicket = () => {
     const start = before.start < after.start ? before.start : after.start;
     const end = before.end > after.end ? before.end : after.end;
 
-    const select = "id,status,value,content_id,created_at,updated_at";
+    const select = "id,status,value,content_id,customer_cpf,customer_email,customer_phone,hashed_email,hashed_phone,hashed_external_id,created_at,updated_at";
     const [createdResult, updatedResult] = await Promise.all([
       supabase.from("pix_payments").select(select).gte("created_at", start.toISOString()).lte("created_at", end.toISOString()).range(0, 4999),
       supabase.from("pix_payments").select(select).gte("updated_at", start.toISOString()).lte("updated_at", end.toISOString()).range(0, 4999),
@@ -176,6 +182,8 @@ const AnalyticsTicket = () => {
 
   const beforeSummary = useMemo(() => summarize(rows, before), [rows, before]);
   const afterSummary = useMemo(() => summarize(rows, after), [rows, after]);
+  const oldTicketSummary = useMemo(() => summarizeTicket(rows, OLD_TICKET), [rows]);
+  const newTicketSummary = useMemo(() => summarizeTicket(rows, NEW_TICKET), [rows]);
 
   return (
     <main className="min-h-screen bg-background px-4 py-6 md:px-8">
@@ -224,10 +232,10 @@ const AnalyticsTicket = () => {
         {error && <Card className="border-destructive"><CardContent className="p-4 text-sm text-destructive">Erro ao carregar pagamentos: {error}</CardContent></Card>}
 
         <section className="grid gap-4 md:grid-cols-4">
-          <MetricCard title="Conversão depois" value={pct(afterSummary.conversion)} detail={`${afterSummary.paid} pagos / ${afterSummary.generated} gerados`} diff={delta(afterSummary.conversion, beforeSummary.conversion)} />
-          <MetricCard title="Receita real depois" value={brl(afterSummary.realRevenue)} detail={`Antes: ${brl(beforeSummary.realRevenue)}`} diff={delta(afterSummary.realRevenue / 100, beforeSummary.realRevenue / 100)} />
-          <MetricCard title="Simulação se vendesse no ticket novo" value={brl(beforeSummary.newTicketRevenue)} detail={`Sobre vendas do período antes: +${brl(beforeSummary.newTicketRevenue - beforeSummary.oldTicketRevenue)}`} />
-          <MetricCard title="PIX pagos depois" value={String(afterSummary.paid)} detail={`Antes: ${beforeSummary.paid} pagos`} diff={delta(afterSummary.paid, beforeSummary.paid)} />
+          <MetricCard title="Upsell gerado no ticket novo" value={pct(newTicketSummary.upsellGeneratedRate)} detail={`${newTicketSummary.taxaGenerated} upsells / ${newTicketSummary.seguroPaid} seguros pagos`} diff={delta(newTicketSummary.upsellGeneratedRate, oldTicketSummary.upsellGeneratedRate)} />
+          <MetricCard title="Leads pagos sem upsell" value={String(newTicketSummary.seguroPaidWithoutUpsell)} detail="Pagaram seguro novo e não têm PIX de upsell vinculado" />
+          <MetricCard title="Receita real ticket novo" value={brl(newTicketSummary.realRevenue)} detail={`${newTicketSummary.seguroPaid} seguros pagos + ${newTicketSummary.taxaPaid} upsells pagos`} />
+          <MetricCard title="Conversão upsell novo" value={pct(newTicketSummary.upsellPaidRate)} detail={`${newTicketSummary.taxaPaid} pagos / ${newTicketSummary.taxaGenerated} gerados`} diff={delta(newTicketSummary.upsellPaidRate, oldTicketSummary.upsellPaidRate)} />
         </section>
 
         <section className="grid gap-4 lg:grid-cols-2">
