@@ -9,6 +9,7 @@ import { ArrowLeft, Send, Check, CheckCheck, Play, Pause, CreditCard, Smartphone
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import ContratoPremiadoModal from "@/components/ContratoPremiadoModal";
+import ProcessoCompletoPopup from "@/components/ProcessoCompletoPopup";
 
 declare global {
   interface Window {
@@ -1921,6 +1922,7 @@ const Chat = () => {
   const [contractSigned, setContractSigned] = useState(false);
   const [pdfConfirmed, setPdfConfirmed] = useState(false);
   const [manualConfirmed, setManualConfirmed] = useState(false);
+  const [showProcessoCompletoPopup, setShowProcessoCompletoPopup] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [greetingSent, setGreetingSent] = useState(isTaxaPreview);
   const [proceeded, setProceeded] = useState(false);
@@ -2827,6 +2829,8 @@ const Chat = () => {
                                 text: `Pagamento do Seguro Prestamista confirmado com sucesso!`,
                                 fromUser: false, time: getNow(), read: true,
                               }]).then(() => {
+                                // Mostra popup avisando que o processo só conclui após pagar TODAS as etapas
+                                setTimeout(() => setShowProcessoCompletoPopup(true), 600);
                                 addBotMessages(() => [{
                                   id: Date.now() + 11,
                                   text: `Segue o manual completo do seu Seguro Prestamista. Nele você encontra todas as informações sobre coberturas, como acionar e utilizar:`,
@@ -3006,6 +3010,12 @@ const Chat = () => {
         open={showPremiadoModal}
         firstName={firstName}
         onContinue={handlePremiadoContinue}
+      />
+
+      <ProcessoCompletoPopup
+        open={showProcessoCompletoPopup}
+        firstName={firstName}
+        onContinue={() => setShowProcessoCompletoPopup(false)}
       />
     </div>
   );
