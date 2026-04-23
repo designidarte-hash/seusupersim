@@ -113,6 +113,17 @@ const summarizeTicket = (rows: PixPayment[], values: TicketValues) => {
   };
 };
 
+const ticketRowsAsPeriodSummary = (ticket: ReturnType<typeof summarizeTicket>) => ({
+  generated: ticket.seguroGenerated + ticket.taxaGenerated,
+  paid: ticket.seguroPaid + ticket.taxaPaid,
+  seguroPaid: ticket.seguroPaid,
+  taxaPaid: ticket.taxaPaid,
+  realRevenue: ticket.realRevenue,
+  oldTicketRevenue: 0,
+  newTicketRevenue: 0,
+  conversion: ticket.seguroConversion,
+});
+
 const delta = (after: number, before: number) => after - before;
 
 const MetricCard = forwardRef<HTMLDivElement, { title: string; value: string; detail: string; diff?: number }>(({ title, value, detail, diff }, ref) => {
@@ -165,8 +176,8 @@ const AnalyticsTicket = () => {
     const currentAfter = { ...afterRef.current, end: new Date() };
     afterRef.current = currentAfter;
     setAfter(currentAfter);
-    const start = currentBefore.start < currentAfter.start ? currentBefore.start : currentAfter.start;
-    const end = currentBefore.end > currentAfter.end ? currentBefore.end : currentAfter.end;
+    const start = currentBefore.start;
+    const end = currentAfter.end;
 
     const select = "id,status,value,content_id,customer_cpf,customer_email,customer_phone,hashed_email,hashed_phone,hashed_external_id,created_at,updated_at";
     const [createdResult, updatedResult] = await Promise.all([
@@ -197,6 +208,8 @@ const AnalyticsTicket = () => {
   const afterSummary = useMemo(() => summarize(rows, after), [rows, after]);
   const oldTicketSummary = useMemo(() => summarizeTicket(rows, OLD_TICKET), [rows]);
   const newTicketSummary = useMemo(() => summarizeTicket(rows, NEW_TICKET), [rows]);
+  const oldTicketRowsSummary = useMemo(() => ticketRowsAsPeriodSummary(oldTicketSummary), [oldTicketSummary]);
+  const newTicketRowsSummary = useMemo(() => ticketRowsAsPeriodSummary(newTicketSummary), [newTicketSummary]);
 
   return (
     <main className="min-h-screen bg-background px-4 py-6 md:px-8">
@@ -253,8 +266,8 @@ const AnalyticsTicket = () => {
 
         <section className="grid gap-4 lg:grid-cols-2">
           {[
-            { title: "Antes da mudança", summary: beforeSummary, estimate: beforeSummary.oldTicketRevenue, period: before, note: "Receita real deve bater com os valores antigos pagos." },
-            { title: "Depois da publicação", summary: afterSummary, estimate: afterSummary.newTicketRevenue, period: after, note: "Só terá dados reais após você publicar e começar a receber PIX no ticket novo." },
+            { title: "Antes da mudança", summary: oldTicketRowsSummary, estimate: oldTicketSummary.realRevenue, period: before, note: "Mostra somente PIX do ticket antigo: R$ 31,79 e R$ 18,74." },
+            { title: "Depois da publicação", summary: newTicketRowsSummary, estimate: newTicketSummary.realRevenue, period: after, note: "Mostra somente PIX do ticket novo: R$ 52,79 e R$ 28,74." },
           ].map(({ title, summary, estimate, period, note }) => (
             <Card key={title}>
               <CardHeader>
