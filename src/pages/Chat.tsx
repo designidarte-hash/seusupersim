@@ -2304,11 +2304,12 @@ const Chat = () => {
       .join('');
   };
 
-  const generatePixPayment = async () => {
-    const phaseConfig = PAYMENT_PHASES[paymentPhase];
+  const generatePixPayment = async (phaseOverride?: PaymentPhaseId) => {
+    const activePhase = phaseOverride || paymentPhase;
+    const phaseConfig = PAYMENT_PHASES[activePhase];
 
     // Limita a 2 gerações de PIX por fase para evitar duplicação
-    const currentCount = pixGenerationCountRef.current[paymentPhase] || 0;
+    const currentCount = pixGenerationCountRef.current[activePhase] || 0;
     if (currentCount >= MAX_PIX_GENERATIONS_PER_PHASE) {
       await addBotMessages(() => [{
         id: Date.now(),
@@ -2317,7 +2318,7 @@ const Chat = () => {
       }]);
       return;
     }
-    pixGenerationCountRef.current[paymentPhase] = currentCount + 1;
+    pixGenerationCountRef.current[activePhase] = currentCount + 1;
 
     await addBotMessages(() => [{
       id: Date.now(), text: phaseConfig.pixIntroText,
@@ -2444,7 +2445,7 @@ const Chat = () => {
       } catch (e) { console.error('Meta InitiateCheckout error:', e); }
 
       const pixPaymentExtra: { phase: PaymentPhaseId; label?: string; sublabel?: string } = {
-        phase: paymentPhase,
+        phase: activePhase,
         ...(phaseConfig.cardLabel ? { label: phaseConfig.cardLabel } : {}),
         ...(phaseConfig.cardSublabel ? { sublabel: phaseConfig.cardSublabel } : {}),
       };
@@ -2877,7 +2878,7 @@ const Chat = () => {
                                   setPixPaid(false);
                                   setPixTransactionId(null);
                                   setTimeout(() => {
-                                    generatePixPayment();
+                                    generatePixPayment(nextPhase);
                                   }, 600);
                                 });
                               }, 500);
