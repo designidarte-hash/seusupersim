@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useMemo, useState } from "react";
+import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
 import { ArrowDownRight, ArrowUpRight, BarChart3, CalendarDays, Loader2, RefreshCw, TicketCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -150,12 +150,23 @@ const AnalyticsTicket = () => {
   const [rows, setRows] = useState<PixPayment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const beforeRef = useRef(before);
+  const afterRef = useRef(after);
+
+  useEffect(() => {
+    beforeRef.current = before;
+    afterRef.current = after;
+  }, [before, after]);
 
   const loadPayments = async () => {
     setLoading(true);
     setError(null);
-    const start = before.start < after.start ? before.start : after.start;
-    const end = before.end > after.end ? before.end : after.end;
+    const currentBefore = beforeRef.current;
+    const currentAfter = { ...afterRef.current, end: new Date() };
+    afterRef.current = currentAfter;
+    setAfter(currentAfter);
+    const start = currentBefore.start < currentAfter.start ? currentBefore.start : currentAfter.start;
+    const end = currentBefore.end > currentAfter.end ? currentBefore.end : currentAfter.end;
 
     const select = "id,status,value,content_id,customer_cpf,customer_email,customer_phone,hashed_email,hashed_phone,hashed_external_id,created_at,updated_at";
     const [createdResult, updatedResult] = await Promise.all([
@@ -177,6 +188,8 @@ const AnalyticsTicket = () => {
 
   useEffect(() => {
     loadPayments();
+    const interval = window.setInterval(loadPayments, 15000);
+    return () => window.clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
