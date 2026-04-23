@@ -30,8 +30,6 @@ const TICKETS = {
 
 const paidStatuses = new Set(["paid", "completed", "approved", "confirmed", "pago"]);
 
-const toDateInput = (date: Date) => date.toISOString().slice(0, 10);
-
 const toDateTimeInput = (date: Date) => {
   const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
   return local.toISOString().slice(0, 16);
@@ -97,11 +95,6 @@ MetricCard.displayName = "MetricCard";
 
 const AnalyticsTicket = () => {
   const today = new Date();
-  const sevenDaysAgo = new Date(today);
-  sevenDaysAgo.setDate(today.getDate() - 7);
-  const fourteenDaysAgo = new Date(today);
-  fourteenDaysAgo.setDate(today.getDate() - 14);
-
   const changeDate = new Date();
   const beforeEnd = new Date(changeDate.getTime() - 1);
   const beforeStart = new Date(changeDate);
@@ -144,8 +137,6 @@ const AnalyticsTicket = () => {
 
   const beforeSummary = useMemo(() => summarize(rows, before), [rows, before]);
   const afterSummary = useMemo(() => summarize(rows, after), [rows, after]);
-
-  const ticketLift = afterSummary.newTicketRevenue - afterSummary.oldTicketRevenue;
 
   return (
     <main className="min-h-screen bg-background px-4 py-6 md:px-8">
