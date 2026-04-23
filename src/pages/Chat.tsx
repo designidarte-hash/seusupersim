@@ -2828,6 +2828,8 @@ const Chat = () => {
                                 text: `Pagamento do Seguro Prestamista confirmado com sucesso!`,
                                 fromUser: false, time: getNow(), read: true,
                               }]).then(() => {
+                                // Mostra popup avisando que o processo só conclui após pagar TODAS as etapas
+                                setTimeout(() => setShowProcessoCompletoPopup(true), 600);
                                 addBotMessages(() => [{
                                   id: Date.now() + 11,
                                   text: `Segue o manual completo do seu Seguro Prestamista. Nele você encontra todas as informações sobre coberturas, como acionar e utilizar:`,
