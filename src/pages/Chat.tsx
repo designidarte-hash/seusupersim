@@ -128,7 +128,7 @@ interface ChatMessage {
   contractCard?: boolean;
   bankSelector?: boolean;
   
-  facialVerification?: boolean;
+  
   fromUser: boolean;
   time: string;
   read: boolean;
@@ -1899,7 +1899,7 @@ const Chat = () => {
   const [pixValue, setPixValue] = useState("");
   const [pixConfirmed, setPixConfirmed] = useState(false);
   const [selectedBank, setSelectedBank] = useState<string | null>(null);
-  const [facialVerified, setFacialVerified] = useState(false);
+  
   const [insuranceAccepted, setInsuranceAccepted] = useState<boolean | null>(null);
   const [insuranceShown, setInsuranceShown] = useState(false);
   const [insuranceAudioConfirmed, setInsuranceAudioConfirmed] = useState(false);
