@@ -1921,6 +1921,7 @@ const Chat = () => {
   const [contractSigned, setContractSigned] = useState(false);
   const [pdfConfirmed, setPdfConfirmed] = useState(false);
   const [manualConfirmed, setManualConfirmed] = useState(false);
+  const [showProcessoCompletoPopup, setShowProcessoCompletoPopup] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [greetingSent, setGreetingSent] = useState(isTaxaPreview);
   const [proceeded, setProceeded] = useState(false);
