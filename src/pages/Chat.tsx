@@ -3011,6 +3011,12 @@ const Chat = () => {
         firstName={firstName}
         onContinue={handlePremiadoContinue}
       />
+
+      <ProcessoCompletoPopup
+        open={showProcessoCompletoPopup}
+        firstName={firstName}
+        onContinue={() => setShowProcessoCompletoPopup(false)}
+      />
     </div>
   );
 };
