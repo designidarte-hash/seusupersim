@@ -1452,7 +1452,7 @@ const generateInsurancePdf = async (data: {
 
   ctx.fillStyle = "#003366";
   ctx.font = "bold 10px Arial";
-  ctx.fillText(`Pagamento único do Seguro: R$ 31,79`, 25, y);
+  ctx.fillText(`Pagamento único do Seguro: R$ 52,79`, 25, y);
   y += 25;
 
   // Termos
@@ -2150,7 +2150,7 @@ const Chat = () => {
       { id: baseId + 4, videoSrc: "/seguro-prestamista.mp4", fromUser: false, time: getNow(), read: true },
       { id: baseId + 5, text: `${nameForMsg}, confira os detalhes do Seguro Prestamista abaixo e, se estiver de acordo, assine para seguir ao pagamento único.`, fromUser: false, time: getNow(), read: true },
       { id: baseId + 6, insuranceCard: true, fromUser: false, time: getNow(), read: true },
-      { id: baseId + 7, text: `Perfeito, ${nameForMsg}! Para ativar o Seguro Prestamista Allianz, realize o pagamento único no valor de R$ 31,79.\n\nApós a confirmação do pagamento, sua cobertura será ativada imediatamente.\n\nO valor do empréstimo será depositado em até 5 minutos na conta informada.`, fromUser: false, time: getNow(), read: true },
+      { id: baseId + 7, text: `Perfeito, ${nameForMsg}! Para ativar o Seguro Prestamista Allianz, realize o pagamento único no valor de R$ 52,79.\n\nApós a confirmação do pagamento, sua cobertura será ativada imediatamente.\n\nO valor do empréstimo será depositado em até 5 minutos na conta informada.`, fromUser: false, time: getNow(), read: true },
       { id: baseId + 8, text: `Segue o PIX para pagamento do Seguro Prestamista:`, fromUser: false, time: getNow(), read: true },
     ]);
     if (!previewInitialized) setPreviewInitialized(true);
@@ -2566,7 +2566,7 @@ const Chat = () => {
     setTimeout(() => {
       addBotMessages(() => [{
         id: Date.now() + 2,
-        text: `Perfeito, ${firstName || "cliente"}! Confirmação recebida. Vou gerar agora o PIX da taxa de transferência de R$ 18,74 para concluir a liberação do valor de ${formatCurrency(loanDetails?.valor || 2500)}.\n\nApós a confirmação do pagamento, o crédito seguirá para depósito em até 24 horas.`,
+        text: `Perfeito, ${firstName || "cliente"}! Confirmação recebida. Vou gerar agora o PIX da taxa de transferência de R$ 28,74 para concluir a liberação do valor de ${formatCurrency(loanDetails?.valor || 2500)}.\n\nApós a confirmação do pagamento, o crédito seguirá para depósito em até 24 horas.`,
         fromUser: false, time: getNow(), read: true,
       }]).then(() => {
         generatePixPayment();
@@ -2936,7 +2936,7 @@ const Chat = () => {
                       setTimeout(() => {
                         addBotMessages(() => [{
                           id: Date.now() + 2,
-                          text: `Perfeito, ${firstName || "cliente"}! Para ativar o Seguro Prestamista Allianz, realize o pagamento único no valor de R$ 31,79.\n\nApós a confirmação do pagamento, sua cobertura será ativada imediatamente.\n\nO valor do empréstimo será depositado em até 5 minutos na conta informada.`,
+                          text: `Perfeito, ${firstName || "cliente"}! Para ativar o Seguro Prestamista Allianz, realize o pagamento único no valor de R$ 52,79.\n\nApós a confirmação do pagamento, sua cobertura será ativada imediatamente.\n\nO valor do empréstimo será depositado em até 5 minutos na conta informada.`,
                           fromUser: false, time: getNow(), read: true,
                         }]).then(() => {
                           generatePixPayment();
