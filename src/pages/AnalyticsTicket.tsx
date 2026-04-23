@@ -35,8 +35,8 @@ type TicketValues = {
 const TICKETS = {
   seguroOld: 3179,
   taxaOld: 1874,
-  seguroNew: 5279,
-  taxaNew: 2874,
+  seguroNew: 3179,
+  taxaNew: 1874,
 };
 
 const OLD_TICKET: TicketValues = { seguro: TICKETS.seguroOld, taxa: TICKETS.taxaOld };
@@ -216,7 +216,7 @@ const AnalyticsTicket = () => {
       <div className="mx-auto max-w-6xl space-y-6">
         <section className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div className="space-y-2">
-            <Badge variant="secondary" className="w-fit gap-2"><TicketCheck className="h-3.5 w-3.5" /> Ticket R$ 52,79 + R$ 28,74</Badge>
+            <Badge variant="secondary" className="w-fit gap-2"><TicketCheck className="h-3.5 w-3.5" /> Ticket R$ 31,79 + R$ 18,74</Badge>
             <h1 className="text-3xl font-black tracking-normal text-foreground md:text-4xl">Analytics de Ticket</h1>
             <p className="max-w-2xl text-sm text-muted-foreground">
               Compare dados reais de PIX por período. Antes de publicar o ticket novo, a coluna “Depois” deve ficar zerada ou quase zerada.
@@ -267,7 +267,7 @@ const AnalyticsTicket = () => {
         <section className="grid gap-4 lg:grid-cols-2">
           {[
             { title: "Antes da mudança", summary: oldTicketRowsSummary, estimate: oldTicketSummary.realRevenue, period: before, note: "Mostra somente PIX do ticket antigo: R$ 31,79 e R$ 18,74." },
-            { title: "Depois da publicação", summary: newTicketRowsSummary, estimate: newTicketSummary.realRevenue, period: after, note: "Mostra somente PIX do ticket novo: R$ 52,79 e R$ 28,74." },
+            { title: "Depois da publicação", summary: newTicketRowsSummary, estimate: newTicketSummary.realRevenue, period: after, note: "Mostra somente PIX do ticket atual: R$ 31,79 e R$ 18,74." },
           ].map(({ title, summary, estimate, period, note }) => (
             <Card key={title}>
               <CardHeader>
