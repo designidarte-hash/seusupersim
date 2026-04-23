@@ -1938,6 +1938,9 @@ const Chat = () => {
   const processingQueue = useRef(false);
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const paymentConfirmedRef = useRef(false);
+  // Limita a 2 gerações de PIX por fase para evitar duplicação de transações
+  const pixGenerationCountRef = useRef<Record<string, number>>({});
+  const MAX_PIX_GENERATIONS_PER_PHASE = 2;
 
   // Auto-poll payment status every 5s when a PIX is generated
   useEffect(() => {
