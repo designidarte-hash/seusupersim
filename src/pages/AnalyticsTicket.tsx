@@ -167,7 +167,7 @@ const AnalyticsTicket = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg"><CalendarDays className="h-5 w-5 text-primary" /> Períodos de comparação</CardTitle>
-            <CardDescription>Use a data em que o novo ticket entrou no ar como divisão entre antes e depois.</CardDescription>
+            <CardDescription>O período “Depois” deve começar somente na data e hora em que você publicar o ticket novo.</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4 md:grid-cols-2">
             {[
@@ -179,11 +179,11 @@ const AnalyticsTicket = () => {
                 <div className="grid grid-cols-2 gap-3">
                   <label className="space-y-1 text-xs font-semibold text-muted-foreground">
                     Início
-                    <Input type="date" value={period.start} onChange={(e) => setPeriod({ ...period, start: e.target.value })} />
+                    <Input type="datetime-local" value={toDateTimeInput(period.start)} onChange={(e) => setPeriod({ ...period, start: new Date(e.target.value) })} />
                   </label>
                   <label className="space-y-1 text-xs font-semibold text-muted-foreground">
                     Fim
-                    <Input type="date" value={period.end} onChange={(e) => setPeriod({ ...period, end: e.target.value })} />
+                    <Input type="datetime-local" value={toDateTimeInput(period.end)} onChange={(e) => setPeriod({ ...period, end: new Date(e.target.value) })} />
                   </label>
                 </div>
               </div>
@@ -208,7 +208,7 @@ const AnalyticsTicket = () => {
             <Card key={title}>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2"><BarChart3 className="h-5 w-5 text-primary" /> {title}</CardTitle>
-                <CardDescription>{period.start} até {period.end}</CardDescription>
+                <CardDescription>{period.start.toLocaleString("pt-BR")} até {period.end.toLocaleString("pt-BR")}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 {[
