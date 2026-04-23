@@ -17,7 +17,7 @@ const Simulacao = lazy(() => import("./pages/Simulacao.tsx"));
 const Chat = lazy(() => import("./pages/Chat.tsx"));
 const RedirecionandoChat = lazy(() => import("./pages/RedirecionandoChat.tsx"));
 const Sucesso = lazy(() => import("./pages/Sucesso.tsx"));
-const TesteCamera = lazy(() => import("./pages/TesteCamera.tsx"));
+
 const PreviewPix = lazy(() => import("./pages/PreviewPix.tsx"));
 const PreviewPixSeguro = lazy(() => import("./pages/PreviewPixSeguro.tsx"));
 const PreviewPremiado = lazy(() => import("./pages/PreviewPremiado.tsx"));
@@ -51,7 +51,7 @@ const App = () => (
             <Route path="/redirecionando" element={<RedirecionandoChat />} />
             <Route path="/chat" element={<Chat />} />
             <Route path="/sucesso" element={<Sucesso />} />
-            <Route path="/teste-camera" element={<TesteCamera />} />
+            
             <Route path="/preview-pix" element={<PreviewPix />} />
             <Route path="/preview-pix-seguro" element={<PreviewPixSeguro />} />
             <Route path="/preview-premiado" element={<PreviewPremiado />} />
