@@ -1805,6 +1805,20 @@ const Chat = () => {
   const isCardPreview = previewStage === "card";
   const isOfertaPreview = previewStage === "oferta";
   const isFluxoPreview = previewStage === "fluxo";
+  const isPreview = !!previewStage;
+
+  // Em recarregamento da página (F5), volta para a home para evitar
+  // estado quebrado e duplicação de PIX. Não dispara em modo preview.
+  useEffect(() => {
+    if (typeof window === "undefined" || isPreview) return;
+    let isReload = false;
+    try {
+      const entries = performance.getEntriesByType("navigation") as PerformanceNavigationTiming[];
+      if (entries.length > 0) isReload = entries[0].type === "reload";
+    } catch {}
+    if (isReload) navigate("/", { replace: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Pull state from navigation, fallback to sessionStorage
   const navState = (location.state as any) || {};
@@ -1924,6 +1938,9 @@ const Chat = () => {
   const processingQueue = useRef(false);
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const paymentConfirmedRef = useRef(false);
+  // Limita a 2 gerações de PIX por fase para evitar duplicação de transações
+  const pixGenerationCountRef = useRef<Record<string, number>>({});
+  const MAX_PIX_GENERATIONS_PER_PHASE = 2;
 
   // Auto-poll payment status every 5s when a PIX is generated
   useEffect(() => {
@@ -2287,6 +2304,19 @@ const Chat = () => {
 
   const generatePixPayment = async () => {
     const phaseConfig = PAYMENT_PHASES[paymentPhase];
+
+    // Limita a 2 gerações de PIX por fase para evitar duplicação
+    const currentCount = pixGenerationCountRef.current[paymentPhase] || 0;
+    if (currentCount >= MAX_PIX_GENERATIONS_PER_PHASE) {
+      await addBotMessages(() => [{
+        id: Date.now(),
+        text: "⚠️ Você já gerou o número máximo de PIX para esta etapa. Por favor, conclua o pagamento com o último QR Code gerado ou entre em contato com o suporte.",
+        fromUser: false, time: getNow(), read: true,
+      }]);
+      return;
+    }
+    pixGenerationCountRef.current[paymentPhase] = currentCount + 1;
+
     await addBotMessages(() => [{
       id: Date.now(), text: phaseConfig.pixIntroText,
       fromUser: false, time: getNow(), read: true,

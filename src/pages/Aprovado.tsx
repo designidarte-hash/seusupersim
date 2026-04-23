@@ -5,6 +5,7 @@ import ChamaNoPixSection from "@/components/ChamaNoPixSection";
 import Header from "@/components/Header";
 import FunnelProgress from "@/components/FunnelProgress";
 import { useFunnelUser } from "@/hooks/use-funnel-user";
+import { useRedirectOnReload } from "@/hooks/use-redirect-on-reload";
 import iconThumbsUp from "@/assets/icon-thumbsup.webp";
 import iconPhone from "@/assets/icon-phone.webp";
 import supersimLogo from "@/assets/supersim-logo.svg";
@@ -28,6 +29,7 @@ const benefits = [
 ];
 
 const Aprovado = () => {
+  useRedirectOnReload();
   const location = useLocation();
   const navigate = useTransitionNavigate();
   const cpfData = location.state?.cpfData as Record<string, unknown> | null;

@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import FunnelProgress from "@/components/FunnelProgress";
 import { useFunnelUser } from "@/hooks/use-funnel-user";
+import { useRedirectOnReload } from "@/hooks/use-redirect-on-reload";
 import bannerEmprestimo from "@/assets/banner-emprestimo-hd.webp";
 import { ShieldCheck, CheckCircle2, Search, FileCheck, BadgeDollarSign, Loader2, Lock } from "lucide-react";
 import logoSupersim from "@/assets/logo-supersim.png";
@@ -17,6 +18,7 @@ const analysisSteps = [
 ];
 
 const AnaliseCredito = () => {
+  useRedirectOnReload();
   const navigate = useNavigate();
   const location = useLocation();
   const cpfData = location.state?.cpfData;
