@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { forwardRef, useEffect, useMemo, useState } from "react";
 import { ArrowDownRight, ArrowUpRight, BarChart3, CalendarDays, Loader2, RefreshCw, TicketCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -17,8 +17,8 @@ type PixPayment = {
 
 type Period = {
   label: string;
-  start: string;
-  end: string;
+  start: Date;
+  end: Date;
 };
 
 const TICKETS = {
@@ -32,6 +32,11 @@ const paidStatuses = new Set(["paid", "completed", "approved", "confirmed", "pag
 
 const toDateInput = (date: Date) => date.toISOString().slice(0, 10);
 
+const toDateTimeInput = (date: Date) => {
+  const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+  return local.toISOString().slice(0, 16);
+};
+
 const brl = (cents: number) =>
   (cents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
@@ -39,9 +44,7 @@ const pct = (value: number) => `${value.toLocaleString("pt-BR", { maximumFractio
 
 const inPeriod = (isoDate: string, period: Period) => {
   const time = new Date(isoDate).getTime();
-  const start = new Date(`${period.start}T00:00:00`).getTime();
-  const end = new Date(`${period.end}T23:59:59`).getTime();
-  return time >= start && time <= end;
+  return time >= period.start.getTime() && time <= period.end.getTime();
 };
 
 const isPaid = (payment: PixPayment) => paidStatuses.has((payment.status || "").toLowerCase());
