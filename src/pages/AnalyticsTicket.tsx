@@ -72,10 +72,10 @@ const summarize = (rows: PixPayment[], period: Period) => {
 
 const delta = (after: number, before: number) => after - before;
 
-const MetricCard = ({ title, value, detail, diff }: { title: string; value: string; detail: string; diff?: number }) => {
+const MetricCard = forwardRef<HTMLDivElement, { title: string; value: string; detail: string; diff?: number }>(({ title, value, detail, diff }, ref) => {
   const positive = (diff || 0) >= 0;
   return (
-    <Card>
+    <Card ref={ref}>
       <CardHeader className="pb-3">
         <CardDescription>{title}</CardDescription>
         <CardTitle className="text-2xl">{value}</CardTitle>
@@ -91,7 +91,9 @@ const MetricCard = ({ title, value, detail, diff }: { title: string; value: stri
       </CardContent>
     </Card>
   );
-};
+});
+
+MetricCard.displayName = "MetricCard";
 
 const AnalyticsTicket = () => {
   const today = new Date();
@@ -100,8 +102,13 @@ const AnalyticsTicket = () => {
   const fourteenDaysAgo = new Date(today);
   fourteenDaysAgo.setDate(today.getDate() - 14);
 
-  const [before, setBefore] = useState<Period>({ label: "Antes", start: toDateInput(fourteenDaysAgo), end: toDateInput(sevenDaysAgo) });
-  const [after, setAfter] = useState<Period>({ label: "Depois", start: toDateInput(sevenDaysAgo), end: toDateInput(today) });
+  const changeDate = new Date();
+  const beforeEnd = new Date(changeDate.getTime() - 1);
+  const beforeStart = new Date(changeDate);
+  beforeStart.setDate(changeDate.getDate() - 7);
+
+  const [before, setBefore] = useState<Period>({ label: "Antes", start: beforeStart, end: beforeEnd });
+  const [after, setAfter] = useState<Period>({ label: "Depois", start: changeDate, end: today });
   const [rows, setRows] = useState<PixPayment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -114,8 +121,8 @@ const AnalyticsTicket = () => {
 
     const select = "id,status,value,content_id,created_at,updated_at";
     const [createdResult, updatedResult] = await Promise.all([
-      supabase.from("pix_payments").select(select).gte("created_at", `${start}T00:00:00`).lte("created_at", `${end}T23:59:59`).range(0, 4999),
-      supabase.from("pix_payments").select(select).gte("updated_at", `${start}T00:00:00`).lte("updated_at", `${end}T23:59:59`).range(0, 4999),
+      supabase.from("pix_payments").select(select).gte("created_at", start.toISOString()).lte("created_at", end.toISOString()).range(0, 4999),
+      supabase.from("pix_payments").select(select).gte("updated_at", start.toISOString()).lte("updated_at", end.toISOString()).range(0, 4999),
     ]);
 
     const queryError = createdResult.error || updatedResult.error;
