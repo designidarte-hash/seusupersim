@@ -9,8 +9,8 @@ const corsHeaders = {
 const SIGMAPAY_BASE_URL = 'https://api.sigmapay.com.br/api/public/v1';
 
 const VALUE_TO_CONTENT_ID: Record<number, string> = {
-  5279: 'seguro_prestamista',
-  2874: 'taxa_transferencia',
+  3179: 'seguro_prestamista',
+  1874: 'taxa_transferencia',
   2490: 'iof_federal',
   2990: 'taxa_scr_bacen',
   3290: 'taxa_liberacao_imediata',
@@ -18,7 +18,7 @@ const VALUE_TO_CONTENT_ID: Record<number, string> = {
 };
 
 const NEXT_PAYMENT_BY_CONTENT_ID: Record<string, { contentId: string; title: string; value: number } | undefined> = {
-  seguro_prestamista: { contentId: 'taxa_transferencia', title: 'Taxa de Transferência', value: 2874 },
+  seguro_prestamista: { contentId: 'taxa_transferencia', title: 'Taxa de Transferência', value: 1874 },
   taxa_transferencia: { contentId: 'iof_federal', title: 'IOF Federal', value: 2490 },
   iof_federal: { contentId: 'taxa_scr_bacen', title: 'Taxa SCR/Bacen', value: 2990 },
   taxa_scr_bacen: { contentId: 'taxa_liberacao_imediata', title: 'Taxa de Liberação Imediata', value: 3290 },
