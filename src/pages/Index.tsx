@@ -13,6 +13,11 @@ import seloRa from "@/assets/selo-ra.png";
 import seloFebraban from "@/assets/selo-febraban.png";
 import seloAnbima from "@/assets/selo-anbima.png";
 import seloSsl from "@/assets/selo-ssl.png";
+import pessoa1 from "@/assets/testimonials/pessoa1.png";
+import pessoa2 from "@/assets/testimonials/pessoa2.png";
+import pessoa3 from "@/assets/testimonials/pessoa3.png";
+import marciaImg from "@/assets/testimonials/marcia.png";
+import pessoa5 from "@/assets/testimonials/pessoa5.png";
 import { ClipboardList, UserCheck, CreditCard, Send, Quote, Facebook, Youtube, Instagram, Linkedin } from "lucide-react";
 import Header from "@/components/Header";
 
@@ -32,11 +37,11 @@ const steps = [
 ];
 
 const testimonials = [
-  { name: "Luciano Dos Santos", img: "https://www.supersim.com.br/media/2022/09/pessoa1.png", text: "Fiz o empréstimo do valor que precisava, me passou total confiança. Sem burocracia, rápido, fácil e seguro. Só o juros que é um pouco alto, mas fora isso, eu super indico. Parabéns aos profissionais envolvidos!" },
-  { name: "Fernanda Ap", img: "https://www.supersim.com.br/media/2022/09/pessoa2.png", text: "Muito profissional mesmo no começo achei que fosse mais um golpe de internet mais depois que uma menina entrou em contato em nome da empresa fiquei mais seguro obrigado pelo atendimento" },
-  { name: "Brenda Luara Beltrame", img: "https://www.supersim.com.br/media/2022/09/pessoa3.png", text: "Eu simplesmente amo a Super sim, é o help que nós precisamos com condições sensacionais!" },
-  { name: "Marcia Caverzan", img: "https://www.supersim.com.br/media/2025/06/depoimento-cliente-home.png", text: "Uma empresa séria e que realmente ajuda na hora do aperto, sem burocracias. Precisei, e lá estava o depósito. Pagamento facilitado e que cabem no orçamento. Pagando certinho, em dia, você consegue novo empréstimo com valor mais alto." },
-  { name: "Elias Barbaroto", img: "https://www.supersim.com.br/media/2022/09/pessoa5.png", text: "Eu amei a super sim 😍 Atendeu minha necessidade! E superou minhas expectativas 😍😇✌😎" },
+  { name: "Luciano Dos Santos", img: pessoa1, text: "Fiz o empréstimo do valor que precisava, me passou total confiança. Sem burocracia, rápido, fácil e seguro. Só o juros que é um pouco alto, mas fora isso, eu super indico. Parabéns aos profissionais envolvidos!" },
+  { name: "Fernanda Ap", img: pessoa2, text: "Muito profissional mesmo no começo achei que fosse mais um golpe de internet mais depois que uma menina entrou em contato em nome da empresa fiquei mais seguro obrigado pelo atendimento" },
+  { name: "Brenda Luara Beltrame", img: pessoa3, text: "Eu simplesmente amo a Super sim, é o help que nós precisamos com condições sensacionais!" },
+  { name: "Marcia Caverzan", img: marciaImg, text: "Uma empresa séria e que realmente ajuda na hora do aperto, sem burocracias. Precisei, e lá estava o depósito. Pagamento facilitado e que cabem no orçamento. Pagando certinho, em dia, você consegue novo empréstimo com valor mais alto." },
+  { name: "Elias Barbaroto", img: pessoa5, text: "Eu amei a super sim 😍 Atendeu minha necessidade! E superou minhas expectativas 😍😇✌😎" },
   { name: "Tatiana Bispo Dos Santos", img: null, text: "Recebi o dinheiro no tempo certo" },
 ];
 
