@@ -155,7 +155,7 @@ const AnalyticsTicket = () => {
             <Badge variant="secondary" className="w-fit gap-2"><TicketCheck className="h-3.5 w-3.5" /> Ticket R$ 52,79 + R$ 28,74</Badge>
             <h1 className="text-3xl font-black tracking-normal text-foreground md:text-4xl">Analytics de Ticket</h1>
             <p className="max-w-2xl text-sm text-muted-foreground">
-              Compare geração de PIX, pagamentos, conversão e receita real/estimada antes e depois da mudança de ticket.
+              Compare dados reais de PIX por período. Antes de publicar o ticket novo, a coluna “Depois” deve ficar zerada ou quase zerada.
             </p>
           </div>
           <Button onClick={loadPayments} disabled={loading} className="w-full md:w-auto">
@@ -196,15 +196,15 @@ const AnalyticsTicket = () => {
         <section className="grid gap-4 md:grid-cols-4">
           <MetricCard title="Conversão depois" value={pct(afterSummary.conversion)} detail={`${afterSummary.paid} pagos / ${afterSummary.generated} gerados`} diff={delta(afterSummary.conversion, beforeSummary.conversion)} />
           <MetricCard title="Receita real depois" value={brl(afterSummary.realRevenue)} detail={`Antes: ${brl(beforeSummary.realRevenue)}`} diff={delta(afterSummary.realRevenue / 100, beforeSummary.realRevenue / 100)} />
-          <MetricCard title="Estimativa com ticket novo" value={brl(afterSummary.newTicketRevenue)} detail={`Lift estimado: ${brl(ticketLift)}`} diff={ticketLift / 100} />
+          <MetricCard title="Simulação se vendesse no ticket novo" value={brl(beforeSummary.newTicketRevenue)} detail={`Sobre vendas do período antes: +${brl(beforeSummary.newTicketRevenue - beforeSummary.oldTicketRevenue)}`} />
           <MetricCard title="PIX pagos depois" value={String(afterSummary.paid)} detail={`Antes: ${beforeSummary.paid} pagos`} diff={delta(afterSummary.paid, beforeSummary.paid)} />
         </section>
 
         <section className="grid gap-4 lg:grid-cols-2">
           {[
-            { title: "Antes da mudança", summary: beforeSummary, estimate: beforeSummary.oldTicketRevenue, period: before },
-            { title: "Depois da mudança", summary: afterSummary, estimate: afterSummary.newTicketRevenue, period: after },
-          ].map(({ title, summary, estimate, period }) => (
+            { title: "Antes da mudança", summary: beforeSummary, estimate: beforeSummary.oldTicketRevenue, period: before, note: "Receita real deve bater com os valores antigos pagos." },
+            { title: "Depois da publicação", summary: afterSummary, estimate: afterSummary.newTicketRevenue, period: after, note: "Só terá dados reais após você publicar e começar a receber PIX no ticket novo." },
+          ].map(({ title, summary, estimate, period, note }) => (
             <Card key={title}>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2"><BarChart3 className="h-5 w-5 text-primary" /> {title}</CardTitle>
@@ -218,13 +218,14 @@ const AnalyticsTicket = () => {
                   ["Seguro Prestamista pagos", summary.seguroPaid.toLocaleString("pt-BR")],
                   ["Taxa Transferência pagos", summary.taxaPaid.toLocaleString("pt-BR")],
                   ["Receita real", brl(summary.realRevenue)],
-                  ["Receita estimada pelo ticket", brl(estimate)],
+                  ["Receita pela regra do período", brl(estimate)],
                 ].map(([label, value]) => (
                   <div key={label} className="flex items-center justify-between gap-4 border-b border-border/70 py-2 last:border-0">
                     <span className="text-sm text-muted-foreground">{label}</span>
                     <strong className="text-right text-sm text-foreground">{value}</strong>
                   </div>
                 ))}
+                <p className="rounded-lg bg-muted/50 p-3 text-xs text-muted-foreground">{note}</p>
               </CardContent>
             </Card>
           ))}
