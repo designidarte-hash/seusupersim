@@ -21,12 +21,20 @@ type Period = {
   end: Date;
 };
 
+type TicketValues = {
+  seguro: number;
+  taxa: number;
+};
+
 const TICKETS = {
   seguroOld: 3179,
   taxaOld: 1874,
   seguroNew: 5279,
   taxaNew: 2874,
 };
+
+const OLD_TICKET: TicketValues = { seguro: TICKETS.seguroOld, taxa: TICKETS.taxaOld };
+const NEW_TICKET: TicketValues = { seguro: TICKETS.seguroNew, taxa: TICKETS.taxaNew };
 
 const paidStatuses = new Set(["paid", "completed", "approved", "confirmed", "pago"]);
 
@@ -47,6 +55,13 @@ const inPeriod = (isoDate: string, period: Period) => {
 
 const isPaid = (payment: PixPayment) => paidStatuses.has((payment.status || "").toLowerCase());
 
+const customerKey = (payment: PixPayment) =>
+  payment.customer_cpf || payment.customer_email || payment.customer_phone || payment.hashed_external_id || payment.hashed_email || payment.hashed_phone || "";
+
+const isSeguro = (payment: PixPayment) => payment.content_id === "seguro_prestamista";
+
+const isTaxa = (payment: PixPayment) => payment.content_id === "taxa_transferencia";
+
 const summarize = (rows: PixPayment[], period: Period) => {
   const generated = rows.filter((row) => inPeriod(row.created_at, period));
   const paid = rows.filter((row) => isPaid(row) && inPeriod(row.updated_at, period));
@@ -65,6 +80,30 @@ const summarize = (rows: PixPayment[], period: Period) => {
     oldTicketRevenue,
     newTicketRevenue,
     conversion: generated.length ? (paid.length / generated.length) * 100 : 0,
+  };
+};
+
+const summarizeTicket = (rows: PixPayment[], values: TicketValues) => {
+  const seguroRows = rows.filter((row) => isSeguro(row) && row.value === values.seguro);
+  const taxaRows = rows.filter((row) => isTaxa(row) && row.value === values.taxa);
+  const seguroPaidRows = seguroRows.filter(isPaid);
+  const taxaPaidRows = taxaRows.filter(isPaid);
+  const taxaKeys = new Set(taxaRows.map(customerKey).filter(Boolean));
+  const seguroPaidWithoutUpsell = seguroPaidRows.filter((row) => {
+    const key = customerKey(row);
+    return key && !taxaKeys.has(key);
+  }).length;
+
+  return {
+    seguroGenerated: seguroRows.length,
+    seguroPaid: seguroPaidRows.length,
+    taxaGenerated: taxaRows.length,
+    taxaPaid: taxaPaidRows.length,
+    realRevenue: [...seguroPaidRows, ...taxaPaidRows].reduce((sum, row) => sum + (row.value || 0), 0),
+    seguroConversion: seguroRows.length ? (seguroPaidRows.length / seguroRows.length) * 100 : 0,
+    upsellGeneratedRate: seguroPaidRows.length ? (taxaRows.length / seguroPaidRows.length) * 100 : 0,
+    upsellPaidRate: taxaRows.length ? (taxaPaidRows.length / taxaRows.length) * 100 : 0,
+    seguroPaidWithoutUpsell,
   };
 };
 
