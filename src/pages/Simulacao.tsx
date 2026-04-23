@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useTransitionNavigate } from "@/components/PageTransition";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { useRedirectOnReload } from "@/hooks/use-redirect-on-reload";
 import { ArrowLeft, FileText, Shield, CheckCircle2, Calendar, Percent, Banknote, Clock, ChevronRight } from "lucide-react";
 
 const loanAmount = 2500;
@@ -29,6 +30,7 @@ const formatCurrency = (v: number) =>
 const today = new Date().toLocaleDateString("pt-BR");
 
 const Simulacao = () => {
+  useRedirectOnReload();
   const location = useLocation();
   const navigate = useNavigate();
   const transitionNavigate = useTransitionNavigate();

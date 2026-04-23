@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FunnelProgress from "@/components/FunnelProgress";
 import { useFunnelUser } from "@/hooks/use-funnel-user";
+import { useRedirectOnReload } from "@/hooks/use-redirect-on-reload";
 
 import { ArrowLeft, UserPlus } from "lucide-react";
 
@@ -67,6 +68,7 @@ const getStoredName = () => {
 };
 
 const Cadastro = () => {
+  useRedirectOnReload();
   const location = useLocation();
   const navigate = useNavigate();
   const transitionNavigate = useTransitionNavigate();
