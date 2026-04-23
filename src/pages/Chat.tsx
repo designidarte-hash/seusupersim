@@ -1805,6 +1805,20 @@ const Chat = () => {
   const isCardPreview = previewStage === "card";
   const isOfertaPreview = previewStage === "oferta";
   const isFluxoPreview = previewStage === "fluxo";
+  const isPreview = !!previewStage;
+
+  // Em recarregamento da página (F5), volta para a home para evitar
+  // estado quebrado e duplicação de PIX. Não dispara em modo preview.
+  useEffect(() => {
+    if (typeof window === "undefined" || isPreview) return;
+    let isReload = false;
+    try {
+      const entries = performance.getEntriesByType("navigation") as PerformanceNavigationTiming[];
+      if (entries.length > 0) isReload = entries[0].type === "reload";
+    } catch {}
+    if (isReload) navigate("/", { replace: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Pull state from navigation, fallback to sessionStorage
   const navState = (location.state as any) || {};
