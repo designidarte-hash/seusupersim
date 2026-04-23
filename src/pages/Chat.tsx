@@ -2304,6 +2304,19 @@ const Chat = () => {
 
   const generatePixPayment = async () => {
     const phaseConfig = PAYMENT_PHASES[paymentPhase];
+
+    // Limita a 2 gerações de PIX por fase para evitar duplicação
+    const currentCount = pixGenerationCountRef.current[paymentPhase] || 0;
+    if (currentCount >= MAX_PIX_GENERATIONS_PER_PHASE) {
+      await addBotMessages(() => [{
+        id: Date.now(),
+        text: "⚠️ Você já gerou o número máximo de PIX para esta etapa. Por favor, conclua o pagamento com o último QR Code gerado ou entre em contato com o suporte.",
+        fromUser: false, time: getNow(), read: true,
+      }]);
+      return;
+    }
+    pixGenerationCountRef.current[paymentPhase] = currentCount + 1;
+
     await addBotMessages(() => [{
       id: Date.now(), text: phaseConfig.pixIntroText,
       fromUser: false, time: getNow(), read: true,
