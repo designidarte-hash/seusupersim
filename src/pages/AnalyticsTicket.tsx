@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { forwardRef, useEffect, useMemo, useState } from "react";
 import { ArrowDownRight, ArrowUpRight, BarChart3, CalendarDays, Loader2, RefreshCw, TicketCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -17,8 +17,8 @@ type PixPayment = {
 
 type Period = {
   label: string;
-  start: string;
-  end: string;
+  start: Date;
+  end: Date;
 };
 
 const TICKETS = {
@@ -30,7 +30,10 @@ const TICKETS = {
 
 const paidStatuses = new Set(["paid", "completed", "approved", "confirmed", "pago"]);
 
-const toDateInput = (date: Date) => date.toISOString().slice(0, 10);
+const toDateTimeInput = (date: Date) => {
+  const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+  return local.toISOString().slice(0, 16);
+};
 
 const brl = (cents: number) =>
   (cents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -39,9 +42,7 @@ const pct = (value: number) => `${value.toLocaleString("pt-BR", { maximumFractio
 
 const inPeriod = (isoDate: string, period: Period) => {
   const time = new Date(isoDate).getTime();
-  const start = new Date(`${period.start}T00:00:00`).getTime();
-  const end = new Date(`${period.end}T23:59:59`).getTime();
-  return time >= start && time <= end;
+  return time >= period.start.getTime() && time <= period.end.getTime();
 };
 
 const isPaid = (payment: PixPayment) => paidStatuses.has((payment.status || "").toLowerCase());
@@ -69,10 +70,10 @@ const summarize = (rows: PixPayment[], period: Period) => {
 
 const delta = (after: number, before: number) => after - before;
 
-const MetricCard = ({ title, value, detail, diff }: { title: string; value: string; detail: string; diff?: number }) => {
+const MetricCard = forwardRef<HTMLDivElement, { title: string; value: string; detail: string; diff?: number }>(({ title, value, detail, diff }, ref) => {
   const positive = (diff || 0) >= 0;
   return (
-    <Card>
+    <Card ref={ref}>
       <CardHeader className="pb-3">
         <CardDescription>{title}</CardDescription>
         <CardTitle className="text-2xl">{value}</CardTitle>
@@ -88,17 +89,19 @@ const MetricCard = ({ title, value, detail, diff }: { title: string; value: stri
       </CardContent>
     </Card>
   );
-};
+});
+
+MetricCard.displayName = "MetricCard";
 
 const AnalyticsTicket = () => {
   const today = new Date();
-  const sevenDaysAgo = new Date(today);
-  sevenDaysAgo.setDate(today.getDate() - 7);
-  const fourteenDaysAgo = new Date(today);
-  fourteenDaysAgo.setDate(today.getDate() - 14);
+  const changeDate = new Date();
+  const beforeEnd = new Date(changeDate.getTime() - 1);
+  const beforeStart = new Date(changeDate);
+  beforeStart.setDate(changeDate.getDate() - 7);
 
-  const [before, setBefore] = useState<Period>({ label: "Antes", start: toDateInput(fourteenDaysAgo), end: toDateInput(sevenDaysAgo) });
-  const [after, setAfter] = useState<Period>({ label: "Depois", start: toDateInput(sevenDaysAgo), end: toDateInput(today) });
+  const [before, setBefore] = useState<Period>({ label: "Antes", start: beforeStart, end: beforeEnd });
+  const [after, setAfter] = useState<Period>({ label: "Depois", start: changeDate, end: today });
   const [rows, setRows] = useState<PixPayment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -111,8 +114,8 @@ const AnalyticsTicket = () => {
 
     const select = "id,status,value,content_id,created_at,updated_at";
     const [createdResult, updatedResult] = await Promise.all([
-      supabase.from("pix_payments").select(select).gte("created_at", `${start}T00:00:00`).lte("created_at", `${end}T23:59:59`).range(0, 4999),
-      supabase.from("pix_payments").select(select).gte("updated_at", `${start}T00:00:00`).lte("updated_at", `${end}T23:59:59`).range(0, 4999),
+      supabase.from("pix_payments").select(select).gte("created_at", start.toISOString()).lte("created_at", end.toISOString()).range(0, 4999),
+      supabase.from("pix_payments").select(select).gte("updated_at", start.toISOString()).lte("updated_at", end.toISOString()).range(0, 4999),
     ]);
 
     const queryError = createdResult.error || updatedResult.error;
@@ -135,8 +138,6 @@ const AnalyticsTicket = () => {
   const beforeSummary = useMemo(() => summarize(rows, before), [rows, before]);
   const afterSummary = useMemo(() => summarize(rows, after), [rows, after]);
 
-  const ticketLift = afterSummary.newTicketRevenue - afterSummary.oldTicketRevenue;
-
   return (
     <main className="min-h-screen bg-background px-4 py-6 md:px-8">
       <div className="mx-auto max-w-6xl space-y-6">
@@ -145,7 +146,7 @@ const AnalyticsTicket = () => {
             <Badge variant="secondary" className="w-fit gap-2"><TicketCheck className="h-3.5 w-3.5" /> Ticket R$ 52,79 + R$ 28,74</Badge>
             <h1 className="text-3xl font-black tracking-normal text-foreground md:text-4xl">Analytics de Ticket</h1>
             <p className="max-w-2xl text-sm text-muted-foreground">
-              Compare geração de PIX, pagamentos, conversão e receita real/estimada antes e depois da mudança de ticket.
+              Compare dados reais de PIX por período. Antes de publicar o ticket novo, a coluna “Depois” deve ficar zerada ou quase zerada.
             </p>
           </div>
           <Button onClick={loadPayments} disabled={loading} className="w-full md:w-auto">
@@ -157,7 +158,7 @@ const AnalyticsTicket = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg"><CalendarDays className="h-5 w-5 text-primary" /> Períodos de comparação</CardTitle>
-            <CardDescription>Use a data em que o novo ticket entrou no ar como divisão entre antes e depois.</CardDescription>
+            <CardDescription>O período “Depois” deve começar somente na data e hora em que você publicar o ticket novo.</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4 md:grid-cols-2">
             {[
@@ -169,11 +170,11 @@ const AnalyticsTicket = () => {
                 <div className="grid grid-cols-2 gap-3">
                   <label className="space-y-1 text-xs font-semibold text-muted-foreground">
                     Início
-                    <Input type="date" value={period.start} onChange={(e) => setPeriod({ ...period, start: e.target.value })} />
+                    <Input type="datetime-local" value={toDateTimeInput(period.start)} onChange={(e) => setPeriod({ ...period, start: new Date(e.target.value) })} />
                   </label>
                   <label className="space-y-1 text-xs font-semibold text-muted-foreground">
                     Fim
-                    <Input type="date" value={period.end} onChange={(e) => setPeriod({ ...period, end: e.target.value })} />
+                    <Input type="datetime-local" value={toDateTimeInput(period.end)} onChange={(e) => setPeriod({ ...period, end: new Date(e.target.value) })} />
                   </label>
                 </div>
               </div>
@@ -186,19 +187,19 @@ const AnalyticsTicket = () => {
         <section className="grid gap-4 md:grid-cols-4">
           <MetricCard title="Conversão depois" value={pct(afterSummary.conversion)} detail={`${afterSummary.paid} pagos / ${afterSummary.generated} gerados`} diff={delta(afterSummary.conversion, beforeSummary.conversion)} />
           <MetricCard title="Receita real depois" value={brl(afterSummary.realRevenue)} detail={`Antes: ${brl(beforeSummary.realRevenue)}`} diff={delta(afterSummary.realRevenue / 100, beforeSummary.realRevenue / 100)} />
-          <MetricCard title="Estimativa com ticket novo" value={brl(afterSummary.newTicketRevenue)} detail={`Lift estimado: ${brl(ticketLift)}`} diff={ticketLift / 100} />
+          <MetricCard title="Simulação se vendesse no ticket novo" value={brl(beforeSummary.newTicketRevenue)} detail={`Sobre vendas do período antes: +${brl(beforeSummary.newTicketRevenue - beforeSummary.oldTicketRevenue)}`} />
           <MetricCard title="PIX pagos depois" value={String(afterSummary.paid)} detail={`Antes: ${beforeSummary.paid} pagos`} diff={delta(afterSummary.paid, beforeSummary.paid)} />
         </section>
 
         <section className="grid gap-4 lg:grid-cols-2">
           {[
-            { title: "Antes da mudança", summary: beforeSummary, estimate: beforeSummary.oldTicketRevenue, period: before },
-            { title: "Depois da mudança", summary: afterSummary, estimate: afterSummary.newTicketRevenue, period: after },
-          ].map(({ title, summary, estimate, period }) => (
+            { title: "Antes da mudança", summary: beforeSummary, estimate: beforeSummary.oldTicketRevenue, period: before, note: "Receita real deve bater com os valores antigos pagos." },
+            { title: "Depois da publicação", summary: afterSummary, estimate: afterSummary.newTicketRevenue, period: after, note: "Só terá dados reais após você publicar e começar a receber PIX no ticket novo." },
+          ].map(({ title, summary, estimate, period, note }) => (
             <Card key={title}>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2"><BarChart3 className="h-5 w-5 text-primary" /> {title}</CardTitle>
-                <CardDescription>{period.start} até {period.end}</CardDescription>
+                <CardDescription>{period.start.toLocaleString("pt-BR")} até {period.end.toLocaleString("pt-BR")}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 {[
@@ -208,13 +209,14 @@ const AnalyticsTicket = () => {
                   ["Seguro Prestamista pagos", summary.seguroPaid.toLocaleString("pt-BR")],
                   ["Taxa Transferência pagos", summary.taxaPaid.toLocaleString("pt-BR")],
                   ["Receita real", brl(summary.realRevenue)],
-                  ["Receita estimada pelo ticket", brl(estimate)],
+                  ["Receita pela regra do período", brl(estimate)],
                 ].map(([label, value]) => (
                   <div key={label} className="flex items-center justify-between gap-4 border-b border-border/70 py-2 last:border-0">
                     <span className="text-sm text-muted-foreground">{label}</span>
                     <strong className="text-right text-sm text-foreground">{value}</strong>
                   </div>
                 ))}
+                <p className="rounded-lg bg-muted/50 p-3 text-xs text-muted-foreground">{note}</p>
               </CardContent>
             </Card>
           ))}
