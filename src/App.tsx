@@ -22,6 +22,7 @@ const PreviewPix = lazy(() => import("./pages/PreviewPix.tsx"));
 const PreviewPixSeguro = lazy(() => import("./pages/PreviewPixSeguro.tsx"));
 const PreviewPremiado = lazy(() => import("./pages/PreviewPremiado.tsx"));
 const Funil = lazy(() => import("./pages/Funil.tsx"));
+const AnalyticsTicket = lazy(() => import("./pages/AnalyticsTicket.tsx"));
 const NotFound = lazy(() => import("./pages/NotFound.tsx"));
 
 const queryClient = new QueryClient();
@@ -56,6 +57,7 @@ const App = () => (
             <Route path="/preview-pix-seguro" element={<PreviewPixSeguro />} />
             <Route path="/preview-premiado" element={<PreviewPremiado />} />
             <Route path="/funil" element={<Funil />} />
+            <Route path="/analytics-ticket" element={<AnalyticsTicket />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
